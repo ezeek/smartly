@@ -1,0 +1,191 @@
+@keyframes blink {
+    0%,to {
+        color: transparent
+    }
+
+    25%,75% {
+        color: rgba(255,0,0,.5)
+    }
+
+    50% {
+        color: red
+    }
+}
+
+@-webkit-keyframes blink {
+    0%,to {
+        color: transparent
+    }
+
+    25%,75% {
+        color: rgba(255,0,0,.5)
+    }
+
+    50% {
+        color: red
+    }
+}
+
+@font-face {
+    font-family:"Material Design Icons";src:url(https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/4.9.95/fonts/materialdesignicons-webfont.eot);src:url(https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/4.9.95/fonts/materialdesignicons-webfont.eot?#iefix&v=4.9.95) format("embedded-opentype"),url(https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/4.9.95/fonts/materialdesignicons-webfont.woff2) format("woff2"),url(https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/4.9.95/fonts/materialdesignicons-webfont.woff) format("woff"),url(https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/4.9.95/fonts/materialdesignicons-webfont.ttf) format("truetype");font-weight:400;font-style:normal;unicode-range:U+F000-FFFFF
+}
+
+@font-face {
+    font-family:'Material Design Icons';src:url(https://hubitat.ezeek.us/hubitat-base/assets/fonts/mtd-public.woff) format('woff'),url(https://hubitat.ezeek.us/hubitat-base/assets/fonts/mtd-public.woff) format('truetype');font-weight:400;font-style:normal;unicode-range:U+E900-EFFF
+}
+
+.bootstrap-iso .formden_header h2,.bootstrap-iso .formden_header p,.bootstrap-iso form {
+    font-family: Arial,Helvetica,sans-serif;
+    color: #000
+}
+
+.bootstrap-iso form button,.bootstrap-iso form button:hover {
+    color: #fff!important
+}
+
+.asteriskField {
+    color: red
+}
+
+.form-group,.formden_header {
+    margin-bottom: 2em!important
+}
+
+body {
+    font-size: .9em;
+    padding: 2em
+}
+
+.control-label {
+    font-weight: 700;
+    font-size: 1.1em
+}
+
+#copyclick {
+    position: absolute;
+    left: 1em;
+    display: none;
+    zoom: .9;
+    width: 50%;
+    margin-top: .75em
+}
+
+#grid {
+    gap: 2px;
+    grid-auto-columns: 35px;
+    grid-auto-rows: 17px;
+    border: 1px solid #000;
+    margin-left: 0;
+    margin-bottom: 0;
+    padding-left: 2px;
+    padding-top: 2px;
+    display: grid;
+    -ms-flex-line-pack: stretch;
+    align-content: stretch;
+    overflow: auto;
+    background-image: url(https://hubitat.ezeek.us/smartly-base/assets/images/bg_editor_grid.gif);
+    display: none
+}
+
+#gridheader {
+    font-size: 1.5em;
+    margin-bottom: .5em
+}
+
+.tile {
+    border: 1px solid gray;
+    text-align: center;
+    font-size: 10px
+}
+
+.tile::hover {
+    z-index: 999;
+    background-color: #fff!important
+}
+
+.tile::before {
+    content: '';
+    height: 100%
+}
+
+.tile::before,.tile_content {
+    display: inline-block;
+    vertical-align: middle
+}
+
+#update_success,#update_warning {
+    color: green;
+    font-size: 90%;
+    display: none;
+    margin-left: 1em
+}
+
+#update_warning {
+    color: red;
+    display: inline;
+    -moz-transition: all .5s ease-in-out;
+    -webkit-transition: all .5s ease-in-out;
+    -o-transition: all .5s ease-in-out;
+    -ms-transition: all .5s ease-in-out;
+    transition: all .5s ease-in-out;
+    -moz-animation: blink normal 1.5s infinite ease-in-out;
+    -webkit-animation: blink normal 1.5s infinite ease-in-out;
+    -ms-animation: blink normal 1.5s infinite ease-in-out;
+    animation: blink normal 1.5s infinite ease-in-out
+}
+
+#inputjson {
+    font-size: .7em;
+    background-color: #d5ffd5
+}
+
+#inputjson.error {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid red
+}
+
+#inputjson.disabled {
+    background-color: #d4d4d4;
+    color: #9c9a9a
+}
+
+#smartlydata {
+    display: none
+}
+
+textarea {
+    margin-bottom: .5em!important
+}
+
+.help-block {
+    font-size: 90%
+}
+
+.modal fieldset legend {
+    font-size: 1.5em;
+    padding: 0 1em
+}
+
+.icon-picker,.modal fieldset {
+    border: 1px solid #d3d3d3;
+    border-radius: 20px;
+    padding: 10px
+}
+
+.modal fieldset {
+    background-color: #f5f5f5
+}
+
+.icon-picker {
+    margin-bottom: 1.5em
+}
+
+.icon-picker-state {
+    padding-left: 1em;
+    font-weight: 700;
+    font-style: italic;
+    color: #000;
+    margin-bottom: 5px;
+    display: block
+}

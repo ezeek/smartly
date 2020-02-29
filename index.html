@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!--script src="cookies.js"></script-->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"/>
+  <link rel="stylesheet" href="assets/css/bootstrap-iconpicker.min.css"/>
+  <link rel="stylesheet" href="assets/css/smartly-helper.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/4.9.95/css/materialdesignicons.min.css?rel=efc87f2bdc" />
+  <link rel="stylesheet" href="https://hubitat.ezeek.us/smartly-base/assets/css/mtd-public.min.css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/4.9.95/fonts/materialdesignicons-webfont.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="https://hubitat.ezeek.us/smartly-base/assets/fonts/mtd-public.woff" as="font" type="font/woff" crossorigin>
+
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" ></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
+
+  <script>
+  // allow access within functions
+  var smartlyDATA = '';
+  var hubitatJSON = '';
+
+  $(document).ready(function() {
+
+// retrieve github smartly-skins repo listing and add those options to the skin selector
+
+    $.getJSON("https://api.github.com/repos/ezeek/smartly-skins/contents/", function(data) {
+      //console.log("TEST");
+      //console.log(data);
+      jQuery.each(data, function (index, skin) {
+
+        if (skin.name != "README.md") {
+          //console.log(skin);
+          $('#skinselect').append(new Option(skin.name, skin.path));
+ //       <option value="https://github.com/ezeek/smartly-theme_dark">smartly dark</option>
+ //       <option value="https://github.com/ezeek/smartly-theme_wander">wander</option>
+        }
+
+      });
+    });
+
+
+// if anything changes, remind the user to update
+
+  $(":input").change(function(){ //triggers change in all input fields including text type
+    console.log("something has changed");
+    smartly_update();
+  });
+
+
+// the form submit function
+
+    $('form').submit(function(e) {
+
+      $("#inputjson").prop( "disabled", false ); // must enable a form field to allow it to submit its data
+      e.preventDefault();
+      var values = $(this).serialize();
+
+      // various UI/UX runtime tweaks
+      $("#inputjson").addClass('disabled');
+      $('#inputjson').removeClass('error');
+      $("#copyclick").css({'display':'none'});
+      $("#update_success").css({'display':'none'});
+      $("#update_warning").empty();
+      $("#smartly_update").html('Updating... <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+
+      $.ajax({
+        url: "smartly-helper.php",
+        type: "post",
+        data: values ,
+        success: function (res) {
+
+          $("#inputjson").prop( "disabled", true );
+          // use an additional internal error detector and act accordingly
+          if (res == "JSON Error") {
+            $('#inputjson').addClass('error');
+            $("#inputjson").prop( "disabled", false );
+            $('#inputjson').removeClass('disabled');
+            $("label[for='inputjson']").html('An error has occurred. Is your JSON valid?');
+            $("#smartly_update").html('Update');
+
+          } 
+
+          // parse all json result data
+          var resDATA = JSON.parse(res);
+
+/*
+console.log(res);
+console.log(smartlyDATA, "smartlydata inherited");
+console.log(hubitatJSON, "hubitatJSON inheritied");
+*/
+
+          // split smartlydata from hubitatjson data
+          smartlyDATA = resDATA.smartlyDATA;
+          hubitatJSON = JSON.parse(resDATA.outputJSON);
+          
+          // various UI/UX runtime tweaks
+          $("#checkbox_zoomy").prop("checked", false);
+          smartly_grid(smartlyDATA, hubitatJSON);
+          $("#smartly_update").html('Update');
+          $('#inputjson').val(resDATA.outputJSON);
+          $("label[for='inputjson']").html('Your Updated Layout JSON (to copy back into HE)');
+          $("#copyclick").css({'display':'block'});
+          $("#update_success").css({'display':'inline'});
+          $("#update_success").fadeIn().delay(3000).fadeOut();
+          $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+          $('#copyclick').fadeOut(750).fadeIn(250); 
+        },
+        error: function(xhr, status, error) {
+          console.log(xhr.responseText);
+          $("#smartly_update").html('Error, try again.');
+        }
+
+      });
+    });
+  });
+
+/*
+ * smartly_restart()
+ * clears and resets all (most) form values to ready for a new inputJSON pasting
+*/
+
+  function smartly_restart() {
+    $("#inputjson").val("");
+    $("label[for='inputjson']").html('Your Layout JSON <span class="asteriskField">*</span>');
+    $("#inputjson").prop( "disabled", false );
+    $('#inputjson').removeClass('disabled');
+    $('#inputjson').removeClass('error');
+    $("#copyclick").css({'display':'none'});
+    $("#update_success").css({'display':'none'});    
+    $("#smartlydata").html('');
+    $("#gridheader").empty();
+    $("#grid").empty();
+    $("#grid").removeAttr('style');
+  }
+
+/*
+ * smartly_editor()
+ * launches and populates modal that provides editing options for a particular clicked tile
+*/
+
+  function smartly_editor(tile_id) {
+
+    var data = smartlyDATA[tile_id];
+    var editor = $('#smartly_editor');
+
+    $("#smartly_modal").modal()
+    var modal_label = $("#modalLabel");
+    modal_label.html("Now editing ID " + tile_id + " [ <span style='color:grey;'>" + data.template + "</span> ]");
+
+    //console.log(smartlyDATA, "outside smartlyDATA");
+    //console.log(smartlyDATA[tile_id],"passed tile_id within smartlyDATA"); 
+
+    editor.empty();
+    editor.append('<input type="hidden" id="smart_edit_id" name="smart_edit_id" value="' + tile_id + '">');
+
+    if (typeof data.title !== 'undefined') {
+
+      var title = data.title ? data.title : '';
+      //console.log(data.tile_wrap, tile_id + " : TITLEWRAP");
+      var titlewrap = data.title_wrap === true ? 'checked' : '';
+
+      editor.append('  <div class="form-group row">    <label class="col-4 col-form-label" for="title">Title replacement</label>     <div class="col-8">      <input id="smart_edit_title" name="smart_edit_title" type="text" class="form-control" aria-describedby="titleHelpBlock" value="' + title + '">      <span id="titleHelpBlock" class="form-text text-muted">If your replacement title wraps and is too close to your icon, click <i>Icon Nudge</i> below.</span>    </div>  </div>');
+
+      editor.append('<div class="form-group row">    <label class="col-4">Icon Nudge</label>     <div class="col-8">      <div class="custom-control custom-checkbox custom-control-inline">        <input name="smart_edit_titlewrap" id="smart_edit_titlewrap" type="checkbox" class="custom-control-input" value="title_wrap" ' + titlewrap + '>         <label for="smart_edit_titlewrap" class="custom-control-label">Nudge the icon down to give my title more space.</label>      </div>   </div>  </div>');
+
+    }
+
+    if (typeof data.label !== 'undefined') {
+
+      var label = data.label ? data.label : '';
+      editor.append(' <div class="form-group row">    <label for="label" class="col-4 col-form-label">Add label</label>     <div class="col-8">      <input id="smart_edit_label" name="smart_edit_label" type="text" class="form-control" aria-describedby="labelHelpBlock" value="' + label + '">       <span id="labelHelpBlock" class="form-text text-muted">For image and video tiles, we can add a highly visible label here.</span>    </div>  </div> ');
+    }
+
+    if (data.states) {
+      editor.append("<fieldset id='wrapper_states_"+tile_id+"'><legend>icon replacement</legend></fieldset>");
+      $('#wrapper_states_'+tile_id).collapse({
+        toggle: false
+      })
+
+      jQuery.each(data.states, function (statename, icon) {
+
+        statename_pretty = statename.replace("_", " ");
+        //console.log(statename, "STATENAMEX");
+        //console.log(icon.class, "ICONX");
+        $('#wrapper_states_'+tile_id).append("<span class='icon-picker-state'>"+ statename_pretty +"</span><div class='icon-picker' id='state_" + statename + "'><div id='" + statename + "_picker'></div></div>");
+        editor.append("<input type='hidden' name='" + statename + "' id='state_" + statename + "_value'>");
+        //console.log(data, "DATA");
+
+        //console.log($('#'+statename+'_picker'));
+
+        $('#'+statename+'_picker').iconpicker({
+          align: 'center', // Only in div tag
+          arrowClass: 'btn-submit',
+          arrowPrevIconClass: 'mdi mdi-arrow-left-thick',
+          arrowNextIconClass: 'mdi mdi-arrow-right-thick',
+          cols: 7,
+          footer: true,
+          header: true,
+          icon: icon.code ? icon.code : null, //'F9C1', //'mdi-account',
+          iconset: 'materialdesign',
+          labelHeader: '{0} of {1} pages',
+          labelFooter: '{0} - {1} of {2} icons',
+          placement: 'bottom', // Only in button tag
+          rows: 4,
+          search: true,
+          searchText: 'Search',
+          selectedClass: 'btn-success',
+          unselectedClass: ''
+        });
+
+        $('#'+statename+'_picker').on('change', function(e) {
+          $('#state_'+statename+'_value').val(e.code);
+          console.log(e.code);
+        });
+
+      });
+    } else { // this tile type has no states or icon replacement is not permitted
+
+      editor.append("There are no configurable icons for this tile.");
+
+    }
+  }
+
+/*
+ * smartly_grid()
+ * generates the clickable preview grid after updating
+*/
+
+  function smartly_grid(smartly_data, hubitat_json) {
+    var $gridheight = (Number(hubitat_json.rows)) * 19 + 4;
+    var $gridwidth = (Number(hubitat_json.cols)) * 37 + 4;
+
+    // populate the hidden smartly_datablock
+    var smartly_datablock = $("#smartlydata");
+    smartly_datablock.text(JSON.stringify(smartly_data));
+    $gridheader = $("#gridheader");
+    $grid = $("#grid");
+    $gridheader.empty();
+    $grid.empty();
+    $gridheader.html("'" + hubitat_json.name + "' Tile Editor" + "<br><span style='font-size: 70%;'>Click on a tile below to change title, label and/or icons.</span>");
+    $grid.css({width: $gridwidth, height: $gridheight, display: 'grid'});
+    //console.log(hubitat_json, "HUBITAT JSON ALL");
+
+    jQuery.each(smartly_data, function (id, data) {
+
+      //console.log(data, "SMARTLY DATA: " + id);
+      var he_tile = hubitat_json.tiles[data.pos];
+      var he_colors = hubitat_json.customColors;
+      //console.log(he_tile, "HE JSON: " + id);
+      const colors = he_colors.find( ({ template }) => template === data.template );
+      const bgcolor = typeof colors !== 'undefined' && typeof colors.bgColor !== 'undefined' ? " background-color: " + colors.bgColor : "black";
+
+      var clickEdit = "onClick=clickedit('" + id + "');";
+
+      //console.log(he_tile.row, "THEROW FOR: " + id);
+      $grid.append("<div id='tile-" + id + "' class='tile " + data.template + "' style='grid-area: " + he_tile.row + " / " + he_tile.col + " / " + (Number(he_tile.row) + Number(he_tile.rowSpan)) + " / " + (Number(he_tile.col) + Number(he_tile.colSpan)) + "; " + bgcolor + "' onClick=smartly_editor(" + id + ");><div class='tile_content'>" + id + "</div></div>");
+
+/*
+$form = $("<form></form>");
+$form.append("<b>" + data.template + "</b><br>");
+$form.append('<label for "' + id + '-title">Title</label><input type="text" id="' + id  + '-title" value="' + data.title + '">');
+$("#smartly_editor").append($form);
+*/
+
+//"<div id='" + id + "-smartly'><b>" + data.template + "</b><br><br>title: " + data.title +"</div>");
+
+    });
+  }
+
+/*
+ * smartly_update()a
+ * processes tile_editor input and saves back into JSON awaiting re-update
+ * provides a warning to the user that something has been changed and they should update
+*/
+
+  function smartly_update() {
+    var $locked = $("#inputjson").prop("disabled"); // preserve initial locked state of inputJSON
+    $("#inputjson").prop( "disabled", false );
+
+    $("#smartly_modal").modal("hide");
+    $("#update_warning").html("There are unsaved changes! Click <i>Update</i> again.");
+
+    if ($("#smart_edit_id").val()) {
+      var smart_id = $("#smart_edit_id").val();
+      //console.log(smartlyDATA[smart_id], "UPDATE lookup");
+
+      if ($("#smart_edit_title").val()) {
+        smartlyDATA[smart_id]['title'] = $("#smart_edit_title").val();
+      } else {
+        smartlyDATA[smart_id]['title'] = null;
+      }
+
+      //console.log($("#smart_edit_titlewrap").is(":checked"),"CHECKBOX");
+     if ($("#smart_edit_titlewrap").is(":checked")) {
+        smartlyDATA[smart_id]['title_wrap'] = true;
+      } else {
+        smartlyDATA[smart_id]['title_wrap'] = false;
+      }
+
+      if ($("#smart_edit_label").val()) {
+        smartlyDATA[smart_id]['label'] = $("#smart_edit_label").val();
+      } else {
+        smartlyDATA[smart_id]['label'] = null;
+      }
+
+      $('input[id ^= "state_"]').each(function(index, element) {
+        var icon_code = $(this).val();
+        var icon_class = $(this).attr('name');
+
+        //console.log($(this).val());
+        //console.log($(this).attr('name'));
+        if ($(this).val()) {
+          smartlyDATA[smart_id]['states'][icon_class]['code'] = icon_code;
+        } else {
+          smartlyDATA[smart_id]['states'][icon_class]['code'] = null;
+        }
+      });
+
+
+       // populate the hidden smartly_datablock
+      var smartly_datablock = $("#smartlydata");
+      smartly_datablock.text(JSON.stringify(smartlyDATA));
+
+    }
+
+    if ($locked) {
+      $("#inputjson").prop( "disabled", true );
+    }
+
+  }
+
+  </script>
+
+</head><body>
+
+<!-- HTML Form (wrapped in a .bootstrap-iso div) -->
+<div class="bootstrap-iso">
+ <div class="container-fluid">
+  <div class="row">
+   <div class="col-md-6 col-sm-6 col-xs-12">
+    <div class="formden_header">
+     <img src="assets/images/logo_smartly.png" style="height: 40px; width: 40px; float: left;"><h2>
+      smartly [prerelease 2.24]
+     </h2>
+     <p>
+      Paste your Hubitat Dashboard 'Layout' JSON, choose a skin and update.<br><small>Skins are in active development!</small>    <hr>
+     </p>
+    </div>
+    <form method="post" action="smartly-helper.php">
+<div class="form-group row">
+    <label for="skin" class="col-4 col-form-label">Choose a skin (experimental)</label> 
+    <div class="col-8">
+      <select id="skinselect" name="skin" class="custom-select">
+        <option value="smartly">smartly (default)</option>
+      </select>
+    </div>
+  </div> 
+     <div class="form-group ">
+      <label class="control-label ">
+       Update from smartly github repo..
+      </label>
+      <div class=" ">
+       <div class="checkbox">
+        <label class="checkbox">
+         <input name="options[]" type="checkbox" value="color" checked/>
+         Tile Color Templates (customColors)
+        </label>
+       </div>
+       <div class="checkbox">
+        <label class="checkbox">
+         <input name="options[]" type="checkbox" value="css" checked/>
+         CSS (base and skin formatting and stock skin icons)
+        </label>
+       </div>
+       <div class="checkbox">
+        <label class="checkbox">
+         <input name="options[]" type="checkbox" value="settings" checked/>
+         Recommended settings (grid, spacing, rounded corners, background etc)
+        </label>
+       </div>
+       <span class="help-block text-muted" id="hint_options">
+        Instead of clobbering all of your customized settings, choose what you'd like to update.<br><br>
+       </span>
+       <div class="checkbox">
+        <label class="checkbox">
+         <input name="options[]" type="checkbox" value="zoomy" id="checkbox_zoomy" />
+         <b>Add ZOOMY</b> <small style="color: #da4800;">(This checkbox will uncheck itself after update)</small><br><span style="font-size: 90%">Temporarily add a calibration helper tile to generate the perfect css for alignment of columns to the edge of the screen on any device.</span><br>
+        </label>
+       </div>
+      </div>
+     </div>
+     <div class="form-group " style="position:relative;">
+      <label class="control-label requiredField" for="inputjson">
+       Your Layout JSON       <span class="asteriskField">
+        *
+       </span>
+      </label>
+      <button type="button" id="copyclick" class="btn btn-success" data-clipboard-target="#inputjson" onClick='$("#inputjson").prop( "disabled", false );'>copy to clipboard</button>
+      <textarea class="form-control" cols="40" id="inputjson" name="inputjson" rows="3"></textarea>
+      <span class="help-block text-muted" id="hint_inputjson">
+       Copy and paste the contents of 'Options &gt; Advanced &gt; Layout' then click 'Update' below. Or <a href="#" id="smartly_restart" onClick="smartly_restart()">click here to <b>start over</b></a>.
+      </span>
+     </div>
+      <textarea type="hidden" class="form-control" cols="40" id="smartlydata" name="smartlydata" rows="5"></textarea>
+     <div class="form-group">
+      <div>
+      <button class="btn btn-primary" type="submit" id="smartly_update">Update</button><div id="update_warning"></div><div id="update_success">JSON successfully updated!</div>
+      </div>
+     </div>
+    </form>
+   </div>
+  </div>
+<div id="gridheader"></div>
+<div id="grid"></div>
+
+ </div>
+</div>
+
+<!-- Button trigger modal -->
+
+<!-- Modal -->
+<div class="modal fade" id="smartly_modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog-centered modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div id="smartly_editor" class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onClick="smartly_update()">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+-->
+
+<script>
+var clipboard = new ClipboardJS('#copyclick');
+
+  clipboard.on('success', function(e) {
+    console.info('Action:', e.action);
+    console.info('Text:', e.text);
+    console.info('Trigger:', e.trigger);
+    alert("copied");
+    e.clearSelection();
+    $("#inputjson").prop( "disabled", true );
+  });
+
+  clipboard.on('error', function(e) {
+    console.error('Action:', e.action);
+    console.error('Trigger:', e.trigger);
+  });
+</script>
+
+
+<script type="text/javascript" src="assets/js/bootstrap-iconpicker-iconset-material.js"></script>
+<script type="text/javascript" src="assets/js/bootstrap-iconpicker.js"></script>
+
+
+</body>
+</html>

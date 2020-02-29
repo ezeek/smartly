@@ -1,0 +1,8 @@
+{
+    "require": {
+        "matthiasmullie/minify": "^1.3",
+        "natxet/cssmin": "dev-master",
+        "lastzero/css-optimizer": "^1.0",
+        "wyrihaximus/html-compress": "^1.4"
+    }
+}
