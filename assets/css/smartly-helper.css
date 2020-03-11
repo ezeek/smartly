@@ -31,7 +31,7 @@
 }
 
 @font-face {
-    font-family:'Material Design Icons';src:url(https://hubitat.ezeek.us/hubitat-base/assets/fonts/mtd-public.woff) format('woff'),url(https://hubitat.ezeek.us/hubitat-base/assets/fonts/mtd-public.woff) format('truetype');font-weight:400;font-style:normal;unicode-range:U+E900-EFFF
+    font-family:'Material Design Icons';src:url(https://hubitat.ezeek.us/smartly-base/assets/fonts/mtd-public.woff) format('woff'),url(https://hubitat.ezeek.us/smartly-base/assets/fonts/mtd-public.woff) format('truetype');font-weight:400;font-style:normal;unicode-range:U+E900-EFFF
 }
 
 .bootstrap-iso .formden_header h2,.bootstrap-iso .formden_header p,.bootstrap-iso form {

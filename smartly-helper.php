@@ -6,8 +6,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 include 'assets/data/statelookup.php'; // contains array of each template type and their associated states
 
 $repo_base = array(
-  'css_sandbox' => 'http://hubitat.ezeek.us/hubitat-dashboard/smartly.css',
-  'json_sandbox' => 'http://hubitat.ezeek.us/hubitat-dashboard/smartly.json',
+  'css_sandbox' => 'https://hubitat.ezeek.us/smartly-base/smartly.css',
+  'json_sandbox' => 'https://hubitat.ezeek.us/smartly-base/smartly.json',
   'css_dev' => 'https://raw.githubusercontent.com/ezeek/smartly-base/devel/smartly.css',
   'json_dev' => 'https://raw.githubusercontent.com/ezeek/smartly-base/devel/smartly.json',
   'css' => 'https://raw.githubusercontent.com/ezeek/smartly-base/master/smartly.css',
@@ -30,6 +30,7 @@ if ($_POST['skin'] && $_POST['skin'] != 'smartly') {
   $repo_skin = null;
 }
 
+$device_cals_path = 'assets/data/device_cals.json';
 $update_options = array();
 $tiles = array();
 $smartly_data = array();
@@ -66,6 +67,17 @@ if (is_json($_POST['inputjson'])) {
 // retrieve posted smartlydata
 if (is_json($_POST['smartlydata'])) {
   $inputSDATA = json_decode($_POST['smartlydata'], true);
+  if (!($inputSDATA['tiles'])) { // if smartly_data is of pre-global-settings era, update it.
+    $inputSDATA = array('tiles' => $inputSDATA, 'settings' => null);
+  }
+  
+} elseif ($inputJSON['tiles'][0]['template'] == "smartly") {
+  if (is_json($inputJSON['tiles'][0]['templateExtra'])) {
+    $inputSDATA = json_decode($inputJSON['tiles'][0]['templateExtra'], true);
+    if (!($inputSDATA['tiles'])) { // if smartly_data is of pre-global-settings era, update it.
+      $inputSDATA = array('tiles' => $inputSDATA, 'settings' => null);
+    }
+  }
 } else {
   $inputSDATA = null;
 }
@@ -83,7 +95,7 @@ var_dump($_POST);
 // retrieve smartly base css and/or json from master if instructed
 //if ($update_options['css']) {
   // get updated CSS from repo
-  $repo_base_css = file_get_contents($repo_base['css']); //css_dev
+  $repo_base_css = file_get_contents($repo_base['css_sandbox']); //css_dev
   $repo_skin_css = file_get_contents($repo_skin['css']);
 //} else {
 //  $repo_base_css = '';
@@ -93,7 +105,7 @@ var_dump($_POST);
 // retrieve smartly customColors[] and other settings if instructed
 if ($update_options['color'] || $update_options['settings']) {
   // get updated JSON from repo
-  $repo_base_json = file_get_contents($repo_base['json']); //json_dev
+  $repo_base_json = file_get_contents($repo_base['json_sandbox']); //json_dev
   $repo_base_json = json_decode($repo_base_json, true);
 
   if ($update_options['color']) {
@@ -164,6 +176,84 @@ $calibrate_cols = 0;
 // between smartly tiles and inputJSON tiles.
 if ($inputJSON['tiles'][0]['template'] != "smartly") {
 
+ // first time running
+
+  $workingTiles = $inputJSON['tiles'];
+  foreach ($inputJSON['tiles'] as $tile_id => $tile_data) {
+    if ($tile_data['colSpan'] > 1) {
+      for ($column = $tile_data['col']; $column <= $tile_data['col'] + $tile_data['colSpan'] - 1; $column++) {
+        $workingTiles[] = array(
+          'template' => 'fake',
+          'col' => $column,
+          'row' => $tile_data['row'],
+          'rowSpan' => $tile_data['rowSpan']
+        ); // array
+      } // for
+    } // if
+  } // foreach
+
+//print count($inputJSON['tiles']) . " - orig\n\r";
+//print count($workingTiles) . " - after\n\r";
+
+  $grid = array();
+  $grid['cols']  = array_column($workingTiles, 'col');
+  $grid['rows'] = array_column($workingTiles, 'row');
+
+// sort the tiles with cols ascending, rows ascending
+// add $workingTiles as the last parameter, to sort by the common key
+  array_multisort($grid['cols'], SORT_ASC, $grid['rows'], SORT_ASC, $workingTiles);
+
+  $offset = array();
+// workingTiles has been sorted by column then row
+// run through tiles per column from the 1st row down,
+// increasing column offset when a rowspan is found. 
+// (may not handle 3x height tiles well? may need another for loop)
+  foreach ($workingTiles as $tile_id => $tile_data) {
+    // create the column offset storage
+    if (!(isset($offset[$tile_data['col']]))) { $offset[$tile_data['col']] = 0; } 
+
+$full_height = array(
+'dimmer',
+'thermostat',
+'bulb',
+'shade',
+'clock',
+'date',
+'dashboard-link',
+'mode',
+'music-player',
+'video-player',
+'volume',
+'weather'
+);
+
+if (in_array($tile_data['template'], $full_height)) {
+    $workingTiles[$tile_id]['row'] = ($tile_data['row'] - 1 + $tile_data['row'] + ($offset[$tile_data['col']] * 1));// - 1;
+    $workingTiles[$tile_id]['rowSpan'] = 2;
+} else {
+    $workingTiles[$tile_id]['row'] = ($tile_data['row'] - 1 + $tile_data['row'] + ($offset[$tile_data['col']] * 1)) ;
+}
+
+    if ($tile_data['rowSpan'] > 1) {
+      $offset[$tile_data['col']] += $tile_data['rowSpan'] - 2; //1;
+
+    } 
+
+
+if (in_array($tile_data['template'], $full_height)) {
+    $workingTiles[$tile_id]['rowSpan'] = 2;
+}
+
+  }
+
+// cleanup
+
+  foreach ($workingTiles as $tile_id => $tile_data) {
+    if ($tile_data['template'] == 'fake') {
+      unset($workingTiles[$tile_id]);
+    }
+  }
+
   $smartly_tile = array(
     "template" => "smartly",
     "id" => 0,
@@ -172,8 +262,9 @@ if ($inputJSON['tiles'][0]['template'] != "smartly") {
   );
 
   // add smartly tile to position 0 of tiles[]
-  array_unshift($inputJSON['tiles'], $smartly_tile);
-  $inputJSON['tiles'] = array_values($inputJSON['tiles']); // Hubitat Dashboard doesn't like indexed array for tiles.
+  array_unshift($workingTiles, $smartly_tile);
+
+  $inputJSON['tiles'] = array_values($workingTiles); // Hubitat Dashboard doesn't like indexed array for tiles.
 }
 
 // build refreshed smartly data from tiles
@@ -256,8 +347,14 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
   }
 }
 
+// @TODO why on earth am I splitting inputSDATA into separate variables instead of just writing null corrections to inputSDADA
 // if updated smartlydata was passed, use it instead of the generated smartly data.
-if ($inputSDATA) { $tiles = $inputSDATA; } 
+if ($inputSDATA['tiles']) { $tiles = $inputSDATA['tiles']; } 
+if ($inputSDATA['settings']) { 
+  $smartly_settings = $inputSDATA['settings']; 
+} else {
+  $smartly_settings = array('calibration' => array('devices' => null, 'devices_2col' => null));
+}
 
 /*
 $smartly_tile = array(
@@ -273,8 +370,10 @@ array_unshift($inputJSON['tiles'], $smartly_tile);
 $inputJSON['tiles'] = array_values($inputJSON['tiles']); // Hubitat Dashboard doesn't like indexed array for tiles.
 */
 
+// @TODO why on earth am I splitting inputSDATA into separate variables instead of just writing null corrections to inputSDADA
+
 // update smartly tile with new new smartly data
-$inputJSON['tiles'][0]['templateExtra'] = json_encode($tiles);
+$inputJSON['tiles'][0]['templateExtra'] = json_encode(array("tiles" => $tiles, "settings" => $smartly_settings));
 
 // set up css replacements so they are accessible globally.
 $css_title_replacements = array();
@@ -285,7 +384,7 @@ $css_icon_replacements = array();
 $smartly_css_parsed = smartly_parse_css($inputJSON['customCSS'], $smartly_css_delimiters, $repo_base_css, $repo_skin_css, $update_options);
 
 // build CSS based on smartly data, base and user
-$inputJSON['customCSS'] = smartly_build_css($tiles, $smartly_css_delimiters, $smartly_css_parsed['base'], $smartly_css_parsed['skin'], $smartly_css_parsed['user'], array('iconSize' => $inputJSON['iconSize']));
+$inputJSON['customCSS'] = smartly_build_css($tiles, $smartly_css_delimiters, $smartly_css_parsed['base'], $smartly_css_parsed['skin'], $smartly_css_parsed['user'], $smartly_settings);
 
 // build and attach a zoomy helper tile to the tiles array
 if ($update_options['zoomy']) {
@@ -295,7 +394,7 @@ if ($update_options['zoomy']) {
 }
 
 // build the return array of json for smartly-helper form
-$return_json = array("outputJSON" => json_encode($inputJSON), "smartlyDATA" => $tiles);
+$return_json = array("outputJSON" => json_encode($inputJSON), "smartlyDATA" => array('tiles' => $tiles, 'settings' => $smartly_settings));
 echo json_encode($return_json);
 
 
@@ -353,11 +452,22 @@ function smartly_parse_css($input_css = null, $delimiters = null, $base_css = nu
   } else {
     $css['base'] = $base_css;
     $css['skin'] = $skin_css;
-    $css['user'] = "/* 
+
+    if(trim($input_css)) {
+
+     $css['user'] = "
+
+/* It looks like you didn't delete your existing css before updating for the first time.. that's ok.  Here is is, but we commented it out.
 
 $input_css  
 
-*/";
+Add your custom CSS in the space below.. */
+
+
+";
+    } else {
+      $css['user'] = '';  
+    }
   }
   return $css;
 }
@@ -379,7 +489,8 @@ $input_css
  *  A string containing the entire customCSS for addition to Layout JSON.
  */
 
-function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css = null, $skin_css = null, $user_css = null, $extra = array()) {
+function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css = null, $skin_css = null, $user_css = null, $settings = array()) {
+
   // parse through all smartly data and build necessary "auto" CSS
   foreach ($smartly_tiles as $smart_id => $smart_data) {
 
@@ -455,7 +566,6 @@ EOF;
     }
 
     if ($smart_data['states']) {
-      $icon_size = $extra['iconSize'] . "px";
       foreach ($smart_data['states'] as $state_name => $state_data) { //$state_code) {
         $icon_code = $state_data['code'];
         $icon_class = $state_data['class'];
@@ -490,6 +600,25 @@ EOF;
     }
   }
 
+
+  if ($settings['calibrations']['devices']) {
+
+  
+    $smartly_css['calibrations'][] = <<<EOF
+
+EOF;
+  }
+
+  if ($settings['calibrations']['devices_2col']) {
+
+    $smartly_css['calibrations'][] = <<<EOF
+
+
+
+EOF;
+  }
+
+
   // combine and optimize CSS
 
   $lb = "\r\n\r\n"; // line break for future use
@@ -498,6 +627,7 @@ EOF;
   $optimized_css['title'] =  $optimize->optimizeCss(implode($lb, $smartly_css['title']));
   $optimized_css['label'] =  $optimize->optimizeCss(implode($lb, $smartly_css['label']));
   $optimized_css['icon'] =  $optimize->optimizeCss(implode($lb, $smartly_css['icon']));
+  $optimized_css['calibrations'] = $optimize->optimizeCss(implode($lb, $smartly_css['calibrations']));
 
   $smartly_css_flat = array(
     $delimiters['base'],
@@ -509,7 +639,7 @@ EOF;
     $optimized_css['label'],
     $optimized_css['icon'],
     $delimiters['user'],
-    trim($user_css)
+    $user_css
   );
 
   $smartly_css_flat = implode($lb, array_filter($smartly_css_flat));
