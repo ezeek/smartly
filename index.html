@@ -198,9 +198,13 @@ console.log(str);
 // the form submit function
 
     $('form').submit(function(e) {
-
+$('#copyclick').stop();
       $("#inputjson").addClass("stealth");
-      $("#inputjson").prop( "disabled", false ); // must enable a form field to allow it to submit its data
+
+      $("#inputjson").prop( "readonly", false ); // must enable a form field to allow it to submit its data
+      $("#update_colors").prop( "disabled", false );
+      $("#update_css").prop( "disabled", false );
+      $("#update_settings").prop( "disabled", false ); 
 
       e.preventDefault();
       var values = $(this).serialize();
@@ -213,9 +217,6 @@ console.log(str);
       $("#update_warning").empty();
       $("#smartly_update").html('Updating... <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
       $("#update_options").collapse('hide'); 
-    $("#update_colors").prop( "disabled", false );
-    $("#update_css").prop( "disabled", false );
-    $("#update_settings").prop( "disabled", false ); 
    
       $.ajax({
         url: "smartly-helper.php",
@@ -223,16 +224,16 @@ console.log(str);
         data: values ,
         success: function (res) {
 
-    $("#update_colors").prop( "disabled", true );
-    $("#update_css").prop( "disabled", true );
-    $("#update_settings").prop( "disabled", true );
+          $("#update_colors").prop( "disabled", true );
+          $("#update_css").prop( "disabled", true );
+          $("#update_settings").prop( "disabled", true );
+          $("#inputjson").prop( "readonly", true );
 
-          $("#inputjson").prop( "disabled", true );
    //   $("#inputjson").removeClass("stealth");
           // use an additional internal error detector and act accordingly
           if (res == "JSON Error") {
             $('#inputjson').addClass('error');
-            $("#inputjson").prop( "disabled", false );
+            $("#inputjson").prop( "readonly", false );
             $('#inputjson').removeClass('disabled');
             $("label[for='inputjson']").html('An error has occurred. Is your JSON valid?');
             $("#smartly_update").html('Update');
@@ -329,7 +330,7 @@ console.log("[" + found + "]", "FOUND");
   function smartly_restart() {
     $("#inputjson").val("");
     $("label[for='inputjson']").html('Your Layout JSON <span class="asteriskField">*</span>');
-    $("#inputjson").prop( "disabled", false );
+    $("#inputjson").prop( "readonly", false );
     $('#inputjson').removeClass('disabled');
     $('#inputjson').removeClass('error');
     $("#copyclick").css({'display':'none'});
@@ -512,14 +513,15 @@ $("#smartly_editor").append($form);
 */
 
   function smartly_update() {
-    var $locked = $("#inputjson").prop("disabled"); // preserve initial locked state of inputJSON
-    $("#inputjson").prop( "disabled", false );
+    var $locked = $("#inputjson").prop("readonly"); // preserve initial locked state of inputJSON
+    $("#inputjson").prop( "readonly", false );
 
     $("#smartly_modal").modal("hide");
 
- $("#copyclick").animate({ opacity: 0 }, 250, function() {
+$('#copyclick').stop();
+ $("#copyclick").animate({ opacity: 0 }, 100, function() {
             $("#copyclick").text('unsaved changes!').removeClass('btn-success').addClass('btn-danger').animate({  opacity: 1 }, 250, function() { 
-                $("#copyclick").delay(3000).animate({ opacity: 0 }, 1000, function() {
+                $("#copyclick").delay(1000).animate({ opacity: 0 }, 1000, function() {
                     $("#copyclick").text('copy to clipboard [outdated]').removeClass('btn-danger').addClass('btn-warning').animate({  opacity: 1 }, 250)})})});
 
     $("#update_warning").html("There are unsaved changes! Click <i>Update</i> again.");
@@ -569,7 +571,7 @@ console.log(smartlyDATA);
     }
 
     if ($locked) {
-      $("#inputjson").prop( "disabled", true );
+      $("#inputjson").prop( "readonly", true );
     }
 
   }
@@ -582,11 +584,13 @@ console.log(smartlyDATA);
 */
 
   function smartly_settings_update() {
-    var $locked = $("#inputjson").prop("disabled"); // preserve initial locked state of inputJSON
+    var $locked = $("#inputjson").prop("readonly"); // preserve initial locked state of inputJSON
 
-    $("#inputjson").prop( "disabled", false );
+    $("#inputjson").prop( "readonly", false );
 
     $("#smartly_settings_modal").modal("hide");
+
+$('#copyclick').stop();
 
 $("#copyclick").animate({ opacity: 0 }, 250, function() {
             $("#copyclick").text('unsaved changes!').removeClass('btn-success').addClass('btn-danger').animate({  opacity: 1 }, 250, function() { 
@@ -628,7 +632,7 @@ console.log(smartlyDATA);
 
 
     if ($locked) {
-      $("#inputjson").prop( "disabled", true );
+      $("#inputjson").prop( "readonly", true );
     }
 
   }
@@ -810,7 +814,7 @@ Sorry, selective updating isn't allowed until skins are finalized.
               *
               </span>
               </label>
-              <button type="button" id="copyclick" class="btn btn-success" data-clipboard-target="#inputjson" onClick='$("#inpustjson").prop( "disabled", false );'>copy to clipboard</button>
+              <button type="button" id="copyclick" class="btn btn-success" data-clipboard-target="#inputjson" onClick='$("#inpustjson").prop( "readonly", false );'>copy to clipboard</button>
               <textarea class="form-control stealth" cols="40" id="inputjson" name="inputjson" rows="3"></textarea>
               <span class="help-block text-muted" id="hint_inputjson">
               Copy and paste the contents of 'Options &gt; Advanced &gt; Layout' then click 'Update' below. Or <a href="#" id="smartly_restart" onClick="smartly_restart()">click here to <b>start over</b></a>.
@@ -876,7 +880,7 @@ var clipboard = new ClipboardJS('#copyclick');
 	        $("#copyclick").delay(3000).animate({ opacity: 0 }, 1000, function() {
                     $("#copyclick").text('copy to clipboard').removeClass('btn-info').addClass('btn-success').animate({  opacity: 1 }, 250)})})});
     e.clearSelection();
-    $("#inputjson").prop( "disabled", true );
+    $("#inputjson").prop( "readonly", true );
   });
 
   clipboard.on('error', function(e) {

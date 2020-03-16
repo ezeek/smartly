@@ -86,7 +86,7 @@ if (is_json($_POST['smartlydata'])) {
 }
 
 
-
+/*
 
 // get existing smartly data from inputJSON, so long as it's in pos 
 if (is_json($inputJSON['tiles'][0]['templateExtra'])) {
@@ -94,6 +94,8 @@ if (is_json($inputJSON['tiles'][0]['templateExtra'])) {
 } else {
   $smartly_data = null;
 }
+*/
+
 
 // parse selected update options
 foreach ($_POST['options'] as $options) {
@@ -181,8 +183,9 @@ $calibrate_cols = 0;
 // if first time running, smartly tile won't exist so create it
 // with null data to ensure tile array position is mirrored
 // between smartly tiles and inputJSON tiles.
+//var_dump($inputJSON['tiles']);
 if ($inputJSON['tiles'][0]['template'] != "smartly") {
-
+print "NEW";
  // first time running
 
   $workingTiles = $inputJSON['tiles'];
