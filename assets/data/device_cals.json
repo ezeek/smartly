@@ -30,7 +30,7 @@
 { "value": "apple_iphone7-plus", "text": "iPhone 7 Plus" , "width": 414 , "height": 736 , "pwidth": 2 },
 { "value": "apple_iphone8", "text": "iPhone 8" , "width": 375 , "height": 667 , "pwidth": 2 },
 { "value": "apple_iphone8-plus", "text": "iPhone 8 Plus" , "width": 414 , "height": 736 , "pwidth": 2 },
-{ "value": "apple_iphonex", "text": "iPhone X" , "width": 375 , "height": 812 , "pwidth": 2 },
+{ "value": "apple_iphonex", "text": "iPhone X" , "width": 375 , "height": 724 , "pwidth": 2 },
 { "value": "apple_iphonexs", "text": "iPhone XS" , "width": 375 , "height": 812 , "pwidth": 2 },
 { "value": "apple_iphonexs-max", "text": "iPhone XS Max" , "width": 414 , "height": 896 , "pwidth": 2 },
 { "value": "apple_k900", "text": "Lenovo K900" , "width": 360 , "height": 640 , "pwidth": 2 },
@@ -145,5 +145,7 @@
 { "value": "zte_maven-3", "text": "ZTE Maven 3" , "width": 320 , "height": 570 , "pwidth": 2 },
 { "value": "zte_max-xl", "text": "ZTE Max XL" , "width": 360 , "height": 640 , "pwidth": 2 },
 { "value": "zte_open", "text": "ZTE Open (Firefox OS)" , "width": 320 , "height": 480 , "pwidth": 2 },
-{ "value": "zte_zmax-pro", "text": "ZTE ZMAX Pro" , "width": 360 , "height": 640 , "pwidth": 2 }
+{ "value": "zte_zmax-pro", "text": "ZTE ZMAX Pro" , "width": 360 , "height": 640 , "pwidth": 2 },
+{ "value": "generic_411-413", "text": "Generic 411-413px" , "width": 412 , "height": 0 , "pwidth": 2 },
+{ "value": "generic_359-361", "text": "Generic 359-361px" , "width": 360 , "height": 0 , "pwidth": 2 }
 ]

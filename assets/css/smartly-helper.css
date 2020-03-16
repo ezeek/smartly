@@ -39,9 +39,11 @@
     color: #000
 }
 
+/*
 .bootstrap-iso form button,.bootstrap-iso form button:hover {
     color: #fff!important
 }
+*/
 
 .asteriskField {
     color: red
@@ -53,7 +55,7 @@
 
 body {
     font-size: .9em;
-    padding: 2em
+    padding: 1em .5em;
 }
 
 .control-label {
@@ -188,4 +190,10 @@ textarea {
     color: #000;
     margin-bottom: 5px;
     display: block
+}
+
+@media only screen and (max-width: 480px)  {
+#copyclick {
+width: 90%;
+}
 }
