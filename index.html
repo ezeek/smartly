@@ -261,7 +261,11 @@ console.log(hubitatJSON, "hubitatJSON");
           $("#smartly_update").html('Update');
           $('#inputjson').val(resDATA.outputJSON);
           $("label[for='inputjson']").html('Your Updated Layout JSON (to copy back into HE)');
+          $("#copyclick").html('copy to clipboard');
+          $("#copyclick").removeClass('btn-warning').removeClass('btn-error');
+          $("#copyclick").addClass('btn-success');
           $("#copyclick").css({'display':'block'});
+
           $("#update_success").css({'display':'inline'});
           $("#update_success").fadeIn().delay(3000).fadeOut();
           $("html, body").animate({ scrollTop: $(document).height() }, 1000);
@@ -583,8 +587,15 @@ console.log(smartlyDATA);
     $("#inputjson").prop( "disabled", false );
 
     $("#smartly_settings_modal").modal("hide");
+
+$("#copyclick").animate({ opacity: 0 }, 250, function() {
+            $("#copyclick").text('unsaved changes!').removeClass('btn-success').addClass('btn-danger').animate({  opacity: 1 }, 250, function() { 
+                $("#copyclick").delay(3000).animate({ opacity: 0 }, 1000, function() {
+                    $("#copyclick").text('copy to clipboard [outdated]').removeClass('btn-danger').addClass('btn-warning').animate({  opacity: 1 }, 250)})})});
+
     $("#update_warning").html("There are unsaved changes! Click <i>Update</i> again.");
     $('#copyclick').html('copy to clipboard');
+
 
     var cal_devices_val = $("#cal_devices").val() ? $("#cal_devices").val() : null;
     var cal_devices_2col_val = $("#cal_devices_2col").val() ? $("#cal_devices_2col").val() : null;;
