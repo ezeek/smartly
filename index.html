@@ -198,7 +198,7 @@ console.log(str);
 // the form submit function
 
     $('form').submit(function(e) {
-$('#copyclick').stop();
+$('#copyclick').finish();
       $("#inputjson").addClass("stealth");
 
       $("#inputjson").prop( "readonly", false ); // must enable a form field to allow it to submit its data
@@ -263,7 +263,7 @@ console.log(hubitatJSON, "hubitatJSON");
           $('#inputjson').val(resDATA.outputJSON);
           $("label[for='inputjson']").html('Your Updated Layout JSON (to copy back into HE)');
           $("#copyclick").html('copy to clipboard');
-          $("#copyclick").removeClass('btn-warning').removeClass('btn-error');
+          $("#copyclick").removeClass('btn-warning').removeClass('btn-danger');
           $("#copyclick").addClass('btn-success');
           $("#copyclick").css({'display':'block'});
 
@@ -518,11 +518,11 @@ $("#smartly_editor").append($form);
 
     $("#smartly_modal").modal("hide");
 
-$('#copyclick').stop();
- $("#copyclick").animate({ opacity: 0 }, 100, function() {
+$('#copyclick').finish();
+ $("#copyclick").animate({ opacity: 0 }, 50, function() {
             $("#copyclick").text('unsaved changes!').removeClass('btn-success').addClass('btn-danger').animate({  opacity: 1 }, 250, function() { 
-                $("#copyclick").delay(1000).animate({ opacity: 0 }, 1000, function() {
-                    $("#copyclick").text('copy to clipboard [outdated]').removeClass('btn-danger').addClass('btn-warning').animate({  opacity: 1 }, 250)})})});
+                $("#copyclick").delay(1000).animate({ opacity: 0 }, 500, function() {
+                    $("#copyclick").text('copy to clipboard [outdated]').removeClass('btn-danger').addClass('btn-warning').animate({  opacity: 1 }, 100)})})});
 
     $("#update_warning").html("There are unsaved changes! Click <i>Update</i> again.");
     $('#copyclick').html('copy to clipboard');
@@ -590,12 +590,12 @@ console.log(smartlyDATA);
 
     $("#smartly_settings_modal").modal("hide");
 
-$('#copyclick').stop();
+$('#copyclick').finish();
 
-$("#copyclick").animate({ opacity: 0 }, 250, function() {
+$("#copyclick").animate({ opacity: 0 }, 50, function() {
             $("#copyclick").text('unsaved changes!').removeClass('btn-success').addClass('btn-danger').animate({  opacity: 1 }, 250, function() { 
-                $("#copyclick").delay(3000).animate({ opacity: 0 }, 1000, function() {
-                    $("#copyclick").text('copy to clipboard [outdated]').removeClass('btn-danger').addClass('btn-warning').animate({  opacity: 1 }, 250)})})});
+                $("#copyclick").delay(1000).animate({ opacity: 0 }, 500, function() {
+                    $("#copyclick").text('copy to clipboard [outdated]').removeClass('btn-danger').addClass('btn-warning').animate({  opacity: 1 }, 100)})})});
 
     $("#update_warning").html("There are unsaved changes! Click <i>Update</i> again.");
     $('#copyclick').html('copy to clipboard');
