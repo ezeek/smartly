@@ -132,9 +132,10 @@
             op.icons = icons;
         }
         else {
+console.log("else");
             var result = [];
             $.each(icons, function(i, v) {
-               if (v.toLowerCase().indexOf(search) > -1) {
+               if (v.toLowerCase().indexOf(search.toLowerCase()) > -1) {
                    result.push(v);
                }
             });

@@ -6,8 +6,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 include 'assets/data/statelookup.php'; // contains array of each template type and their associated states
 
 $repo_base = array(
-  'css_sandbox' => 'http://hubitat.ezeek.us/hubitat-dashboard/smartly.css',
-  'json_sandbox' => 'http://hubitat.ezeek.us/hubitat-dashboard/smartly.json',
+  'css_sandbox' => 'https://hubitat.ezeek.us/smartly-base/smartly.css',
+  'json_sandbox' => 'https://hubitat.ezeek.us/smartly-base/smartly.json',
   'css_dev' => 'https://raw.githubusercontent.com/ezeek/smartly-base/devel/smartly.css',
   'json_dev' => 'https://raw.githubusercontent.com/ezeek/smartly-base/devel/smartly.json',
   'css' => 'https://raw.githubusercontent.com/ezeek/smartly-base/master/smartly.css',
@@ -30,6 +30,7 @@ if ($_POST['skin'] && $_POST['skin'] != 'smartly') {
   $repo_skin = null;
 }
 
+$device_cals_path = 'https://hubitat.ezeek.us/dev/smartly-helper-tags/assets/data/device_cals.json';
 $update_options = array();
 $tiles = array();
 $smartly_data = array();
@@ -62,13 +63,39 @@ if (is_json($_POST['inputjson'])) {
   echo "JSON Error";
   exit(0);
 }
+
+//var_dump($inputJSON);
  
 // retrieve posted smartlydata
 if (is_json($_POST['smartlydata'])) {
-  $inputSDATA = json_decode($_POST['smartlydata'], true);
+  $smartly_data = json_decode($_POST['smartlydata'], true);
+  if (!($smartly_data['tiles'])) { // if smartly_data is of pre-global-settings era, update it.
+    $smartly_data = array('tiles' => $smartly_data, 'settings' => null);
+  }
+
+// if nothing sent via form, try to exract from smartly data tile
+} elseif ($inputJSON['tiles'][0]['template'] == "smartly") {
+  if (is_json($inputJSON['tiles'][0]['templateExtra'])) {
+    $smartly_data = json_decode($inputJSON['tiles'][0]['templateExtra'], true);
+    if (!($smartly_data['tiles'])) { // if smartly_data is of pre-global-settings era, update it.
+      $smartly_data = array('tiles' => $smartly_data, 'settings' => null);
+    }
+  }
 } else {
-  $inputSDATA = null;
+  $smartly_data = null;
 }
+
+
+/*
+
+// get existing smartly data from inputJSON, so long as it's in pos 
+if (is_json($inputJSON['tiles'][0]['templateExtra'])) {
+  $smartly_data = json_decode($inputJSON['tiles'][0]['templateExtra'], true);
+} else {
+  $smartly_data = null;
+}
+*/
+
 
 // parse selected update options
 foreach ($_POST['options'] as $options) {
@@ -83,7 +110,7 @@ var_dump($_POST);
 // retrieve smartly base css and/or json from master if instructed
 //if ($update_options['css']) {
   // get updated CSS from repo
-  $repo_base_css = file_get_contents($repo_base['css']); //css_dev
+  $repo_base_css = file_get_contents($repo_base['css_sandbox']); //css_dev
   $repo_skin_css = file_get_contents($repo_skin['css']);
 //} else {
 //  $repo_base_css = '';
@@ -93,7 +120,7 @@ var_dump($_POST);
 // retrieve smartly customColors[] and other settings if instructed
 if ($update_options['color'] || $update_options['settings']) {
   // get updated JSON from repo
-  $repo_base_json = file_get_contents($repo_base['json']); //json_dev
+  $repo_base_json = file_get_contents($repo_base['json_sandbox']); //json_dev
   $repo_base_json = json_decode($repo_base_json, true);
 
   if ($update_options['color']) {
@@ -148,12 +175,6 @@ if ($update_options['color'] || $update_options['settings']) {
   }
 }
 
-// get existing smartly data from inputJSON, so long as it's in pos 0
-if (is_json($inputJSON['tiles'][0]['templateExtra'])) {
-  $smartly_data = json_decode($inputJSON['tiles'][0]['templateExtra'], true);
-} else {
-  $smartly_data = null;
-}
 
 // set up variables for automatically determining and setting grid row and column count
 $calibrate_rows = 0;
@@ -162,7 +183,86 @@ $calibrate_cols = 0;
 // if first time running, smartly tile won't exist so create it
 // with null data to ensure tile array position is mirrored
 // between smartly tiles and inputJSON tiles.
+//var_dump($inputJSON['tiles']);
 if ($inputJSON['tiles'][0]['template'] != "smartly") {
+print "NEW";
+ // first time running
+
+  $workingTiles = $inputJSON['tiles'];
+  foreach ($inputJSON['tiles'] as $tile_id => $tile_data) {
+    if ($tile_data['colSpan'] > 1) {
+      for ($column = $tile_data['col']; $column <= $tile_data['col'] + $tile_data['colSpan'] - 1; $column++) {
+        $workingTiles[] = array(
+          'template' => 'fake',
+          'col' => $column,
+          'row' => $tile_data['row'],
+          'rowSpan' => $tile_data['rowSpan']
+        ); // array
+      } // for
+    } // if
+  } // foreach
+
+//print count($inputJSON['tiles']) . " - orig\n\r";
+//print count($workingTiles) . " - after\n\r";
+
+  $grid = array();
+  $grid['cols']  = array_column($workingTiles, 'col');
+  $grid['rows'] = array_column($workingTiles, 'row');
+
+// sort the tiles with cols ascending, rows ascending
+// add $workingTiles as the last parameter, to sort by the common key
+  array_multisort($grid['cols'], SORT_ASC, $grid['rows'], SORT_ASC, $workingTiles);
+
+  $offset = array();
+// workingTiles has been sorted by column then row
+// run through tiles per column from the 1st row down,
+// increasing column offset when a rowspan is found. 
+// (may not handle 3x height tiles well? may need another for loop)
+  foreach ($workingTiles as $tile_id => $tile_data) {
+    // create the column offset storage
+    if (!(isset($offset[$tile_data['col']]))) { $offset[$tile_data['col']] = 0; } 
+
+$full_height = array(
+'dimmer',
+'thermostat',
+'bulb',
+'shade',
+'clock',
+'date',
+'dashboard-link',
+'mode',
+'music-player',
+'video-player',
+'volume',
+'weather'
+);
+
+if (in_array($tile_data['template'], $full_height)) {
+    $workingTiles[$tile_id]['row'] = ($tile_data['row'] - 1 + $tile_data['row'] + ($offset[$tile_data['col']] * 1));// - 1;
+    $workingTiles[$tile_id]['rowSpan'] = 2;
+} else {
+    $workingTiles[$tile_id]['row'] = ($tile_data['row'] - 1 + $tile_data['row'] + ($offset[$tile_data['col']] * 1)) ;
+}
+
+    if ($tile_data['rowSpan'] > 1) {
+      $offset[$tile_data['col']] += $tile_data['rowSpan'] - 2; //1;
+
+    } 
+
+
+if (in_array($tile_data['template'], $full_height)) {
+    $workingTiles[$tile_id]['rowSpan'] = 2;
+}
+
+  }
+
+// cleanup
+
+  foreach ($workingTiles as $tile_id => $tile_data) {
+    if ($tile_data['template'] == 'fake') {
+      unset($workingTiles[$tile_id]);
+    }
+  }
 
   $smartly_tile = array(
     "template" => "smartly",
@@ -172,8 +272,9 @@ if ($inputJSON['tiles'][0]['template'] != "smartly") {
   );
 
   // add smartly tile to position 0 of tiles[]
-  array_unshift($inputJSON['tiles'], $smartly_tile);
-  $inputJSON['tiles'] = array_values($inputJSON['tiles']); // Hubitat Dashboard doesn't like indexed array for tiles.
+  array_unshift($workingTiles, $smartly_tile);
+
+  $inputJSON['tiles'] = array_values($workingTiles); // Hubitat Dashboard doesn't like indexed array for tiles.
 }
 
 // build refreshed smartly data from tiles
@@ -207,13 +308,13 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
     // if image or video, no title replacement is possible because it doesn't exist
     if ($tile['template'] == "images" | $tile['template'] == "video") { 
       // retrieve existing value of label
-      $tile_data['label'] = $smartly_data[$tile['id']]['label'] ? $smartly_data[$tile['id']]['label'] : null;
+      $tile_data['label'] = $smartly_data['tiles'][$tile['id']]['label'] ? $smartly_data['tiles'][$tile['id']]['label'] : null;
       // add to smartly_css so it can build the css
 //      $smartly_css['label'][$tile['id']]['label'] = $tile_data['label'];
     } else {
       // retrieve existing title_replacement
-      $tile_data['title'] = $smartly_data[$tile['id']]['title'] ? $smartly_data[$tile['id']]['title'] : null;
-      $tile_data['title_wrap'] = $smartly_data[$tile['id']]['title_wrap'] ? $smartly_data[$tile['id']]['title_wrap'] : null;
+      $tile_data['title'] = $smartly_data['tiles'][$tile['id']]['title'] ? $smartly_data['tiles'][$tile['id']]['title'] : null;
+      $tile_data['title_wrap'] = $smartly_data['tiles'][$tile['id']]['title_wrap'] ? $smartly_data['tiles'][$tile['id']]['title_wrap'] : null;
 
       // add to smartly_css so it can build the css
 //      $smartly_css['title'][$tile['id']]['title'] = $tile_data['title'];
@@ -223,7 +324,7 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
     if (is_array($statelookup[$tile['template']])) {
       foreach ($statelookup[$tile['template']] as $statename => $stateclass) {
         // retrieve existing icon value for template state if it exists
-        $tile_data['states'][$statename]['code'] = $smartly_data[$tile['id']]['states'][$statename]['code'] ? $smartly_data[$tile['id']]['states'][$statename]['code'] : null;
+        $tile_data['states'][$statename]['code'] = $smartly_data['tiles'][$tile['id']]['states'][$statename]['code'] ? $smartly_data['tiles'][$tile['id']]['states'][$statename]['code'] : null;
         $tile_data['states'][$statename]['class'] = $stateclass;
 //          $smartly_css['icon'][$tile['id']][$states] = $tile_data['states'][$states];
       }
@@ -256,10 +357,22 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
   }
 }
 
+// @TODO why on earth am I splitting inputSDATA into separate variables instead of just writing null corrections to inputSDADA
 // if updated smartlydata was passed, use it instead of the generated smartly data.
-if ($inputSDATA) { $tiles = $inputSDATA; } 
+if ($inputSDATA['tiles']) { $tiles = $inputSDATA['tiles']; } 
+if ($inputSDATA['settings']) { 
+  $inputSDATA['settings']['calibration']['source'] = $device_cals_path;
+  $inputSDATA['settings']['calibration']['colwidth'] = $inputJSON['colWidth'];
+  $inputSDATA['settings']['calibration']['gridgap'] = $inputJSON['gridGap'];
+  $inputSDATA['settings']['calibration']['colcount'] = $inputJSON['cols'];
+  $smartly_settings = $inputSDATA['settings'];
+} else {
+  $smartly_settings = array('calibration' => array('devices' => null, 'devices_2col' => null));
+}
+//var_dump($smartly_settings);
+/*a
 
-/*
+a
 $smartly_tile = array(
   "template" => "smartly",
   "id" => 0,
@@ -273,8 +386,10 @@ array_unshift($inputJSON['tiles'], $smartly_tile);
 $inputJSON['tiles'] = array_values($inputJSON['tiles']); // Hubitat Dashboard doesn't like indexed array for tiles.
 */
 
+// @TODO why on earth am I splitting inputSDATA into separate variables instead of just writing null corrections to inputSDADA
+
 // update smartly tile with new new smartly data
-$inputJSON['tiles'][0]['templateExtra'] = json_encode($tiles);
+$inputJSON['tiles'][0]['templateExtra'] = json_encode(array("tiles" => $tiles, "settings" => $smartly_settings));
 
 // set up css replacements so they are accessible globally.
 $css_title_replacements = array();
@@ -285,7 +400,7 @@ $css_icon_replacements = array();
 $smartly_css_parsed = smartly_parse_css($inputJSON['customCSS'], $smartly_css_delimiters, $repo_base_css, $repo_skin_css, $update_options);
 
 // build CSS based on smartly data, base and user
-$inputJSON['customCSS'] = smartly_build_css($tiles, $smartly_css_delimiters, $smartly_css_parsed['base'], $smartly_css_parsed['skin'], $smartly_css_parsed['user'], array('iconSize' => $inputJSON['iconSize']));
+$inputJSON['customCSS'] = smartly_build_css($tiles, $smartly_css_delimiters, $smartly_css_parsed['base'], $smartly_css_parsed['skin'], $smartly_css_parsed['user'], $smartly_settings);
 
 // build and attach a zoomy helper tile to the tiles array
 if ($update_options['zoomy']) {
@@ -295,7 +410,7 @@ if ($update_options['zoomy']) {
 }
 
 // build the return array of json for smartly-helper form
-$return_json = array("outputJSON" => json_encode($inputJSON), "smartlyDATA" => $tiles);
+$return_json = array("outputJSON" => json_encode($inputJSON), "smartlyDATA" => array('tiles' => $tiles, 'settings' => $smartly_settings));
 echo json_encode($return_json);
 
 
@@ -353,11 +468,22 @@ function smartly_parse_css($input_css = null, $delimiters = null, $base_css = nu
   } else {
     $css['base'] = $base_css;
     $css['skin'] = $skin_css;
-    $css['user'] = "/* 
+
+    if(trim($input_css)) {
+
+     $css['user'] = "
+
+/* It looks like you didn't delete your existing css before updating for the first time.. that's ok.  Here is is, but we commented it out.
 
 $input_css  
 
-*/";
+Add your custom CSS in the space below.. */
+
+
+";
+    } else {
+      $css['user'] = '';  
+    }
   }
   return $css;
 }
@@ -379,7 +505,8 @@ $input_css
  *  A string containing the entire customCSS for addition to Layout JSON.
  */
 
-function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css = null, $skin_css = null, $user_css = null, $extra = array()) {
+function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css = null, $skin_css = null, $user_css = null, $settings = array()) {
+
   // parse through all smartly data and build necessary "auto" CSS
   foreach ($smartly_tiles as $smart_id => $smart_data) {
 
@@ -455,7 +582,6 @@ EOF;
     }
 
     if ($smart_data['states']) {
-      $icon_size = $extra['iconSize'] . "px";
       foreach ($smart_data['states'] as $state_name => $state_data) { //$state_code) {
         $icon_code = $state_data['code'];
         $icon_class = $state_data['class'];
@@ -490,6 +616,47 @@ EOF;
     }
   }
 
+
+  if ($settings['calibration']['devices'] || $settings['calibration']['devices_2col']) {
+
+    $cal_devices_json = file_get_contents($settings['calibration']['source']); //json_dev
+    $cal_devices_json = json_decode($cal_devices_json, true);
+
+    if ($settings['calibration']['devices']) {
+
+     foreach ($settings['calibration']['devices'] as $index => $device) {
+
+       $key = array_search($device, array_column($cal_devices_json, 'value'));
+       $height = $cal_devices_json[$key]['height'];
+       $width = $cal_devices_json[$key]['width'];
+
+       $bestmatch_p = smartly_calibrate(.8, $width, $settings['calibration']['colwidth'], $settings['calibration']['gridgap'], $settings['calibration']['colcount']);
+
+       $smartly_css['calibration'][] = "@media screen and (orientation: portrait) and (max-width:" . ($width + 1) . "px) and (min-width:" . ($width - 1) . "px){.dashboard{zoom:" . $bestmatch_p['zoom'] . "; -moz-transform:scale(" . $bestmatch_p['zoom'] . ");}}" . $lb;
+
+       $bestmatch_h = smartly_calibrate(.8, $height, $settings['calibration']['colwidth'], $settings['calibration']['gridgap'], $settings['calibration']['colcount']);
+
+       $smartly_css['calibration'][] = "@media screen and (orientation: landscape) and (max-width:" . ($height + 1) . "px) and (min-width:" . ($height - 1) . "px){.dashboard{zoom:" . $bestmatch_h['zoom'] . "; -moz-transform:scale(" . $bestmatch_h['zoom'] . ");}}" . $lb;
+
+      }
+    }
+
+    if ($settings['calibration']['devices_2col']) {
+
+      foreach ($settings['calibration']['devices_2col'] as $index => $device) {
+
+        $key = array_search($device, array_column($cal_devices_json, 'value'));
+        $width = $cal_devices_json[$key]['width'];
+
+        $bestmatch = smartly_calibrate(.8, $width, $settings['calibration']['colwidth'], $settings['calibration']['gridgap'], $settings['calibration']['colcount']);
+
+        $smartly_css['calibration'][] = "@media screen and (orientation: portrait) and (max-width:" . ($width + 1) . "px) and (min-width:" . ($width - 1) . "px){.dashboard{zoom:1; -moz-transform:scale(1);} .dashboard .wrapper { grid-template-columns: repeat(" . $settings['calibration']['colcount'] . ", calc(50% - " . ($settings['calibration']['gridgap'] - 1) . "px))!important;}" . $lb;
+
+      }
+    }
+
+  }  
+
   // combine and optimize CSS
 
   $lb = "\r\n\r\n"; // line break for future use
@@ -498,6 +665,7 @@ EOF;
   $optimized_css['title'] =  $optimize->optimizeCss(implode($lb, $smartly_css['title']));
   $optimized_css['label'] =  $optimize->optimizeCss(implode($lb, $smartly_css['label']));
   $optimized_css['icon'] =  $optimize->optimizeCss(implode($lb, $smartly_css['icon']));
+  $optimized_css['calibration'] = $optimize->optimizeCss(implode($lb, $smartly_css['calibration']));
 
   $smartly_css_flat = array(
     $delimiters['base'],
@@ -508,8 +676,9 @@ EOF;
     $optimized_css['title'],
     $optimized_css['label'],
     $optimized_css['icon'],
+    $optimized_css['calibration'],
     $delimiters['user'],
-    trim($user_css)
+    $user_css
   );
 
   $smartly_css_flat = implode($lb, array_filter($smartly_css_flat));
@@ -517,6 +686,86 @@ EOF;
   return $smartly_css_flat;
 
 }
+
+
+/**
+ *
+ * smartly_calibrate()
+ *
+ *
+ *
+ */
+function smartly_calibrate($minzoom = null, $screenwidth = null, $colwidth = null, $gap = null, $colcount = null) {
+// TODO: make dynamically generated on the fly until a bestmatch is found, possibly a for loop
+  $columns = [
+    'one' => ($gap * 2) + $colwidth,
+    'two' => ($gap * 3) + ($colwidth * 2),
+    'three' => ($gap * 4) + ($colwidth * 3),
+    'four' => ($gap * 5) + ($colwidth * 4),
+    'five' => ($gap * 6) + ($colwidth * 5),
+    'six' => ($gap * 7) + ($colwidth * 6),
+    'seven' => ($gap * 8) + ($colwidth * 7),
+    'eight' => ($gap * 9) + ($colwidth * 8),
+    'nine' => ($gap * 10) + ($colwidth * 9),
+    'ten' => ($gap * 11) + ($colwidth * 10),
+    'eleven' => ($gap * 12) + ($colwidth * 11),
+    'twelve' => ($gap * 13) + ($colwidth * 12)
+  ];
+
+  $bestmatch = [
+    'name' => null,
+    'width' => null,
+    'zoom' => null,
+    'abszoom' => 999
+  ];
+
+
+  foreach ($columns as $column => $width) {
+    $zoom = ($screenwidth) / $width;
+    $abszoom = abs($zoom - 1) + 1;
+
+    if ($zoom > $minzoom && ($abszoom < $bestmatch['abszoom'])) {
+
+      // specific overrides for well-known screen widths
+      if ($screenwidth == 1280) {
+        $bestmatch = [
+        'name' => 'seven',
+        'width' => $columns['seven'],
+        'zoom' => ($screenwidth) / $columns['seven'],
+        'abszoom' => abs((($screenwidth) / $columns['seven']) - 1) + 1
+        ];
+        break;
+      }  elseif ($screenwidth == 1920) {
+        $bestmatch = [
+        'name' => 'nine',
+        'width' => $columns['nine'],
+        'zoom' => ($screenwidth) / $columns['nine'],
+        'abszoom' => abs((($screenwidth) / $columns['nine']) - 1) + 1
+        ];
+        break;
+
+      } else {
+        // save the current best match, only if it's better than the last
+        $bestmatch = [
+        'name' => $column,
+        'width' => $width,
+        'zoom' => round($zoom,3),
+        'abszoom' => $abszoom
+        ];
+      }
+  //      print "bestmatch [$bestmatch] so far is: $column at $width with zoom of $zoom [$abszoom]<br><br>";
+
+    } else {
+
+  //      print "zoom too small: $column at $width with zoom of $zoom [$abszoom]<br><br>";
+    }
+  }
+
+  return $bestmatch;
+
+}
+
+
 
 /**
  * smartly_zoomy() adds a tile that assists the user in choosing
@@ -604,7 +853,7 @@ function smartly_zoomy($next_id = null, $colwidth = null, $gap = null, $colcount
           $bestmatch = [
           'name' => $column,
           'width' => $width,
-          'zoom' => $zoom,
+          'zoom' => round($zoom,3),
           'abszoom' => $abszoom
           ];
         }
@@ -627,12 +876,12 @@ function smartly_zoomy($next_id = null, $colwidth = null, $gap = null, $colcount
 
     } else {
 
-      $output['css'][] = "@media screen and (max-width:" . ($screenwidth + 4) . "px) and (min-width:" . $screenwidth . "px){.sw-" . $screenwidth . "{top: -" . $screenwidth ."em;}.zoomval_container{margin-top:-" . $screenwidth . "em;}.dashboard{zoom:" . $bestmatch['zoom'] . ";}}" . $lb;
+      $output['css'][] = "@media screen and (max-width:" . ($screenwidth + 4) . "px) and (min-width:" . $screenwidth . "px){.sw-" . $screenwidth . "{top: -" . $screenwidth ."em;}.zoomval_container{margin-top:-" . $screenwidth . "em;}.dashboard{zoom:" . $bestmatch['zoom'] . "; -moz-transform:scale(" . $bestmatch['zoom'] . ");}}" . $lb;
 
-      $output['html'][] = "<i style='top:" . $screenwidth . "em' class='sw-" . $screenwidth . "'>@media screen and (max-width: " . ($screenwidth + 4) . "px) and (min-width:" . $screenwidth . "px){.dashboard{zoom:" .  $bestmatch['zoom'] . ";}}</i>" . $lb;
+      $output['html'][] = "<i style='top:" . $screenwidth . "em' class='sw-" . $screenwidth . "'>@media screen and (max-width: " . ($screenwidth + 4) . "px) and (min-width:" . $screenwidth . "px){.dashboard{zoom:" .  $bestmatch['zoom'] . "; -moz-transform:scale(" . $bestmatch['zoom'] . ");}}</i>" . $lb;
 
     }
-  }  
+  }    // foreach width  
 
   $output['css'][] = $output['attach']['css'];
   $output['css'][] = "@media screen and (min-width: 1925px){.sw-default{display: block;}.zoomval_container{margin-top:0;}}" . $lb;
@@ -659,6 +908,7 @@ function smartly_zoomy($next_id = null, $colwidth = null, $gap = null, $colcount
     width: 100%;
     word-break: break-word;
 pointer-events: all;
+    font-size: .9em;
   /*  transform: scale(.75);*/
   }
 
