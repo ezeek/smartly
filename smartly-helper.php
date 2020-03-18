@@ -185,7 +185,7 @@ $calibrate_cols = 0;
 // between smartly tiles and inputJSON tiles.
 //var_dump($inputJSON['tiles']);
 if ($inputJSON['tiles'][0]['template'] != "smartly") {
-print "NEW";
+//print "NEW";
  // first time running
 
   $workingTiles = $inputJSON['tiles'];
