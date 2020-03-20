@@ -744,6 +744,15 @@ function smartly_calibrate($minzoom = null, $screenwidth = null, $colwidth = nul
         ];
         break;
 
+      }  elseif ($screenwidth > 359 && $screenwidth < 421) {
+        $bestmatch = [
+        'name' => 'three',
+        'width' => $columns['three'],
+        'zoom' => ($screenwidth) / $columns['three'],
+        'abszoom' => abs((($screenwidth) / $columns['three']) - 1) + 1
+        ];
+        break;
+
       } else {
         // save the current best match, only if it's better than the last
         $bestmatch = [
@@ -845,6 +854,15 @@ function smartly_zoomy($next_id = null, $colwidth = null, $gap = null, $colcount
           'width' => $columns['nine'],
           'zoom' => ($screenwidth + 4) / $columns['nine'],
           'abszoom' => abs((($screenwidth + 4) / $columns['nine']) - 1) + 1
+          ];
+          break;
+
+        }  elseif ($screenwidth > 359 && $screenwidth < 421) {
+          $bestmatch = [
+          'name' => 'three',
+          'width' => $columns['three'],
+          'zoom' => ($screenwidth) / $columns['three'],
+          'abszoom' => abs((($screenwidth) / $columns['three']) - 1) + 1
           ];
           break;
 
