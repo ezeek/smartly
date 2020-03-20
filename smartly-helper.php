@@ -30,7 +30,7 @@ if ($_POST['skin'] && $_POST['skin'] != 'smartly') {
   $repo_skin = null;
 }
 
-$device_cals_path = 'https://hubitat.ezeek.us/dev/smartly-helper-tags/assets/data/device_cals.json';
+$device_cals_path = 'https://hubitat.ezeek.us/smartly/assets/data/device_cals.json';
 $update_options = array();
 $tiles = array();
 $smartly_data = array();
@@ -357,15 +357,15 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
   }
 }
 
-// @TODO why on earth am I splitting inputSDATA into separate variables instead of just writing null corrections to inputSDADA
+// @TODO why on earth am I splitting smartly_data into separate variables instead of just writing null corrections to inputSDADA
 // if updated smartlydata was passed, use it instead of the generated smartly data.
-if ($inputSDATA['tiles']) { $tiles = $inputSDATA['tiles']; } 
-if ($inputSDATA['settings']) { 
-  $inputSDATA['settings']['calibration']['source'] = $device_cals_path;
-  $inputSDATA['settings']['calibration']['colwidth'] = $inputJSON['colWidth'];
-  $inputSDATA['settings']['calibration']['gridgap'] = $inputJSON['gridGap'];
-  $inputSDATA['settings']['calibration']['colcount'] = $inputJSON['cols'];
-  $smartly_settings = $inputSDATA['settings'];
+if ($smartly_data['tiles']) { $tiles = $smartly_data['tiles']; } 
+if ($smartly_data['settings']) { 
+  $smartly_data['settings']['calibration']['source'] = $device_cals_path;
+  $smartly_data['settings']['calibration']['colwidth'] = $inputJSON['colWidth'];
+  $smartly_data['settings']['calibration']['gridgap'] = $inputJSON['gridGap'];
+  $smartly_data['settings']['calibration']['colcount'] = $inputJSON['cols'];
+  $smartly_settings = $smartly_data['settings'];
 } else {
   $smartly_settings = array('calibration' => array('devices' => null, 'devices_2col' => null));
 }
@@ -386,7 +386,7 @@ array_unshift($inputJSON['tiles'], $smartly_tile);
 $inputJSON['tiles'] = array_values($inputJSON['tiles']); // Hubitat Dashboard doesn't like indexed array for tiles.
 */
 
-// @TODO why on earth am I splitting inputSDATA into separate variables instead of just writing null corrections to inputSDADA
+// @TODO why on earth am I splitting smartly_data into separate variables instead of just writing null corrections to inputSDADA
 
 // update smartly tile with new new smartly data
 $inputJSON['tiles'][0]['templateExtra'] = json_encode(array("tiles" => $tiles, "settings" => $smartly_settings));
