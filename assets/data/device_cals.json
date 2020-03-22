@@ -4,7 +4,7 @@
 { "value": "amazon_kindle-fire-hd7", "text": "Amazon Kindle Fire HD 7" , "width": 480 , "height": 800 , "pwidth": 2 },
 { "value": "amazon_kinda-fire-hd8.9", "text": "Amazon Kindle Fire HD 8.9" , "width": 800 , "height": 1280 , "pwidth": 2 },
 { "value": "amazon_kindle-fire-hd10", "text": "Amazon Kindle Fire HD 10" , "width": 1200 , "height": 1920 , "pwidth": 2 },
-{ "value": "amazon_kindle-fire-hd8", "text": "Amazon Kindle Fire HD 8" , "width": 800 , "height": 1280 , "pwidth": 2 },
+{ "value": "amazon_kindle-fire-hd8", "text": "Amazon Kindle Fire HD 8" , "width": 601 , "height": 962 , "pwidth": 2 },
 { "value": "apple_ipad-mini", "text": "Apple iPad mini" , "width": 768 , "height": 1024 , "pwidth": 2 },
 { "value": "apple_ipad-mini-2", "text": "Apple iPad mini 2" , "width": 768 , "height": 1024 , "pwidth": 2 },
 { "value": "apple_ipad-mini-3", "text": "Apple iPad mini 3" , "width": 768 , "height": 1024 , "pwidth": 2 },

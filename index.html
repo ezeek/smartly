@@ -209,13 +209,13 @@ $('#copyclick').finish();
       e.preventDefault();
       var values = $(this).serialize();
 
-      // various UI/UX runtime tweaks
+            // various UI/UX runtime tweaks
       $("#inputjson").addClass('disabled');
       $('#inputjson').removeClass('error');
       $("#copyclick").css({'display':'none'});
       $("#update_success").css({'display':'none'});
       $("#update_warning").empty();
-      $("#smartly_update").html('Updating... <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+      $("#smartly_update").html('Updating...  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
       $("#update_options").collapse('hide'); 
    
       $.ajax({
@@ -261,16 +261,19 @@ console.log(hubitatJSON, "hubitatJSON");
           smartly_grid(smartlyDATA, hubitatJSON);
           $("#smartly_update").html('Update');
           $('#inputjson').val(resDATA.outputJSON);
-          $("label[for='inputjson']").html('Your Updated Layout JSON (to copy back into HE)');
-          $("#copyclick").html('copy to clipboard');
-          $("#copyclick").removeClass('btn-warning').removeClass('btn-danger');
-          $("#copyclick").addClass('btn-success');
-          $("#copyclick").css({'display':'block'});
+       //   $("label[for='inputjson']").html('Your Updated Layout JSON (to copy back into HE)');
+       //   $("#copyclick").html('copy to clipboard');
+       //   $("#copyclick").removeClass('btn-warning').removeClass('btn-danger');
+       //   $("#copyclick").addClass('btn-success');
+          $("#copyclick").css({'display':'unset'});
+          $("#smartly_update").css({'display':'none'});
+          $("#resetclick").css({'display':'unset'});
+
 
           $("#update_success").css({'display':'inline'});
           $("#update_success").fadeIn().delay(3000).fadeOut();
           $("html, body").animate({ scrollTop: $(document).height() }, 1000);
-          $('#copyclick').fadeOut(750).fadeIn(250); 
+       //   $('#copyclick').fadeOut(750).fadeIn(250); 
         },
         error: function(xhr, status, error) {
           console.log(xhr.responseText);
@@ -334,6 +337,8 @@ console.log("[" + found + "]", "FOUND");
     $('#inputjson').removeClass('disabled');
     $('#inputjson').removeClass('error');
     $("#copyclick").css({'display':'none'});
+    $("#resetclick").css({'display':'none'});
+          $("#smartly_update").css({'display':'unset'});
     $("#update_success").css({'display':'none'});    
     $("#smartlydata").html('');
     $("#gridwrapper").css({'display': 'none'});
@@ -383,7 +388,7 @@ console.log("no tile id sent!");
       editor.empty();
       editor.append('<input type="hidden" id="smart_edit_id" name="smart_edit_id" value="' + tile_id + '">');
 
-      if (typeof data.title !== 'undefined') {
+      if (typeof data.title !== 'undefined' || data.tile !== null) {
 
         var title = data.title ? data.title : '';
         //console.log(data.tile_wrap, tile_id + " : TITLEWRAP");
@@ -395,7 +400,7 @@ console.log("no tile id sent!");
 
       }
 
-      if (typeof data.label !== 'undefined') {
+      if (typeof data.label !== 'undefined' && data.label !== null) {
 
         var label = data.label ? data.label : '';
         editor.append(' <div class="form-group row">    <label for="label" class="col-4 col-form-label">Add label</label>     <div class="col-8">      <input id="smart_edit_label" name="smart_edit_label" type="text" class="form-control" aria-describedby="labelHelpBlock" value="' + label + '">       <span id="labelHelpBlock" class="form-text text-muted">For image and video tiles, we can add a highly visible label here.</span>    </div>  </div> ');
@@ -417,7 +422,7 @@ console.log("no tile id sent!");
           //console.log(data, "DATA");
 
           //console.log($('#'+statename+'_picker'));
-
+console.log(icon.code, "CODE LOOKUP");
           $('#'+statename+'_picker').iconpicker({
  	    align: 'center', // Only in div tag
       	    arrowClass: 'btn-submit',
@@ -437,6 +442,10 @@ console.log("no tile id sent!");
             selectedClass: 'btn-success',
             unselectedClass: ''
           });
+
+          if (icon.code) {
+            $('#state_'+statename+'_value').val(icon.code);
+          }
 
           $('#'+statename+'_picker').on('change', function(e) {
             $('#state_'+statename+'_value').val(e.code);
@@ -518,20 +527,27 @@ $("#smartly_editor").append($form);
 
     $("#smartly_modal").modal("hide");
 
+/*
 $('#copyclick').finish();
  $("#copyclick").animate({ opacity: 0 }, 50, function() {
             $("#copyclick").text('unsaved changes!').removeClass('btn-success').addClass('btn-danger').animate({  opacity: 1 }, 250, function() { 
                 $("#copyclick").delay(1000).animate({ opacity: 0 }, 500, function() {
-                    $("#copyclick").text('copy to clipboard [outdated]').removeClass('btn-danger').addClass('btn-warning').animate({  opacity: 1 }, 100)})})});
+                    $("#copyclick").text("changes made - click 'Update' below").removeClass('btn-danger').addClass('btn-warning').animate({  opacity: 1 }, 100)})})});
+*/
 
     $("#update_warning").html("There are unsaved changes! Click <i>Update</i> again.");
-    $('#copyclick').html('copy to clipboard');
+//    $('#copyclick').html('copy to clipboard');
+
+    $("#copyclick").css({'display':'none'});
+          $("#smartly_update").css({'display':'unset'});
+
 
     if ($("#smart_edit_id").val()) {
       var smart_id = $("#smart_edit_id").val();
       //console.log(smartlyDATA[smart_id], "UPDATE lookup");
 
       if ($("#smart_edit_title").val()) {
+console.log("SMART_EDIT_TITLE PRESENT");
         smartlyDATA['tiles'][smart_id]['title'] = $("#smart_edit_title").val();
       } else {
         smartlyDATA['tiles'][smart_id]['title'] = null;
@@ -539,21 +555,24 @@ $('#copyclick').finish();
 
       //console.log($("#smart_edit_titlewrap").is(":checked"),"CHECKBOX");
      if ($("#smart_edit_titlewrap").is(":checked")) {
+console.log("SMART_EDIT_TITLEWRAP PRESENT");
         smartlyDATA['tiles'][smart_id]['title_wrap'] = true;
       } else {
         smartlyDATA['tiles'][smart_id]['title_wrap'] = false;
       }
 
       if ($("#smart_edit_label").val()) {
+console.log("SMART_EDIT_LABEL PRESENT");
         smartlyDATA['tiles'][smart_id]['label'] = $("#smart_edit_label").val();
       } else {
         smartlyDATA['tiles'][smart_id]['label'] = null;
       }
 
       $('input[id ^= "state_"]').each(function(index, element) {
+console.log("SMART STATES PRESENT");
         var icon_code = $(this).val();
         var icon_class = $(this).attr('name');
-
+console.log("VAL: " + $(this).val() + " | NAME: " + $(this).attr('name'));
         //console.log($(this).val());
         //console.log($(this).attr('name'));
         if ($(this).val()) {
@@ -589,17 +608,19 @@ console.log(smartlyDATA);
     $("#inputjson").prop( "readonly", false );
 
     $("#smartly_settings_modal").modal("hide");
-
+/*
 $('#copyclick').finish();
 
 $("#copyclick").animate({ opacity: 0 }, 50, function() {
             $("#copyclick").text('unsaved changes!').removeClass('btn-success').addClass('btn-danger').animate({  opacity: 1 }, 250, function() { 
                 $("#copyclick").delay(1000).animate({ opacity: 0 }, 500, function() {
-                    $("#copyclick").text('copy to clipboard [outdated]').removeClass('btn-danger').addClass('btn-warning').animate({  opacity: 1 }, 100)})})});
-
+                    $("#copyclick").text("changes made - click 'Update' below").removeClass('btn-danger').addClass('btn-warning').animate({  opacity: 1 }, 100)})})});
+*/
     $("#update_warning").html("There are unsaved changes! Click <i>Update</i> again.");
-    $('#copyclick').html('copy to clipboard');
+//    $('#copyclick').html('copy to clipboard');
 
+    $("#copyclick").css({'display':'none'});
+          $("#smartly_update").css({'display':'unset'});
 
     var cal_devices_val = $("#cal_devices").val() ? $("#cal_devices").val() : null;
     var cal_devices_2col_val = $("#cal_devices_2col").val() ? $("#cal_devices_2col").val() : null;;
@@ -749,6 +770,25 @@ Device-based calibrations are experimental.
           </div>
         </div>
         <!-- /modal -->
+ <div class="form-group " style="position:relative;">
+            <div class="form-group " style="position:relative;">
+              <label class="control-label requiredField" for="inputjson">
+              Your Layout JSON       <span class="asteriskField">
+              *
+              </span>
+              </label>
+<span style="position: relative; width: 100%; display: block;">
+              <textarea class="form-control stealth" cols="40" id="inputjson" name="inputjson" rows="3"></textarea>
+ <button type="button" id="resetclick" class="btn btn-primary"  onClick='smartly_restart();'>Start Over</button>
+
+</span>
+              <span class="help-block text-muted" id="hint_inputjson">
+              Copy and paste the contents of 'Options &gt; Advanced &gt; Layout' then click 'Update' below. Or <a href="#" id="smartly_restart" onClick="smartly_restart()">click here to <b>start over</b></a>.
+              </span>
+            </div>
+            <textarea type="hidden" class="form-control" cols="40" id="smartlydata" name="smartlydata" rows="5"></textarea>
+</div>
+
         <div class="form-group">
           <div class="card">
             <header class="card-header">
@@ -767,7 +807,7 @@ Device-based calibrations are experimental.
           <div id="gridheader"></div>
           <div id="grid"></div>
         </div>
-        <div class="form-group">
+        <div class="form-group" style="display: none;">
           <div class="card">
             <header class="card-header">
               <a href="#" data-toggle="collapse" data-target="#update_options" aria-expanded="true" class="">
@@ -807,29 +847,16 @@ Sorry, selective updating isn't allowed until skins are finalized.
               </div> <!-- collapse .// -->
             </div>
           </div>
-          <div class="form-group " style="position:relative;">
-            <div class="form-group " style="position:relative;">
-              <label class="control-label requiredField" for="inputjson">
-              Your Layout JSON       <span class="asteriskField">
-              *
-              </span>
-              </label>
-              <button type="button" id="copyclick" class="btn btn-success" data-clipboard-target="#inputjson" onClick='$("#inpustjson").prop( "readonly", false );'>copy to clipboard</button>
-              <textarea class="form-control stealth" cols="40" id="inputjson" name="inputjson" rows="3"></textarea>
-              <span class="help-block text-muted" id="hint_inputjson">
-              Copy and paste the contents of 'Options &gt; Advanced &gt; Layout' then click 'Update' below. Or <a href="#" id="smartly_restart" onClick="smartly_restart()">click here to <b>start over</b></a>.
-              </span>
-            </div>
-            <textarea type="hidden" class="form-control" cols="40" id="smartlydata" name="smartlydata" rows="5"></textarea>
-            <div class="form-group">
+ <div class="form-group">
               <div>
-                <button class="btn btn-primary" type="submit" id="smartly_update">Update</button>
+              <button type="button" id="copyclick" class="btn btn-success" data-clipboard-target="#inputjson" onClick='$("#inpustjson").prop( "readonly", false );'>Updated! Copy to Clipboard</button>
+                <button class="btn btn-warning" type="submit" id="smartly_update">Update</button>
                 <div id="update_warning"></div>
                 <div id="update_success">JSON successfully updated!</div>
               </div>
             </div>
+
       </form>
-      </div>
       </div>
     </div>
   </div>
@@ -878,7 +905,7 @@ var clipboard = new ClipboardJS('#copyclick');
         $("#copyclick").animate({ opacity: 0 }, 250, function() {
             $("#copyclick").text('copied!').removeClass('btn-success').addClass('btn-info').animate({  opacity: 1 }, 250, function() { 
 	        $("#copyclick").delay(3000).animate({ opacity: 0 }, 1000, function() {
-                    $("#copyclick").text('copy to clipboard').removeClass('btn-info').addClass('btn-success').animate({  opacity: 1 }, 250)})})});
+                    $("#copyclick").text('Updated! Copy to Clipboard').removeClass('btn-info').addClass('btn-success').animate({  opacity: 1 }, 250)})})});
     e.clearSelection();
     $("#inputjson").prop( "readonly", true );
   });

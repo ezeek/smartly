@@ -63,13 +63,18 @@ body {
     font-size: 1.1em
 }
 
-#copyclick {
-    position: absolute;
+#resetclick {
+position: absolute;
     left: 1em;
     display: none;
     zoom: .9;
     width: 50%;
-    margin-top: .75em
+    /* margin-top: .75em; */
+    top: 1em;
+}
+
+#copyclick {
+display: none;
 }
 
 #grid {
@@ -193,7 +198,11 @@ textarea {
 }
 
 @media only screen and (max-width: 480px)  {
-#copyclick {
+#resetclick {
 width: 90%;
 }
+}
+
+#update_options {
+display: none;
 }
