@@ -1,7 +1,8 @@
 <?php
 
-// init smartly variables
 require_once __DIR__ . '/vendor/autoload.php';
+
+// include all tile state names for use when building smartly data
 
 include 'assets/data/statelookup.php'; // contains array of each template type and their associated states
 
@@ -10,30 +11,45 @@ $repo_base = array(
   'json_sandbox' => 'https://hubitat.ezeek.us/smartly-base/smartly.json',
   'css_dev' => 'https://raw.githubusercontent.com/ezeek/smartly-base/devel/smartly.css',
   'json_dev' => 'https://raw.githubusercontent.com/ezeek/smartly-base/devel/smartly.json',
+  'head_dev' => 'https://api.github.com/repos/ezeek/smartly-base/commits/HEAD',
   'css' => 'https://raw.githubusercontent.com/ezeek/smartly-base/master/smartly.css',
-  'json' => 'https://raw.githubusercontent.com/ezeek/smartly-base/master/smartly.json'
+  'json' => 'https://raw.githubusercontent.com/ezeek/smartly-base/master/smartly.json',
+  'head' => 'https://api.github.com/repos/ezeek/smartly-base/commits/HEAD'
 );
 
+// prep for allowing custom github user repos
+
 if ($_POST['github_user']) {
-$repo_skin_user = preg_replace("/[^ \w]+/", "", $_POST['github_user']); //
+  $repo_skin_user = preg_replace("/[^ \w]+/", "", $_POST['github_user']); //
 } else {
-$repo_skin_user = 'ezeek'; // will allow user defined github user in future
+  $repo_skin_user = 'ezeek';
 }
 
+// retrieve selected skin css and json
 
 if ($_POST['skin'] && $_POST['skin'] != 'smartly') {
   $repo_skin = array(
     'css' => 'https://raw.githubusercontent.com/' . $repo_skin_user . '/smartly-skins/master/' . $_POST['skin'] . '/' . $_POST['skin'] . '.css',
     'json' => 'https://raw.githubusercontent.com/' . $repo_skin_user . '/smartly-skins/master/' . $_POST['skin'] . '/' . $_POST['skin'] . '.json',
+    'head' => 'https://api.github.com/repos/' . $repo_skin_user . "/smartly-skins/commits/HEAD",
   );
 } else {
   $repo_skin = null;
 }
 
+// initialize required smartly variables globally
+
+
+// required by github to retrieve repo HEAD
+$fgc_opts = ['http' => ['method' => 'GET','header' => ['User-Agent: PHP']]];
+$fgc_context = stream_context_create($fgc_opts);
+
+$smartly_head = get_current_git_commit();
 $device_cals_path = 'https://hubitat.ezeek.us/smartly/assets/data/device_cals.json';
 $update_options = array();
 $tiles = array();
 $smartly_data = array();
+$smartly_touched = false;
 $base_css = "";
 $user_css = "";
 
@@ -43,6 +59,8 @@ $smartly_css = array(
   "icon" => array() // each state, icon content code and icon font
 );
 
+// define deliiters used when parsing and building smartly css
+
 $smartly_css_delimiters = array(
   "base" => "/* ------- DO NOT EDIT - Smartly Base CSS ------- */",
   "skin" => "/* ------- DO NOT EDIT - Custom Skin CSS ------- */",
@@ -50,13 +68,15 @@ $smartly_css_delimiters = array(
   "user" => "/* ------- CUSTOM CSS BELOW THIS LINE - This CSS will be preserved during updates ------- */"
 );
 
+
 /*
  *
  * TODO: continue breaking this horrendous block of code into more functions
  *
 */
 
-// retrieve posted inputjson
+// retrieve and decode posted inputjson
+
 if (is_json($_POST['inputjson'])) {
   $inputJSON = json_decode($_POST['inputjson'], true);
 } else {
@@ -66,14 +86,17 @@ if (is_json($_POST['inputjson'])) {
 
 //var_dump($inputJSON);
  
-// retrieve posted smartlydata
+// retrieve and decode posted smartlydata, and if none posted, attempt to extract from smartly tile
+
 if (is_json($_POST['smartlydata'])) {
   $smartly_data = json_decode($_POST['smartlydata'], true);
   if (!($smartly_data['tiles'])) { // if smartly_data is of pre-global-settings era, update it.
     $smartly_data = array('tiles' => $smartly_data, 'settings' => null);
+    $smartly_touched = true;
   }
 
 // if nothing sent via form, try to exract from smartly data tile
+
 } elseif ($inputJSON['tiles'][0]['template'] == "smartly") {
   if (is_json($inputJSON['tiles'][0]['templateExtra'])) {
     $smartly_data = json_decode($inputJSON['tiles'][0]['templateExtra'], true);
@@ -85,39 +108,39 @@ if (is_json($_POST['smartlydata'])) {
   $smartly_data = null;
 }
 
-
-/*
-
-// get existing smartly data from inputJSON, so long as it's in pos 
-if (is_json($inputJSON['tiles'][0]['templateExtra'])) {
-  $smartly_data = json_decode($inputJSON['tiles'][0]['templateExtra'], true);
-} else {
-  $smartly_data = null;
-}
-*/
-
-
 // parse selected update options
+
 foreach ($_POST['options'] as $options) {
   $update_options[$options] = true;
 }
 
-/*
-print "<pre>";
-var_dump($_POST);
-*/
+// retrieve smartly base and skin head
 
-// retrieve smartly base css and/or json from master if instructed
-//if ($update_options['css']) {
-  // get updated CSS from repo
-  $repo_base_css = file_get_contents($repo_base['css_sandbox']); //css_dev
-  $repo_skin_css = file_get_contents($repo_skin['css']);
-//} else {
-//  $repo_base_css = '';
-//  $repo_skin_css = file_get_contents($repo_skin['css']);;
-//}
+$repo_base_head_json = json_decode(file_get_contents($repo_base['head'], false, $fgc_context), true);
+$repo_base_head = "/* " . $repo_base_head_json['commit']['url'] . " */\r\n\r\n";
+
+
+if ($repo_skin) {
+  $repo_skin_head_json = json_decode(file_get_contents($repo_skin['head'], false, $fgc_context), true);
+  $repo_skin_head = "/* " . $_POST['skin'] . ": " . $repo_skin_head_json['commit']['url'] . " */\r\n\r\n";
+//var_dump($repo_skin);
+//var_dump(file_get_contents("https://api.github.com/repos/ezeek/smartly-skins/commits/HEAD"));
+} else {
+  $repo_skin_head = null;
+}
+
+// define smartly base and skin css based on user input
+
+$repo_base_css = $repo_base_head . file_get_contents($repo_base['css']); //css_dev
+
+if ($repo_skin) {
+  $repo_skin_css = $repo_skin_head . file_get_contents($repo_skin['css']);
+} else {
+  $repo_skin_css = null;
+}
 
 // retrieve smartly customColors[] and other settings if instructed
+
 if ($update_options['color'] || $update_options['settings']) {
   // get updated JSON from repo
   $repo_base_json = file_get_contents($repo_base['json_sandbox']); //json_dev
@@ -126,7 +149,6 @@ if ($update_options['color'] || $update_options['settings']) {
   if ($update_options['color']) {
     $inputJSON['customColors'] = $repo_base_json['customColors'];
   }
-
 
   if ($repo_skin) {
     $repo_skin_json = file_get_contents($repo_skin['json']);
@@ -145,20 +167,9 @@ if ($update_options['color'] || $update_options['settings']) {
     $repo_base_json = array_replace_recursive($repo_base_json, $repo_skin_json);
 
   }
-/*
-} else {
-  $repo_base_json = '';
-  $repo_skin_json = '';
-*/
 
 // TODO: make available JSON settings checkbox granular, allowing for user to keep their background image, tile sizing, gap size, etc.
 // update customColors[] (color templates) from repo if instructed.
-
-/*
-  if ($update_options['color']) {
-    $inputJSON['customColors'] = $repo_base_json['customColors'];
-  }
-*/
 
   if ($update_options['settings']) {
     $inputJSON['roundedCorners'] = $repo_base_json['roundedCorners'];
@@ -173,20 +184,25 @@ if ($update_options['color'] || $update_options['settings']) {
     $inputJSON['background'] = $repo_base_json['background'];
     $inputJSON['fontSize'] = $repo_base_json['fontSize'];
   }
-}
+} //END if ($update_options['color'] || $update_options['settings']) {
 
+// set up global variables for automatically determining and setting grid row and column count
 
-// set up variables for automatically determining and setting grid row and column count
 $calibrate_rows = 0;
 $calibrate_cols = 0;
 
-// if first time running, smartly tile won't exist so create it
-// with null data to ensure tile array position is mirrored
-// between smartly tiles and inputJSON tiles.
+
+/*
+ * TODO: split into first_run() function
+ * 
+ * if first time running, smartly tile won't exist so create it
+ * with null data to ensure tile array position is mirrored
+ * between smartly tiles and inputJSON tiles.
+*/
+
 //var_dump($inputJSON['tiles']);
-if ($inputJSON['tiles'][0]['template'] != "smartly") {
-//print "NEW";
- // first time running
+
+if ($inputJSON['tiles'][0]['template'] != "smartly") {  // first time running
 
   $workingTiles = $inputJSON['tiles'];
   foreach ($inputJSON['tiles'] as $tile_id => $tile_data) {
@@ -211,55 +227,57 @@ if ($inputJSON['tiles'][0]['template'] != "smartly") {
 
 // sort the tiles with cols ascending, rows ascending
 // add $workingTiles as the last parameter, to sort by the common key
+
   array_multisort($grid['cols'], SORT_ASC, $grid['rows'], SORT_ASC, $workingTiles);
 
   $offset = array();
+
 // workingTiles has been sorted by column then row
 // run through tiles per column from the 1st row down,
 // increasing column offset when a rowspan is found. 
 // (may not handle 3x height tiles well? may need another for loop)
+
   foreach ($workingTiles as $tile_id => $tile_data) {
+
     // create the column offset storage
+
     if (!(isset($offset[$tile_data['col']]))) { $offset[$tile_data['col']] = 0; } 
 
-$full_height = array(
-'dimmer',
-'thermostat',
-'bulb',
-'shade',
-'clock',
-'date',
-'dashboard-link',
-'mode',
-'music-player',
-'video-player',
-'volume',
-'weather'
-);
+      $full_height = array(
+        'dimmer',
+        'thermostat',
+        'bulb',
+        'shade',
+        'clock',
+        'date',
+        'dashboard-link',
+        'mode',
+        'music-player',
+        'video-player',
+        'volume',
+        'weather'
+      );
 
-if (in_array($tile_data['template'], $full_height)) {
-    $workingTiles[$tile_id]['row'] = ($tile_data['row'] - 1 + $tile_data['row'] + ($offset[$tile_data['col']] * 1));// - 1;
-    $workingTiles[$tile_id]['rowSpan'] = 2;
-} else {
-    $workingTiles[$tile_id]['row'] = ($tile_data['row'] - 1 + $tile_data['row'] + ($offset[$tile_data['col']] * 1)) ;
-}
+      if (in_array($tile_data['template'], $full_height)) {
+        $workingTiles[$tile_id]['row'] = ($tile_data['row'] - 1 + $tile_data['row'] + ($offset[$tile_data['col']] * 1));// - 1;
+        $workingTiles[$tile_id]['rowSpan'] = 2;
+      } else {
+        $workingTiles[$tile_id]['row'] = ($tile_data['row'] - 1 + $tile_data['row'] + ($offset[$tile_data['col']] * 1)) ;
+      }
 
-    if ($tile_data['rowSpan'] > 1) {
-      $offset[$tile_data['col']] += $tile_data['rowSpan'] - 2; //1;
+      if ($tile_data['rowSpan'] > 1) {
+        $offset[$tile_data['col']] += $tile_data['rowSpan'] - 2; //1;
+      } 
 
-    } 
+      if (in_array($tile_data['template'], $full_height)) {
+        $workingTiles[$tile_id]['rowSpan'] = 2;
+      }
+    }
 
+    // cleanup
 
-if (in_array($tile_data['template'], $full_height)) {
-    $workingTiles[$tile_id]['rowSpan'] = 2;
-}
-
-  }
-
-// cleanup
-
-  foreach ($workingTiles as $tile_id => $tile_data) {
-    if ($tile_data['template'] == 'fake') {
+    foreach ($workingTiles as $tile_id => $tile_data) {
+      if ($tile_data['template'] == 'fake') {
       unset($workingTiles[$tile_id]);
     }
   }
@@ -272,14 +290,26 @@ if (in_array($tile_data['template'], $full_height)) {
   );
 
   // add smartly tile to position 0 of tiles[]
-  array_unshift($workingTiles, $smartly_tile);
 
+  array_unshift($workingTiles, $smartly_tile);
   $inputJSON['tiles'] = array_values($workingTiles); // Hubitat Dashboard doesn't like indexed array for tiles.
 }
 
+
+/*
+ * TODO: split into smartly_regen() function 
+ *
+ * rebuilds smartly_data tiles based on inputJSON tiles, preservinfg
+ * data from old smartly_data (if tile type is changed) and adding
+ * and deleting tiles as necessary
+*/
+
 // build refreshed smartly data from tiles
+
 foreach ($inputJSON['tiles'] as $pos => $tile) {
+
   // build smartly data for all tiles, excluding smartly data
+
   if (($tile['template'] != "smartly") && ($tile['device'] != "smartly_zoomy")) {
     $tile_data = array(); // reset tile_data
     $tile_data['id'] = $tile['id'];
@@ -287,7 +317,7 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
     $tile_data['pos'] = $pos;
     
 /*
-    // strip HE native "Custom Icon" data, as it breaks states.
+    // strip HE native "Custom Icon" data, as it prevents the use of states icons.
     if (array_key_exists('customIcon', $tile)) {
       unset($inputJSON['tiles'][$pos]['customIcon']);
     }
@@ -305,28 +335,48 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
       $tile_data['rowSpan'] = $tile['rowSpan'];
 */
 
+
+// TODO: this is a mess, it should be processing them based on case statement.
+// though, title data is global, every tile will have a title or a label so
+// it will be separate from other regen.. it should be cleaned up though.
+
     // if image or video, no title replacement is possible because it doesn't exist
+
     if ($tile['template'] == "images" | $tile['template'] == "video") { 
+
       // retrieve existing value of label
+
       $tile_data['label'] = $smartly_data['tiles'][$tile['id']]['label'] ? $smartly_data['tiles'][$tile['id']]['label'] : null;
-      // add to smartly_css so it can build the css
+
+//      add to smartly_css so it can build the css
 //      $smartly_css['label'][$tile['id']]['label'] = $tile_data['label'];
+
     } else {
+
       // retrieve existing title_replacement
+
       $tile_data['title'] = $smartly_data['tiles'][$tile['id']]['title'] ? $smartly_data['tiles'][$tile['id']]['title'] : null;
       $tile_data['title_wrap'] = $smartly_data['tiles'][$tile['id']]['title_wrap'] ? $smartly_data['tiles'][$tile['id']]['title_wrap'] : null;
 
-      // add to smartly_css so it can build the css
+//      add to smartly_css so it can build the css
 //      $smartly_css['title'][$tile['id']]['title'] = $tile_data['title'];
+
     }
 
+// TODO: to make scalable, this should probably be based on a case statement, based on template type.
+
     // refresh states for tile template type
+
     if (is_array($statelookup[$tile['template']])) {
       foreach ($statelookup[$tile['template']] as $statename => $stateclass) {
+
         // retrieve existing icon value for template state if it exists
+
         $tile_data['states'][$statename]['code'] = $smartly_data['tiles'][$tile['id']]['states'][$statename]['code'] ? $smartly_data['tiles'][$tile['id']]['states'][$statename]['code'] : null;
         $tile_data['states'][$statename]['class'] = $stateclass;
+
 //          $smartly_css['icon'][$tile['id']][$states] = $tile_data['states'][$states];
+
       }
     }
 
@@ -357,18 +407,26 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
   }
 }
 
+
 // @TODO why on earth am I splitting smartly_data into separate variables instead of just writing null corrections to inputSDADA
 // if updated smartlydata was passed, use it instead of the generated smartly data.
-if ($smartly_data['tiles']) { $tiles = $smartly_data['tiles']; } 
+
+// at this point, $tiles contains the regen'd smartly_data, which should have kept
+// any existing smartly_data, but will have added and deleted tiles as necessary to
+// sync with inputJSON tiles[].
+
+if ($smartly_data['tiles'] && $smartly_touched == true) { $tiles = $smartly_data['tiles']; } 
 if ($smartly_data['settings']) { 
   $smartly_data['settings']['calibration']['source'] = $device_cals_path;
   $smartly_data['settings']['calibration']['colwidth'] = $inputJSON['colWidth'];
   $smartly_data['settings']['calibration']['gridgap'] = $inputJSON['gridGap'];
   $smartly_data['settings']['calibration']['colcount'] = $inputJSON['cols'];
+  $smartly_data['settings']['commit'] = $smartly_head;
   $smartly_settings = $smartly_data['settings'];
 } else {
-  $smartly_settings = array('calibration' => array('devices' => null, 'devices_2col' => null));
+  $smartly_settings = array('calibration' => array('devices' => null, 'devices_2col' => null),'commit' => $smartly_head . "two");
 }
+
 //var_dump($smartly_settings);
 /*a
 
@@ -1031,5 +1089,13 @@ function multi_array_search($array, $search)
 
 }
 
+
+function get_current_git_commit( $branch='master' ) {
+  if ( $hash = file_get_contents( sprintf( '.git/refs/heads/%s', $branch ) ) ) {
+    return trim($hash);
+  } else {
+    return false;
+  }
+}
 
 ?>

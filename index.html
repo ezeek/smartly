@@ -272,7 +272,7 @@ console.log(hubitatJSON, "hubitatJSON");
 
           $("#update_success").css({'display':'inline'});
           $("#update_success").fadeIn().delay(3000).fadeOut();
-          $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+          $("html, body").animate({ scrollTop: $(document).height()}, 1000);
        //   $('#copyclick').fadeOut(750).fadeIn(250); 
         },
         error: function(xhr, status, error) {
@@ -396,8 +396,6 @@ console.log("no tile id sent!");
 
         editor.append('  <div class="form-group row">    <label class="col-4 col-form-label" for="title">Title replacement</label>     <div class="col-8">      <input id="smart_edit_title" name="smart_edit_title" type="text" class="form-control" aria-describedby="titleHelpBlock" value="' + title + '">      <span id="titleHelpBlock" class="form-text text-muted">If your replacement title wraps and is too close to your icon, click <i>Icon Nudge</i> below.</span>    </div>  </div>');
 
-        editor.append('<div class="form-group row">    <label class="col-4">Icon Nudge</label>     <div class="col-8">      <div class="custom-control custom-checkbox custom-control-inline">        <input name="smart_edit_titlewrap" id="smart_edit_titlewrap" type="checkbox" class="custom-control-input" value="title_wrap" ' + titlewrap + '>         <label for="smart_edit_titlewrap" class="custom-control-label">Nudge the icon down to give my title more space.</label>      </div>   </div>  </div>');
-
       }
 
       if (typeof data.label !== 'undefined' && data.label !== null) {
@@ -407,6 +405,10 @@ console.log("no tile id sent!");
       }
 
       if (data.states) {
+
+        editor.append('<div class="form-group row">    <label class="col-4">Icon Nudge</label>     <div class="col-8">      <div class="custom-control custom-checkbox custom-control-inline">        <input name="smart_edit_titlewrap" id="smart_edit_titlewrap" type="checkbox" class="custom-control-input" value="title_wrap" ' + titlewrap + '>         <label for="smart_edit_titlewrap" class="custom-control-label">Nudge the icon down to give my title more space..</label>      </div>   </div>  </div>');
+
+
         editor.append("<fieldset id='wrapper_states_"+tile_id+"'><legend>icon replacement</legend></fieldset>");
         $('#wrapper_states_'+tile_id).collapse({
           toggle: false
@@ -696,8 +698,7 @@ function disableEnterKey(e)
         <h2>
           smartly
         </h2>
-        <p>
-          Paste your Hubitat Dashboard 'Layout' JSON, choose a skin and update.<br><small>Skins are in active development! Update often for the most up-to-date designs.</small>
+        <p>hubitat dashboard skin engine <small>[v1.0]</small>
         <hr>
         </p>
       </div>
