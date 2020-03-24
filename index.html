@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -28,6 +29,17 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
 
 <!---https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js"></script-->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-161632491-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-161632491-1');
+</script>
+
 
 <style>
 
@@ -388,7 +400,7 @@ console.log("no tile id sent!");
       editor.empty();
       editor.append('<input type="hidden" id="smart_edit_id" name="smart_edit_id" value="' + tile_id + '">');
 
-      if (typeof data.title !== 'undefined' || data.tile !== null) {
+      if (typeof data.title !== 'undefined') { // || data.tile !== null) {
 
         var title = data.title ? data.title : '';
         //console.log(data.tile_wrap, tile_id + " : TITLEWRAP");
@@ -398,7 +410,7 @@ console.log("no tile id sent!");
 
       }
 
-      if (typeof data.label !== 'undefined' && data.label !== null) {
+      if (typeof data.label !== 'undefined') { // && data.label !== null) {
 
         var label = data.label ? data.label : '';
         editor.append(' <div class="form-group row">    <label for="label" class="col-4 col-form-label">Add label</label>     <div class="col-8">      <input id="smart_edit_label" name="smart_edit_label" type="text" class="form-control" aria-describedby="labelHelpBlock" value="' + label + '">       <span id="labelHelpBlock" class="form-text text-muted">For image and video tiles, we can add a highly visible label here.</span>    </div>  </div> ');

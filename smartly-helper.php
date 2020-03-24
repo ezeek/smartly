@@ -605,7 +605,8 @@ EOF;
         $smartly_css['icon'][] = <<<EOF
 
 #tile-$smart_id .tile-primary i.material-icons {
-    margin-top: -10px;
+    padding-top: 5px;
+    margin-bottom: 0px;
 }
 
 EOF;
@@ -902,7 +903,7 @@ function smartly_zoomy($next_id = null, $colwidth = null, $gap = null, $colcount
           $bestmatch = [
           'name' => 'seven',
           'width' => $columns['seven'],
-          'zoom' => ($screenwidth + 4) / $columns['seven'],
+          'zoom' => round(($screenwidth + 4) / $columns['seven'],3),
           'abszoom' => abs((($screenwidth + 4) / $columns['seven']) - 1) + 1
           ];
           break;
@@ -910,7 +911,7 @@ function smartly_zoomy($next_id = null, $colwidth = null, $gap = null, $colcount
           $bestmatch = [
           'name' => 'nine',
           'width' => $columns['nine'],
-          'zoom' => ($screenwidth + 4) / $columns['nine'],
+          'zoom' => round(($screenwidth + 4) / $columns['nine'],3),
           'abszoom' => abs((($screenwidth + 4) / $columns['nine']) - 1) + 1
           ];
           break;
@@ -919,7 +920,7 @@ function smartly_zoomy($next_id = null, $colwidth = null, $gap = null, $colcount
           $bestmatch = [
           'name' => 'three',
           'width' => $columns['three'],
-          'zoom' => ($screenwidth) / $columns['three'],
+          'zoom' => round(($screenwidth) / $columns['three'],3),
           'abszoom' => abs((($screenwidth) / $columns['three']) - 1) + 1
           ];
           break;
