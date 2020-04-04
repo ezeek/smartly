@@ -7,8 +7,9 @@ require_once __DIR__ . '/vendor/autoload.php';
 include 'assets/data/statelookup.php'; // contains array of each template type and their associated states
 
 $repo_base = array(
-  'css_sandbox' => 'https://hubitat.ezeek.us/smartly-base/smartly.css',
-  'json_sandbox' => 'https://hubitat.ezeek.us/smartly-base/smartly.json',
+  'css_sandbox' => '/var/www/html/dev/smartly-base/smartly.css',
+  'json_sandbox' => '/var/www/html/dev/smartly-base/smartly.json',
+  'head_sandbox' => '/var/www/html/dev/smartly-base/head.json',
   'css_dev' => 'https://raw.githubusercontent.com/ezeek/smartly-base/devel/smartly.css',
   'json_dev' => 'https://raw.githubusercontent.com/ezeek/smartly-base/devel/smartly.json',
   'head_dev' => 'https://api.github.com/repos/ezeek/smartly-base/commits/HEAD',
@@ -45,13 +46,26 @@ $fgc_opts = ['http' => ['method' => 'GET','header' => ['User-Agent: PHP']]];
 $fgc_context = stream_context_create($fgc_opts);
 
 $smartly_head = get_current_git_commit();
-$device_cals_path = 'https://hubitat.ezeek.us/smartly/assets/data/device_cals.json';
+$device_cals_path = '/var/www/html/smartly/assets/data/device_cals.json';
 $update_options = array();
 $tiles = array();
 $smartly_data = array();
 $smartly_touched = false;
 $base_css = "";
 $user_css = "";
+
+// some tile template types have no configurable options, let's define them up here
+
+$template_noconfig = array(
+    "date",
+    "clock",
+    "date-time",
+//    "mode",
+    "attribute",
+    "dashboard-link",
+    "analog-clock",
+    "text"
+);
 
 $smartly_css = array(
   "title" => array(), // id and replacement title
@@ -131,7 +145,7 @@ if ($repo_skin) {
 
 // define smartly base and skin css based on user input
 
-$repo_base_css = $repo_base_head . file_get_contents($repo_base['css']); //css_dev
+$repo_base_css = $repo_base_head . file_get_contents($repo_base['css_sandbox']); //css_dev
 
 if ($repo_skin) {
   $repo_skin_css = $repo_skin_head . file_get_contents($repo_skin['css']);
@@ -342,7 +356,7 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
 
     // if image or video, no title replacement is possible because it doesn't exist
 
-    if ($tile['template'] == "images" | $tile['template'] == "video") { 
+    if ($tile['template'] == "images" | $tile['template'] == "video" | $tile['template'] == "thermostat") { 
 
       // retrieve existing value of label
 
@@ -351,7 +365,7 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
 //      add to smartly_css so it can build the css
 //      $smartly_css['label'][$tile['id']]['label'] = $tile_data['label'];
 
-    } else {
+    } elseif (!(in_array($tile_data['template'], $template_noconfig)))  {
 
       // retrieve existing title_replacement
 
@@ -360,6 +374,10 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
 
 //      add to smartly_css so it can build the css
 //      $smartly_css['title'][$tile['id']]['title'] = $tile_data['title'];
+
+    } else {
+
+    // future
 
     }
 
@@ -511,11 +529,11 @@ function smartly_parse_css($input_css = null, $delimiters = null, $base_css = nu
 
     if (strpos($input_css, $delimiters['skin']) !== false) { // this has been updated recently, has skin functionality
 //        $css['skin'] = $input_css_result[1];
-      $css['user'] = $input_css_result[3];
+      $css['user'] = "\r\n" . trim($input_css_result[3]) . "\r\n";
     } else {
 //    $css['auto'] = $input_css_result[1];
       $css['skin'] = $skin_css; // . "/* added */"; //'';
-      $css['user'] = $input_css_result[2];
+      $css['user'] = "\r\n" . trim($input_css_result[2]) . "\r\n";
     }
 
     if (in_array('css', $update)) {
@@ -540,7 +558,7 @@ Add your custom CSS in the space below.. */
 
 ";
     } else {
-      $css['user'] = '';  
+      $css['user'] = "\r\n\r\n";  
     }
   }
   return $css;
@@ -619,8 +637,33 @@ EOF;
       // TODO: allow html instead of escaping all characters
       $label = addslashes($smart_data['label']);
 
-      // using css optimizer downstream, redundant is fine
-      $smartly_css['label'][] = <<<EOF
+      switch ($smart_data['template']) {
+
+        case 'thermostat':
+
+        // using css optimizer downstream, redundant is fine
+        $smartly_css['label'][] = <<<EOF
+
+#tile-$smart_id>.absolute.bottom-0 {
+    visibility: hidden;
+}
+
+#tile-$smart_id>.absolute.bottom-0:after {
+    visibility: visible;
+    content: "$label";
+    position: absolute;
+    left: 0;
+    white-space: nowrap;
+}
+
+EOF;
+
+          break;
+
+        default:
+
+        // using css optimizer downstream, redundant is fine
+        $smartly_css['label'][] = <<<EOF
 
 #tile-$smart_id .inset-auto:after {
     content: "$label";
@@ -638,6 +681,9 @@ EOF;
 
 EOF;
 
+          break;
+
+      }
     }
 
     if ($smart_data['states']) {
@@ -647,7 +693,65 @@ EOF;
 
         if (strlen($state_data['code']) > 0) {
 
-        $smartly_css['icon'][] = <<<EOF
+          switch ($smart_data['template']) {
+
+            case 'bulb-color':
+              $smartly_css['icon'][] = <<<EOF
+
+#tile-$smart_id .tile-primary i.material-icons.$icon_class {
+    visibility: hidden;
+}
+
+#tile-$smart_id .tile-primary i.material-icons.$icon_class:after {
+    content: "\\$icon_code";
+    font-family: "Material Design Icons" !important;
+    visibility: hidden;
+}
+
+#tile-$smart_id .tile-primary i.material-icons.$icon_class:before {
+    content: "\\$icon_code";
+    font-family: "Material Design Icons" !important;
+    visibility: visible;
+    position: absolute;
+    left:0;
+    right:0;
+}
+
+EOF;
+
+
+              break;
+
+            case 'buttons':
+              $smartly_css['icon'][] = <<<EOF
+
+#tile-$smart_id .tile-primary i.material-icons {
+    visibility: hidden;
+}
+
+#tile-$smart_id .tile-primary i.material-icons:after {
+    content: "\\$icon_code";
+    font-family: "Material Design Icons" !important;
+    visibility: hidden;
+}
+
+#tile-$smart_id .tile-primary i.material-icons:before {
+    content: "\\$icon_code";
+    font-family: "Material Design Icons" !important;
+    visibility: visible;
+    position: absolute;
+    left:0;
+    right:0;
+}
+
+EOF;
+
+
+              break;
+
+            default:
+
+              $smartly_css['icon'][] = <<<EOF
 
 #tile-$smart_id .tile-primary.$state_name i.material-icons {
     visibility: hidden;
@@ -670,6 +774,10 @@ EOF;
 
 EOF;
 
+
+              break;
+
+          }
         }
       }
     }

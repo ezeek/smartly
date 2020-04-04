@@ -406,14 +406,14 @@ console.log("no tile id sent!");
         //console.log(data.tile_wrap, tile_id + " : TITLEWRAP");
         var titlewrap = data.title_wrap === true ? 'checked' : '';
 
-        editor.append('  <div class="form-group row">    <label class="col-4 col-form-label" for="title">Title replacement</label>     <div class="col-8">      <input id="smart_edit_title" name="smart_edit_title" type="text" class="form-control" aria-describedby="titleHelpBlock" value="' + title + '">      <span id="titleHelpBlock" class="form-text text-muted">If your replacement title wraps and is too close to your icon, click <i>Icon Nudge</i> below.</span>    </div>  </div>');
+        editor.append('  <div class="form-group row">    <label class="col-4 col-form-label" for="title">Title replacement</label>     <div class="col-8">      <input id="smart_edit_title" name="smart_edit_title" type="text" class="form-control" aria-describedby="titleHelpBlock" value="' + title + '">   </div>  </div>');
 
       }
 
       if (typeof data.label !== 'undefined') { // && data.label !== null) {
 
         var label = data.label ? data.label : '';
-        editor.append(' <div class="form-group row">    <label for="label" class="col-4 col-form-label">Add label</label>     <div class="col-8">      <input id="smart_edit_label" name="smart_edit_label" type="text" class="form-control" aria-describedby="labelHelpBlock" value="' + label + '">       <span id="labelHelpBlock" class="form-text text-muted">For image and video tiles, we can add a highly visible label here.</span>    </div>  </div> ');
+        editor.append(' <div class="form-group row">    <label for="label" class="col-4 col-form-label">Add/Replace Label</label>     <div class="col-8">      <input id="smart_edit_label" name="smart_edit_label" type="text" class="form-control" aria-describedby="labelHelpBlock" value="' + label + '">       <span id="labelHelpBlock" class="form-text text-muted">For image and video tiles, this will add a highly visible label.  For others this will replace the existing label.</span>    </div>  </div> ');
       }
 
       if (data.states) {
@@ -564,7 +564,11 @@ $('#copyclick').finish();
 console.log("SMART_EDIT_TITLE PRESENT");
         smartlyDATA['tiles'][smart_id]['title'] = $("#smart_edit_title").val();
       } else {
+
+if ($("#smart_edit_title").length) {
         smartlyDATA['tiles'][smart_id]['title'] = null;
+}
+
       }
 
       //console.log($("#smart_edit_titlewrap").is(":checked"),"CHECKBOX");
@@ -579,7 +583,10 @@ console.log("SMART_EDIT_TITLEWRAP PRESENT");
 console.log("SMART_EDIT_LABEL PRESENT");
         smartlyDATA['tiles'][smart_id]['label'] = $("#smart_edit_label").val();
       } else {
+
+if ($("#smart_edit_label").length) {
         smartlyDATA['tiles'][smart_id]['label'] = null;
+}
       }
 
       $('input[id ^= "state_"]').each(function(index, element) {
@@ -710,7 +717,7 @@ function disableEnterKey(e)
         <h2>
           smartly
         </h2>
-        <p>hubitat dashboard skin engine <small>[v1.0]</small>
+        <p>hubitat dashboard skin engine <small>[v1.02]</small>
         <hr>
         </p>
       </div>
@@ -954,7 +961,7 @@ var cal_devices_mobile = new Bloodhound({
     cache: false,
     filter: function(devices) {
       return $.map(devices, function(device) { 
-        if (device.width < 420) {
+        if (device.force_cols != null) {
           return device;
         //return { value: 'one', text: 'One', width: 111, height: 222, pwidth: 2 }; });
         }
