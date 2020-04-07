@@ -7,9 +7,9 @@ require_once __DIR__ . '/vendor/autoload.php';
 include 'assets/data/statelookup.php'; // contains array of each template type and their associated states
 
 $repo_base = array(
-  'css_sandbox' => '/var/www/html/dev/smartly-base/smartly.css',
-  'json_sandbox' => '/var/www/html/dev/smartly-base/smartly.json',
-  'head_sandbox' => '/var/www/html/dev/smartly-base/head.json',
+  'css_sandbox' => '/var/www/html/smartly-base/smartly.css',
+  'json_sandbox' => '/var/www/html/smartly-base/smartly.json',
+  'head_sandbox' => '/var/www/html/smartly-base/head.json',
   'css_dev' => 'https://raw.githubusercontent.com/ezeek/smartly-base/devel/smartly.css',
   'json_dev' => 'https://raw.githubusercontent.com/ezeek/smartly-base/devel/smartly.json',
   'head_dev' => 'https://api.github.com/repos/ezeek/smartly-base/commits/HEAD',
@@ -654,6 +654,8 @@ EOF;
     position: absolute;
     left: 0;
     white-space: nowrap;
+    width: 100%;
+    text-align: center;
 }
 
 EOF;

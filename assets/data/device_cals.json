@@ -21,6 +21,7 @@
 { "value": "apple_ipad2", "text": "Apple iPad 2" , "width": 768 , "height": 1024 , "force_cols": null },
 { "value": "apple_ipad3", "text": "Apple iPad 3" , "width": 768 , "height": 1024 , "force_cols": null },
 { "value": "apple_ipad4", "text": "Apple iPad 4" , "width": 768 , "height": 1024 , "force_cols": null },
+{ "value": "apple_ipad5", "text": "Apple iPad 5" , "width": 768 , "height": 1024 , "force_cols": null },
 { "value": "apple_ipad-air", "text": "Apple iPad Air" , "width": 768 , "height": 1024 , "force_cols": null },
 { "value": "apple_ipad-air2", "text": "Apple iPad Air 2" , "width": 768 , "height": 1024 , "force_cols": null },
 { "value": "apple_iphone6", "text": "Apple iPhone 6" , "width": 375 , "height": 667 , "force_cols": 2 },

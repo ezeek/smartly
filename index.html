@@ -717,7 +717,7 @@ function disableEnterKey(e)
         <h2>
           smartly
         </h2>
-        <p>hubitat dashboard skin engine <small>[v1.02]</small>
+        <p>hubitat dashboard skin engine <small>[v1.04]</small>
         <hr>
         </p>
       </div>
@@ -983,7 +983,8 @@ elt.tagsinput({
   typeaheadjs: {
     name: 'cal_devices',
     displayKey: 'text',
-    source: cal_devices.ttAdapter()
+    source: cal_devices.ttAdapter(),
+    limit: 100
   }
 });
 
@@ -993,7 +994,8 @@ elt2.tagsinput({
   typeaheadjs: {
     name: 'cal_devices_mobile',
     displayKey: 'text',
-    source: cal_devices_mobile
+    source: cal_devices_mobile,
+    limit: 100
   }
 });
 
