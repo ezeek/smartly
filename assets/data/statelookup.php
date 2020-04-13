@@ -5,6 +5,9 @@ $statelookup = [
         'active' => 'he-acceleration_active',
         'inactive' => 'he-acceleration_inactive',
     ],
+    'attribute' => [
+	'default' => ''
+    ],
     'bulb' => [
         'off' => 'he-bulb_off', 
         'on' => 'he-bulb_on',
@@ -69,6 +72,18 @@ $statelookup = [
         'closed' => 'he-garage_closed', 
         'opening' => 'he-garage_open', 
         'closing' => 'he-garage_closed',
+    ],
+    'illuminance' => [
+        'default' => ''
+    ],
+    'energy' => [
+        'default' => ''
+    ],
+    'temperature' => [
+        'default' => ''
+    ],
+    'humidity' => [
+        'default' => ''
     ],
     'lock' => [
         'locked' => 'he-lock1', 

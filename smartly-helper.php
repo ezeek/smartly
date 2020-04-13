@@ -61,11 +61,24 @@ $template_noconfig = array(
     "clock",
     "date-time",
 //    "mode",
-    "attribute",
+//    "attribute",
     "dashboard-link",
     "analog-clock",
     "text"
 );
+
+// TODO: incorporate all tile template 'options' within statefile lookup.
+ 
+$template_nonudge = array(
+/*
+  'attribute',
+  'temperature',
+  'humidity',
+  'energy',
+  'illuminance'
+*/
+);
+
 
 $smartly_css = array(
   "title" => array(), // id and replacement title
@@ -370,7 +383,12 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
       // retrieve existing title_replacement
 
       $tile_data['title'] = $smartly_data['tiles'][$tile['id']]['title'] ? $smartly_data['tiles'][$tile['id']]['title'] : null;
-      $tile_data['title_wrap'] = $smartly_data['tiles'][$tile['id']]['title_wrap'] ? $smartly_data['tiles'][$tile['id']]['title_wrap'] : null;
+
+      if ($tile_data['title_wrap']) { // legacy support
+        $tile_data['icon_nudge'] = $smartly_data['tiles'][$tile['id']]['title_wrap'] ? $smartly_data['tiles'][$tile['id']]['title_wrap'] : null;
+      } elseif (!(in_array($tile_data['template'], $template_nonudge))) {	      
+        $tile_data['icon_nudge'] = $smartly_data['tiles'][$tile['id']]['icon_nudge'] ? $smartly_data['tiles'][$tile['id']]['icon_nudge'] : null;
+      }
 
 //      add to smartly_css so it can build the css
 //      $smartly_css['title'][$tile['id']]['title'] = $tile_data['title'];
@@ -380,6 +398,17 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
     // future
 
     }
+
+
+    if ($tile['template'] == "attribute") {
+
+      // retrieve existing value of label
+
+      $tile_data['attribute']['unit'] = $smartly_data['tiles'][$tile['id']]['attribute']['unit'] ? $smartly_data['tiles'][$tile['id']]['attribute']['unit'] : null;
+      $tile_data['attribute']['numeric'] = $smartly_data['tiles'][$tile['id']]['attribute']['numeric'] ? $smartly_data['tiles'][$tile['id']]['attribute']['numeric'] : null;
+
+    }
+
 
 // TODO: to make scalable, this should probably be based on a case statement, based on template type.
 
@@ -589,7 +618,9 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
     if ($smart_data['title'] != "") {
 
       // if title will fit on one line, no need to wrap the space allocated for the new title
-      $title_wrap = $smart_data['title_wrap'] == true? "" : "white-space: nowrap;";
+      $icon_nudge = $smart_data['icon_nudge'] == true? "" : "white-space: nowrap;";
+      $icon_nudge_hz = $smart_data['icon_nudge'] == true? "margin-right: 0px;" : "margin-right: -5px;";
+      $icon_nudge_hz_2 = $smart_data['icon_nudge'] == true? "margin-right: 5px;" : "margin-right: 0px;";
 
       // TODO: allow html instead of escaping all characters
       $title_replacement = addslashes($smart_data['title']);
@@ -599,7 +630,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
 
 #tile-$smart_id .tile-title {
 	visibility: hidden;
-	$title_wrap
+	$icon_nudge
 }
 
 #tile-$smart_id .tile-title:after {
@@ -618,7 +649,7 @@ EOF;
       // even though we aren't doing a title replacement, 'icon nudge' should still
       // do something to help.
    
-      if ($smart_data['title_wrap'] == true) {
+      if ($smart_data['icon_nudge'] == true) {
 
         $smartly_css['icon'][] = <<<EOF
 
@@ -688,7 +719,43 @@ EOF;
       }
     }
 
+    if ($smart_data['attribute']['unit'] != "") {
+
+      // TODO: allow html instead of escaping all characters
+      $unit = addslashes($smart_data['attribute']['unit']);
+
+
+      // using css optimizer downstream, redundant is fine
+      $smartly_css['attribute']['unit'][] = <<<EOF
+
+#tile-$smart_id .tile-primary:after {
+    content: " $unit";
+    font-size: 50%;
+}
+
+EOF;
+
+    }
+
+    if ($smart_data['attribute']['numeric'] == true) {
+
+      $inputJSON = $GLOBALS['inputJSON'];
+
+      $bump_fontsize = strval($inputJSON['fontSize'] * 1.75) . "px";
+
+      // using css optimizer downstream, redundant is fine
+      $smartly_css['attribute']['numeric'][] = <<<EOF
+
+#tile-$smart_id .tile-primary {
+    font-size: $bump_fontsize !important;
+}
+
+EOF;
+
+    }
+
     if ($smart_data['states']) {
+
       foreach ($smart_data['states'] as $state_name => $state_data) { //$state_code) {
         $icon_code = $state_data['code'];
         $icon_class = $state_data['class'];
@@ -748,6 +815,39 @@ EOF;
 
 EOF;
 
+              break;
+
+            case 'temperature':
+            case 'humidity':
+            case 'energy':
+            case 'illuminance':
+            case 'power':
+              $smartly_css['icon'][] = <<<EOF
+
+#tile-$smart_id .tile-primary:before {
+    content: "\\$icon_code";
+    font-family: "Material Design Icons" !important;
+    opacity: .7;
+    display: inline-block;
+    $icon_nudge_hz
+}
+
+EOF;
+
+              break;
+
+            case 'attribute':
+              $smartly_css['icon'][] = <<<EOF
+
+#tile-$smart_id .tile-primary:before {
+    content: "\\$icon_code";
+    font-family: "Material Design Icons" !important;
+    opacity: .7;
+    display: inline-block;
+    $icon_nudge_hz_2
+}
+
+EOF;
 
               break;
 
@@ -833,6 +933,8 @@ EOF;
   $optimize = new \CssOptimizer\Css\Optimizer;
   $optimized_css['title'] =  $optimize->optimizeCss(implode($lb, $smartly_css['title']));
   $optimized_css['label'] =  $optimize->optimizeCss(implode($lb, $smartly_css['label']));
+  $optimized_css['unit'] =  $optimize->optimizeCss(implode($lb, $smartly_css['attribute']['unit']));
+  $optimized_css['numeric'] =  $optimize->optimizeCss(implode($lb, $smartly_css['attribute']['numeric']));  
   $optimized_css['icon'] =  $optimize->optimizeCss(implode($lb, $smartly_css['icon']));
   $optimized_css['calibration'] = $optimize->optimizeCss(implode($lb, $smartly_css['calibration']));
 
@@ -844,6 +946,8 @@ EOF;
     $delimiters['auto'],
     $optimized_css['title'],
     $optimized_css['label'],
+    $optimized_css['unit'],
+    $optimized_css['numeric'],
     $optimized_css['icon'],
     $optimized_css['calibration'],
     $delimiters['user'],

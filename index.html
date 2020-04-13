@@ -404,7 +404,6 @@ console.log("no tile id sent!");
 
         var title = data.title ? data.title : '';
         //console.log(data.tile_wrap, tile_id + " : TITLEWRAP");
-        var titlewrap = data.title_wrap === true ? 'checked' : '';
 
         editor.append('  <div class="form-group row">    <label class="col-4 col-form-label" for="title">Title replacement</label>     <div class="col-8">      <input id="smart_edit_title" name="smart_edit_title" type="text" class="form-control" aria-describedby="titleHelpBlock" value="' + title + '">   </div>  </div>');
 
@@ -416,12 +415,34 @@ console.log("no tile id sent!");
         editor.append(' <div class="form-group row">    <label for="label" class="col-4 col-form-label">Add/Replace Label</label>     <div class="col-8">      <input id="smart_edit_label" name="smart_edit_label" type="text" class="form-control" aria-describedby="labelHelpBlock" value="' + label + '">       <span id="labelHelpBlock" class="form-text text-muted">For image and video tiles, this will add a highly visible label.  For others this will replace the existing label.</span>    </div>  </div> ');
       }
 
+      if (typeof data.attribute !== 'undefined') {
+
+        if (typeof data.attribute.unit !== 'undefined') {
+
+          var unit = data.attribute.unit ? data.attribute.unit : '';
+          editor.append(' <div class="form-group row">    <label for="label" class="col-4 col-form-label">Add Custom Unit text</label>     <div class="col-8">      <input id="smart_edit_unit" name="smart_edit_unit" type="text" class="form-control" aria-describedby="labelHelpBlock" value="' + unit + '">       <span id="labelHelpBlock" class="form-text text-muted">For attribute tiles, this will add your custom unit label immediately after the tile value.</span>    </div>  </div> ');
+        }
+
+        if (typeof data.attribute.numeric !== 'undefined') {
+
+          var numeric = data.attribute.numeric === true ? 'checked' : '';
+
+          editor.append('<div class="form-group row">    <label class="col-4">Increase Font Size</label>     <div class="col-8">      <div class="custom-control custom-checkbox custom-control-inline">        <input name="smart_edit_numeric" id="smart_edit_numeric" type="checkbox" class="custom-control-input" value="numeric" ' + numeric + '>         <label for="smart_edit_numeric" class="custom-control-label">This is normally used to increase attribute tile font size to match temperature, humidity and other numeric-based tile types.</label>      </div>   </div>  </div>');
+
+        }
+
+      }
+
       if (data.states) {
 
-        editor.append('<div class="form-group row">    <label class="col-4">Icon Nudge</label>     <div class="col-8">      <div class="custom-control custom-checkbox custom-control-inline">        <input name="smart_edit_titlewrap" id="smart_edit_titlewrap" type="checkbox" class="custom-control-input" value="title_wrap" ' + titlewrap + '>         <label for="smart_edit_titlewrap" class="custom-control-label">Nudge the icon down to give my title more space..</label>      </div>   </div>  </div>');
+        if (typeof data.icon_nudge !== 'undefined') {
+          var iconnudge = data.icon_nudge === true ? 'checked' : '';
+          editor.append('<div class="form-group row">    <label class="col-4">Icon Nudge</label>     <div class="col-8">      <div class="custom-control custom-checkbox custom-control-inline">        <input name="smart_edit_iconnudge" id="smart_edit_iconnudge" type="checkbox" class="custom-control-input" value="icon_nudge" ' + iconnudge + '>         <label for="smart_edit_iconnudge" class="custom-control-label">Nudge the icon to give it more space..</label>      </div>   </div>  </div>');
+
+        }
 
 
-        editor.append("<fieldset id='wrapper_states_"+tile_id+"'><legend>icon replacement</legend></fieldset>");
+        editor.append("<fieldset id='wrapper_states_"+tile_id+"'><legend>icon replace/add</legend></fieldset>");
         $('#wrapper_states_'+tile_id).collapse({
           toggle: false
         })
@@ -571,12 +592,12 @@ if ($("#smart_edit_title").length) {
 
       }
 
-      //console.log($("#smart_edit_titlewrap").is(":checked"),"CHECKBOX");
-     if ($("#smart_edit_titlewrap").is(":checked")) {
+      //console.log($("#smart_edit_iconnudge").is(":checked"),"CHECKBOX");
+     if ($("#smart_edit_iconnudge").is(":checked")) {
 console.log("SMART_EDIT_TITLEWRAP PRESENT");
-        smartlyDATA['tiles'][smart_id]['title_wrap'] = true;
+        smartlyDATA['tiles'][smart_id]['icon_nudge'] = true;
       } else {
-        smartlyDATA['tiles'][smart_id]['title_wrap'] = false;
+        smartlyDATA['tiles'][smart_id]['icon_nudge'] = false;
       }
 
       if ($("#smart_edit_label").val()) {
@@ -588,6 +609,25 @@ if ($("#smart_edit_label").length) {
         smartlyDATA['tiles'][smart_id]['label'] = null;
 }
       }
+
+
+      if ($("#smart_edit_unit").val()) {
+console.log("SMART_EDIT_UNIT PRESENT");
+        smartlyDATA['tiles'][smart_id]['attribute']['unit'] = $("#smart_edit_unit").val();
+      } else {
+        if ($("#smart_edit_unit").length) {
+          smartlyDATA['tiles'][smart_id]['attribute']['unit'] = null;
+        }
+      }
+
+    if ($("#smart_edit_numeric").val()) {
+     if ($("#smart_edit_numeric").is(":checked")) {
+console.log("SMART_EDIT_NUMERIC PRESENT");
+        smartlyDATA['tiles'][smart_id]['attribute']['numeric'] = true;
+      } else {
+        smartlyDATA['tiles'][smart_id]['attribute']['numeric'] = false;
+      }
+}
 
       $('input[id ^= "state_"]').each(function(index, element) {
 console.log("SMART STATES PRESENT");
@@ -715,9 +755,9 @@ function disableEnterKey(e)
       <div class="formden_header">
         <img src="assets/images/logo_smartly.png" style="height: 40px; width: 40px; float: left;">
         <h2>
-          smartly
+          smartly dev
         </h2>
-        <p>hubitat dashboard skin engine <small>[v1.04]</small>
+        <p>hubitat dashboard skin engine <small>[v1.05]</small>
         <hr>
         </p>
       </div>
