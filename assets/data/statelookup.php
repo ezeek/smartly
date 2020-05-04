@@ -37,6 +37,9 @@ $statelookup = [
         'open' => 'he-contact_open', 
         'closed' => 'he-contact_closed',
     ],
+    'dashboard' => [
+        'default' => ''
+    ],
     'dimmer' => [
         'off' => 'he-dimmer_low', 
         'on' => 'he-dimmer_medium',

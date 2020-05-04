@@ -468,11 +468,14 @@ if ($smartly_data['settings']) {
   $smartly_data['settings']['calibration']['colwidth'] = $inputJSON['colWidth'];
   $smartly_data['settings']['calibration']['gridgap'] = $inputJSON['gridGap'];
   $smartly_data['settings']['calibration']['colcount'] = $inputJSON['cols'];
+  $smartly_data['settings']['iconSize'] = $inputJSON['iconSize'];
+  $smartly_data['settings']['fontSize'] = $inputJSON['fontSize'];
   $smartly_data['settings']['commit'] = $smartly_head;
   $smartly_settings = $smartly_data['settings'];
 } else {
   $smartly_settings = array('calibration' => array('devices' => null, 'devices_2col' => null),'commit' => $smartly_head . "two");
 }
+
 
 //var_dump($smartly_settings);
 /*a
@@ -624,26 +627,59 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
 
       // TODO: allow html instead of escaping all characters
       $title_replacement = addslashes($smart_data['title']);
+      $fontsize_calc = strval($settings['fontSize'] * 1.5) . "px;";
 
-      // using css optimizer downstream, redundant is fine
-      $smartly_css['title'][] = <<<EOF
 
-#tile-$smart_id .tile-title {
-	visibility: hidden;
-	$icon_nudge
+      switch ($smart_data['template']) {
+
+        case 'dashboard':
+
+          $smartly_css['title'][] = <<<EOF
+
+#tile-$smart_id .tile-primary {
+        font-size: 0 !important;
+        color: transparent;
 }
 
-#tile-$smart_id .tile-title:after {
-	content: "$title_replacement";
-	visibility: visible;
-	position: absolute;
-	left: 0;
-	padding: .5em .5em 3px .5em;
-	width: 100%;
-	top: 0;
+#tile-$smart_id .tile-primary:after {
+        color: black;
+        content: "$title_replacement";
+        margin-left: 5px;
+        font-size: $fontsize_calc
+}
+
+#tile-$smart_id .tile-primary:before {
+        color: black;
+        font-size: $fontsize_calc
 }
 
 EOF;
+            break;
+
+        case 'default':
+
+          // using css optimizer downstream, redundant is fine
+          $smartly_css['title'][] = <<<EOF
+
+#tile-$smart_id .tile-title {
+        visibility: hidden;
+        $icon_nudge
+}
+
+#tile-$smart_id .tile-title:after {
+        content: "$title_replacement";
+        visibility: visible;
+        position: absolute;
+        left: 0;
+        padding: .5em .5em 3px .5em;
+        width: 100%;
+        top: 0;
+}
+
+EOF;
+            break;
+
+      }
 
     } else {
       // even though we aren't doing a title replacement, 'icon nudge' should still
@@ -758,7 +794,8 @@ EOF;
 
       foreach ($smart_data['states'] as $state_name => $state_data) { //$state_code) {
         $icon_code = $state_data['code'];
-        $icon_class = $state_data['class'];
+        $icon_class = str_replace("_", ".", $state_data['class']);
+        $state_name = str_replace("_", ".", $state_name);
 
         if (strlen($state_data['code']) > 0) {
 
@@ -821,7 +858,6 @@ EOF;
             case 'humidity':
             case 'energy':
             case 'illuminance':
-            case 'power':
               $smartly_css['icon'][] = <<<EOF
 
 #tile-$smart_id .tile-primary:before {
@@ -836,6 +872,7 @@ EOF;
 
               break;
 
+            case 'dashboard':
             case 'attribute':
               $smartly_css['icon'][] = <<<EOF
 
