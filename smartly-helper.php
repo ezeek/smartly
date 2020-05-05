@@ -656,7 +656,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
 EOF;
             break;
 
-        case 'default':
+        default:
 
           // using css optimizer downstream, redundant is fine
           $smartly_css['title'][] = <<<EOF
