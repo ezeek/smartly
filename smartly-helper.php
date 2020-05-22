@@ -1039,10 +1039,10 @@ function smartly_calibrate($minzoom = null, $screenwidth = null, $colwidth = nul
       // specific overrides for well-known screen widths
       if ($screenwidth == 1280) {
         $bestmatch = [
-        'name' => 'seven',
-        'width' => $columns['seven'],
-        'zoom' => ($screenwidth) / $columns['seven'],
-        'abszoom' => abs((($screenwidth) / $columns['seven']) - 1) + 1
+        'name' => 'eight',
+        'width' => $columns['eight'],
+        'zoom' => ($screenwidth) / $columns['eight'],
+        'abszoom' => abs((($screenwidth) / $columns['eight']) - 1) + 1
         ];
         break;
       }  elseif ($screenwidth == 1920) {
