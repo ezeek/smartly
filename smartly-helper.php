@@ -10,9 +10,12 @@ $repo_base = array(
   'css_sandbox' => '/var/www/html/smartly-base/smartly.css',
   'json_sandbox' => '/var/www/html/smartly-base/smartly.json',
   'head_sandbox' => '/var/www/html/smartly-base/head.json',
-  'css_dev' => 'https://raw.githubusercontent.com/ezeek/smartly-base/devel/smartly.css',
-  'json_dev' => 'https://raw.githubusercontent.com/ezeek/smartly-base/devel/smartly.json',
-  'head_dev' => 'https://api.github.com/repos/ezeek/smartly-base/commits/HEAD',
+  'css_dev' => '/var/www/html/smartly-base/smartly.css',
+  'json_dev' => '/var/www/html/smartly-base/smartly.json',
+  'head_dev' => '/var/www/html/smartly-base/head.json',
+//  'css_dev' => 'https://raw.githubusercontent.com/ezeek/smartly-base/devel/smartly.css',
+//  'json_dev' => 'https://raw.githubusercontent.com/ezeek/smartly-base/devel/smartly.json',
+//  'head_dev' => 'https://api.github.com/repos/ezeek/smartly-base/commits/HEAD',
   'css' => 'https://raw.githubusercontent.com/ezeek/smartly-base/master/smartly.css',
   'json' => 'https://raw.githubusercontent.com/ezeek/smartly-base/master/smartly.json',
   'head' => 'https://api.github.com/repos/ezeek/smartly-base/commits/HEAD'
@@ -54,8 +57,8 @@ $smartly_touched = false;
 $base_css = "";
 $user_css = "";
 
-// some tile template types have no configurable options, let's define them up here
 
+// some tile template types have no configurable options, let's define them up here
 $template_noconfig = array(
     "date",
     "clock",
@@ -66,6 +69,7 @@ $template_noconfig = array(
     "analog-clock",
     "text"
 );
+
 
 // TODO: incorporate all tile template 'options' within statefile lookup.
  
@@ -113,6 +117,8 @@ if (is_json($_POST['inputjson'])) {
 
 //var_dump($inputJSON);
  
+
+// EXTRACT SMARTLYDATA
 // retrieve and decode posted smartlydata, and if none posted, attempt to extract from smartly tile
 
 if (is_json($_POST['smartlydata'])) {
@@ -122,7 +128,7 @@ if (is_json($_POST['smartlydata'])) {
     $smartly_touched = true;
   }
 
-// if nothing sent via form, try to exract from smartly data tile
+// if nothing sent via form, try to extract from smartly data tile
 
 } elseif ($inputJSON['tiles'][0]['template'] == "smartly") {
   if (is_json($inputJSON['tiles'][0]['templateExtra'])) {
@@ -135,6 +141,8 @@ if (is_json($_POST['smartlydata'])) {
   $smartly_data = null;
 }
 
+
+// PARSE UPDATE OPTIONS
 // parse selected update options
 
 foreach ($_POST['options'] as $options) {
@@ -156,6 +164,7 @@ if ($repo_skin) {
   $repo_skin_head = null;
 }
 
+
 // define smartly base and skin css based on user input
 
 $repo_base_css = $repo_base_head . file_get_contents($repo_base['css_sandbox']); //css_dev
@@ -165,6 +174,7 @@ if ($repo_skin) {
 } else {
   $repo_skin_css = null;
 }
+
 
 // retrieve smartly customColors[] and other settings if instructed
 
@@ -212,6 +222,7 @@ if ($update_options['color'] || $update_options['settings']) {
     $inputJSON['fontSize'] = $repo_base_json['fontSize'];
   }
 } //END if ($update_options['color'] || $update_options['settings']) {
+
 
 // set up global variables for automatically determining and setting grid row and column count
 
@@ -367,7 +378,10 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
 // though, title data is global, every tile will have a title or a label so
 // it will be separate from other regen.. it should be cleaned up though.
 
-    // if image or video, no title replacement is possible because it doesn't exist
+    // BUILDFIELDS
+
+    // LABEL-ENABLED TILE SPECIFIC OPTIONS
+    // if image,video or thermostat, no title replacement is possible because it doesn't exist
 
     if ($tile['template'] == "images" | $tile['template'] == "video" | $tile['template'] == "thermostat") { 
 
@@ -380,13 +394,15 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
 
     } elseif (!(in_array($tile_data['template'], $template_noconfig)))  {
 
+    // TITLE-ENABLED SPECIFIC OPTIONS
+
       // retrieve existing title_replacement
 
       $tile_data['title'] = $smartly_data['tiles'][$tile['id']]['title'] ? $smartly_data['tiles'][$tile['id']]['title'] : null;
 
       if ($tile_data['title_wrap']) { // legacy support
         $tile_data['icon_nudge'] = $smartly_data['tiles'][$tile['id']]['title_wrap'] ? $smartly_data['tiles'][$tile['id']]['title_wrap'] : null;
-      } elseif (!(in_array($tile_data['template'], $template_nonudge))) {	      
+      } elseif (!(in_array($tile_data['template'], $template_nonudge))) {          
         $tile_data['icon_nudge'] = $smartly_data['tiles'][$tile['id']]['icon_nudge'] ? $smartly_data['tiles'][$tile['id']]['icon_nudge'] : null;
       }
 
@@ -399,6 +415,7 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
 
     }
 
+    // ATTRIBUTE SPECIFIC OPTIONS
 
     if ($tile['template'] == "attribute") {
 
@@ -411,6 +428,7 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
 
 
 // TODO: to make scalable, this should probably be based on a case statement, based on template type.
+
 
     // refresh states for tile template type
 
@@ -523,10 +541,6 @@ echo json_encode($return_json);
 
 
 
-
-
-
-
 /**
  * smartly_parse_css() splits customCSS:[] from input JSON into base,
  * auto, and user css.  If instructed to, it will also update base_css to
@@ -620,15 +634,17 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
 
     if ($smart_data['title'] != "") {
 
-      // if title will fit on one line, no need to wrap the space allocated for the new title
-      $icon_nudge = $smart_data['icon_nudge'] == true? "" : "white-space: nowrap;";
-      $icon_nudge_hz = $smart_data['icon_nudge'] == true? "margin-right: 0px;" : "margin-right: -5px;";
-      $icon_nudge_hz_2 = $smart_data['icon_nudge'] == true? "margin-right: 5px;" : "margin-right: 0px;";
+      // if title will fit on one line, no need to wrap the space allocated for the new title // HACKYHACK
+      $icon_nudge = $smart_data['icon_nudge'] == true? "" : "white-space: nowrap;"; // default
+      $icon_nudge_hz = $smart_data['icon_nudge'] == true? "margin-right: 0px;" : "margin-right: -5px;"; // illuminance
+      $icon_nudge_hz_2 = $smart_data['icon_nudge'] == true? "margin-right: 5px;" : "margin-right: 0px;"; // attribute
 
       // TODO: allow html instead of escaping all characters
       $title_replacement = addslashes($smart_data['title']);
       $fontsize_calc = strval($settings['fontSize'] * 1.5) . "px;";
 
+
+      // TITLE-DISABLED TYPE SPECIFIC CSS BUILDS
 
       switch ($smart_data['template']) {
 
@@ -679,9 +695,10 @@ EOF;
 EOF;
             break;
 
-      }
+      } // template case
 
-    } else {
+    } else { // if tile uses TITLE replacement
+
       // even though we aren't doing a title replacement, 'icon nudge' should still
       // do something to help.
    
@@ -698,6 +715,9 @@ EOF;
         
       }
     }
+
+
+    // LABEL-ENABLED TILE CSS
 
     if ($smart_data['label'] != "") {
 
@@ -726,7 +746,6 @@ EOF;
 }
 
 EOF;
-
           break;
 
         default:
@@ -749,11 +768,13 @@ EOF;
 }
 
 EOF;
-
           break;
 
       }
     }
+
+
+    // ALL OTHER TILE CSS
 
     if ($smart_data['attribute']['unit'] != "") {
 
@@ -790,6 +811,9 @@ EOF;
 
     }
 
+
+    // ICON-ENABLED TILE CSS
+
     if ($smart_data['states']) {
 
       foreach ($smart_data['states'] as $state_name => $state_data) { //$state_code) {
@@ -824,8 +848,6 @@ EOF;
 }
 
 EOF;
-
-
               break;
 
             case 'buttons':
@@ -851,7 +873,6 @@ EOF;
 }
 
 EOF;
-
               break;
 
             case 'temperature':
@@ -869,7 +890,6 @@ EOF;
 }
 
 EOF;
-
               break;
 
             case 'dashboard':
@@ -885,7 +905,6 @@ EOF;
 }
 
 EOF;
-
               break;
 
             default:
@@ -912,8 +931,6 @@ EOF;
 }
 
 EOF;
-
-
               break;
 
           }
@@ -1101,9 +1118,9 @@ function smartly_calibrate($minzoom = null, $screenwidth = null, $colwidth = nul
  */
 
 function smartly_zoomy($next_id = null, $colwidth = null, $gap = null, $colcount = null) {
-	
-//	$gap = 15;
-//	$colwidth = 135;
+    
+//    $gap = 15;
+//    $colwidth = 135;
 //  $screenwidth = 390;
 
   $minzoom = .80;
