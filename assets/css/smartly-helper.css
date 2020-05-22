@@ -218,3 +218,104 @@ display: none;
 .mdi:before, .mdi-set {
 font-size: 30px !important;
 }
+
+.col-form-label {
+    font-size: .8em;
+}
+
+.container{
+  margin: 20px;
+}
+
+/* autocomplete tagsinput*/
+.label-info {
+  background-color: #007bff;
+  display: inline-block;
+  padding: 5px;
+  font-size: 75%;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25em;
+}
+
+
+.card {
+    margin-bottom: 15px;
+}
+
+.card .title {
+    margin-right: 1em;
+}
+
+.icon-action {
+    margin-top: 5px;
+    float: right;
+    font-size: 80%;
+}
+
+.list-group-item .title {
+    margin-top: 5px;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+#gridwrapper {
+    margin-bottom: 2em;
+    width: min-content;
+    position: relative;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: 6px;
+    padding: 1em;
+    min-width: 300px;
+}
+
+#gridheader i.fa-cog {
+    position: absolute;
+    color: grey;
+    top: .5em;
+    right: .5em;
+    font-size: 1.5em;
+    line-height: 1em;
+  animation: spin-animation 1.3s 1;
+}
+
+
+@keyframes spin-animation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
+}
+
+
+#hint_options {
+    margin-top: 1em;
+    display: block;
+}
+
+.bootstrap-tagsinput .tag {
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+.tab-content {
+    padding-top: 1em;
+}
+
+.icon-picker-reset {
+    float: right;
+    margin-right: .5em;
+}
+
+#skin_chooser {
+    background-size: cover;
+    background-position: center;
+    background-image: url('https://hubitat.ezeek.us/smartly-base/assets/images/bg_smartly.jpg');
+}
+
