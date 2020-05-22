@@ -38,215 +38,162 @@
   <script src="assets/js/smartly-helper.js"></script>
 
 </head>
-
 <body OnKeyPress="return disableEnterKey(event)">
-  <!-- HTML Form (wrapped in a .bootstrap-iso div) -->
-  <div class="bootstrap-iso">
-  <div class="container-fluid">
-  <div class="row">
-    <div class="col-md-10 col-sm-11 col-xs-12">
-      <div class="formden_header">
-        <img src="assets/images/logo_smartly.png" style="height: 40px; width: 40px; float: left;">
-        <h2>
-          smartly dev
-        </h2>
-        <p>hubitat dashboard skin engine <small>[v1.07]</small>
-        <hr>
-        </p>
-      </div>
-      <form method="post" action="smartly-helper.php">
-        <div class="modal fade" id="smartly_settings_modal" tabindex="-1" role="dialog" aria-labelledby="settings_modalLabel" aria-hidden="true">
-          <div class="modal-dialog-centered modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="settings_modalLabel">Dashboard Settings</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div id="smartly_settings_editor" class="modal-body">
-
-
-<ul class="nav nav-tabs" role="tablist">
-  <li class="nav-item">
-    <a class="nav-link active" data-toggle="tab" href="#settings-calibration" role="tab">calibration</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" data-toggle="tab" href="#settings-colors" role="tab">colors</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" data-toggle="tab" href="#settings-icons" role="tab">icons</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" data-toggle="tab" href="#settings-mods" role="tab">mods</a>
-  </li>
-</ul><!-- Tab panes -->
-
-<div class="tab-content">
-  <div class="tab-pane active" id="settings-calibration" role="tabpanel">
-<div class="alert alert-warning" role="alert">
-Device-based calibrations are experimental.
-</div>
-    <div class="form-group row">
-      <div class="col-12">
-        <label for="cal_devices" class="col-form-label"><b>CALIBRATE MY DASHBOARD</b> for the following devices:<br><small>FOR STOCK DEVICE DISPLAY DPI SETTINGS ONLY</small></label>
-        <input type="text" id="cal_devices" class="bootstrap-tagsinput"/>
-      </div>
-      <div class="col-12"><br>
-        <label for="cal_devices_2col" class=" col-form-label"><b>FORCE DISPLAY 2 COLUMNS WIDE</b> <i>(when held vertically)</i><br><small>FOR STOCK DEVICE DISPLAY DPI SETTINGS ONLY</small></label>
-        <input type="text" id="cal_devices_2col" class="bootstrap-tagsinput"/>
-      </div>
-    </div>
-    <div class="checkbox">
-      <label class="checkbox">
-      <input name="options[]" type="checkbox" value="zoomy" id="checkbox_zoomy" />
-      <b>Add ZOOMY</b> <small style="color: #da4800;">(This checkbox will uncheck itself after update)</small><br><small>Temporarily add a calibration helper tile to generate the perfect css for alignment of columns to the edge of the screen on any device, any device display dpi setting.</small><br>
-      </label>
-    </div>
-  </div>
-  <div class="tab-pane" id="settings-colors" role="tabpanel">
-    <p>COLORS [global settings]<br><br>This is where we'll allow tile-type color templates to include border color and other options missing from HE template editor.</p>
-  </div>
-  <div class="tab-pane" id="settings-icons" role="tabpanel">
-    <p>ICONS [global setting]<br><br>This is where we'll allow replacement of tile-type icons with the modern 5200+ material design icons.</p>
-  </div>
-  <div class="tab-pane" id="settings-mods" role="tabpanel">
-    <p>MODS [global setting]<br><br>This is where we'll offer community built mods to improve your dashboard experience. </p>
-  </div>
-</div>
-</div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onClick="smartly_settings_update()">Save changes</button>
-              </div>
-            </div>
-          </div>
+	<!-- HTML Form (wrapped in a .bootstrap-iso div) -->
+	<div class="bootstrap-iso">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-10 col-sm-11 col-xs-12">
+					<div class="formden_header"> <img src="assets/images/logo_smartly.png" style="height: 40px; width: 40px; float: left;">
+						<h2>smartly dev</h2>
+						<p>hubitat dashboard skin engine <small>[v1.07]</small></p>
+					</div>
+					<form method="post" action="smartly-helper.php">
+						<div class="modal fade" id="smartly_settings_modal" tabindex="-1" role="dialog" aria-labelledby="settings_modalLabel" aria-hidden="true">
+							<div class="modal-dialog-centered modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="settings_modalLabel">Dashboard Settings</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+									</div>
+									<div id="smartly_settings_editor" class="modal-body">
+										<ul class="nav nav-tabs" role="tablist">
+											<li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#settings-calibration" role="tab">calibration</a> </li>
+											<li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#settings-colors" role="tab">colors</a> </li>
+											<li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#settings-icons" role="tab">icons</a> </li>
+											<li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#settings-mods" role="tab">mods</a> </li>
+										</ul>
+										<!-- Tab panes -->
+										<div class="tab-content">
+											<div class="tab-pane active" id="settings-calibration" role="tabpanel">
+												<div class="alert alert-warning" role="alert"> Device-based calibrations are experimental. </div>
+												<div class="form-group row">
+													<div class="col-12">
+														<label for="cal_devices" class="col-form-label"><b>CALIBRATE MY DASHBOARD</b> for the following devices:
+															<br><small>FOR STOCK DEVICE DISPLAY DPI SETTINGS ONLY</small></label>
+														<input type="text" id="cal_devices" class="bootstrap-tagsinput" /> </div>
+													<div class="col-12">
+														<br>
+														<label for="cal_devices_2col" class=" col-form-label"><b>FORCE DISPLAY 2 COLUMNS WIDE</b> <i>(when held vertically)</i>
+															<br><small>FOR STOCK DEVICE DISPLAY DPI SETTINGS ONLY</small></label>
+														<input type="text" id="cal_devices_2col" class="bootstrap-tagsinput" /> </div>
+												</div>
+												<div class="checkbox">
+													<label class="checkbox">
+														<input name="options[]" type="checkbox" value="zoomy" id="checkbox_zoomy" /> <b>Add ZOOMY</b> <small style="color: #da4800;">(This checkbox will uncheck itself after update)</small>
+														<br><small>Temporarily add a calibration helper tile to generate the perfect css for alignment of columns to the edge of the screen on any device, any device display dpi setting.</small>
+														<br> </label>
+												</div>
+											</div>
+											<div class="tab-pane" id="settings-colors" role="tabpanel">
+												<p>COLORS [global settings]
+													<br>
+													<br>This is where we'll allow tile-type color templates to include border color and other options missing from HE template editor.</p>
+											</div>
+											<div class="tab-pane" id="settings-icons" role="tabpanel">
+												<p>ICONS [global setting]
+													<br>
+													<br>This is where we'll allow replacement of tile-type icons with the modern 5200+ material design icons.</p>
+											</div>
+											<div class="tab-pane" id="settings-mods" role="tabpanel">
+												<p>MODS [global setting]
+													<br>
+													<br>This is where we'll offer community built mods to improve your dashboard experience. </p>
+											</div>
+										</div>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+										<button type="button" class="btn btn-primary" onClick="smartly_settings_update()">Save changes</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- /modal -->
+						<div class="form-group " style="position:relative;">
+							<div class="form-group " style="position:relative;">
+								<label class="control-label requiredField" for="inputjson"> Your Layout JSON <span class="asteriskField">*</span> </label> <span style="position: relative; width: 100%; display: block;">
+                                    <textarea class="form-control stealth" cols="40" id="inputjson" name="inputjson" rows="3"></textarea>
+                                    <button type="button" id="resetclick" class="btn btn-primary"  onClick='smartly_restart();'>Start Over</button>
+                                </span> <span class="help-block text-muted" id="hint_inputjson">
+                                    Copy and paste the contents of 'Options &gt; Advanced &gt; Layout' then click 'Update' below. Or <a href="#" id="smartly_restart" onClick="smartly_restart()">click here to <b>start over</b></a>.
+                                </span> </div>
+							<textarea type="hidden" class="form-control" cols="40" id="smartlydata" name="smartlydata" rows="5"></textarea>
+						</div>
+						<div class="form-group">
+							<div class="card">
+								<header class="card-header"> <span class="title">Choose a Skin</span> </header>
+								<div id="skin_chooser" style="">
+									<article class="card-body">
+										<select id="skinselect" name="skin" class="custom-select">
+											<option value="smartly">smartly (default)</option>
+										</select>
+									</article>
+								</div>
+							</div>
+							<!-- /skin chooser -->
+							<div id="gridwrapper" style="display: none;">
+								<div id="gridheader"></div>
+								<div id="grid"></div>
+							</div>
+							<div class="form-group" style="display: none;">
+								<div class="card">
+									<header class="card-header">
+										<a href="#" data-toggle="collapse" data-target="#update_options" aria-expanded="true" class=""> <i class="icon-action fa fa-chevron-down"></i> <span class="title">Update Options</span> </a>
+									</header>
+									<div class="collapse show" id="update_options" style="">
+										<article class="card-body">
+											<div class=" ">
+												<div class="alert alert-warning" role="alert"> Sorry, selective updating isn't allowed until skins are finalized. </div>
+												<div class="checkbox">
+													<label class="checkbox">
+														<input id="update_colors" name="options[]" type="checkbox" value="color" checked/> Tile Color Templates (customColors) </label>
+												</div>
+												<div class="checkbox">
+													<label class="checkbox">
+														<input id="update_css" name="options[]" type="checkbox" value="css" checked /> CSS (base and skin formatting and stock skin icons) </label>
+												</div>
+												<div class="checkbox">
+													<label class="checkbox">
+														<input id="update_settings" name="options[]" type="checkbox" value="settings" checked /> Recommended settings (grid, spacing, rounded corners, background etc) </label>
+												</div> <span class="help-block text-muted" id="hint_options">Instead of clobbering any customized dashboard settings or tile colors, choose what you'd like to update.</span> </div>
+										</article>
+										<!-- card-body.// -->
+									</div>
+									<!-- collapse .// -->
+								</div>
+							</div>
+							<div class="form-group">
+								<div>
+									<button type="button" id="copyclick" class="btn btn-success" data-clipboard-target="#inputjson" onClick='$("#inpustjson").prop( "readonly", false );'>Updated! Copy to Clipboard</button>
+									<button class="btn btn-warning" type="submit" id="smartly_update">Update</button>
+									<div id="update_warning"></div>
+									<div id="update_success">JSON successfully updated!</div>
+								</div>
+							</div>
+					</form>
+					</div>
+				</div>
+			</div>
+			<!-- Button trigger modal -->
+			<!-- Modal -->
+			<div class="modal fade" id="smartly_modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+				<div class="modal-dialog-centered modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="modalLabel">Modal title</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+						</div>
+						<div id="smartly_editor" class="modal-body"> ... </div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-primary" onClick="smartly_update()">Save changes</button>
+						</div>
+					</div>
+				</div>
+			</div>
         </div>
-        <!-- /modal -->
- <div class="form-group " style="position:relative;">
-            <div class="form-group " style="position:relative;">
-              <label class="control-label requiredField" for="inputjson">
-              Your Layout JSON       <span class="asteriskField">
-              *
-              </span>
-              </label>
-<span style="position: relative; width: 100%; display: block;">
-              <textarea class="form-control stealth" cols="40" id="inputjson" name="inputjson" rows="3"></textarea>
- <button type="button" id="resetclick" class="btn btn-primary"  onClick='smartly_restart();'>Start Over</button>
-
-</span>
-              <span class="help-block text-muted" id="hint_inputjson">
-              Copy and paste the contents of 'Options &gt; Advanced &gt; Layout' then click 'Update' below. Or <a href="#" id="smartly_restart" onClick="smartly_restart()">click here to <b>start over</b></a>.
-              </span>
-            </div>
-            <textarea type="hidden" class="form-control" cols="40" id="smartlydata" name="smartlydata" rows="5"></textarea>
-</div>
-
-        <div class="form-group">
-          <div class="card">
-            <header class="card-header">
-              <span class="title">Choose a Skin</span>
-            </header>
-            <div id="skin_chooser" style="">
-            <article class="card-body">
-              <select id="skinselect" name="skin" class="custom-select">
-                <option value="smartly">smartly (default)</option>
-              </select>
-            </article>
-          </div>
-        </div>
-        <!-- /skin chooser -->
-        <div id="gridwrapper" style="display: none;">
-          <div id="gridheader"></div>
-          <div id="grid"></div>
-        </div>
-        <div class="form-group" style="display: none;">
-          <div class="card">
-            <header class="card-header">
-              <a href="#" data-toggle="collapse" data-target="#update_options" aria-expanded="true" class="">
-              <i class="icon-action fa fa-chevron-down"></i>
-              <span class="title">Update Options</span>
-              </a>
-            </header>
-            <div class="collapse show" id="update_options" style="">
-              <article class="card-body">
-                <div class=" ">
-<div class="alert alert-warning" role="alert">
-Sorry, selective updating isn't allowed until skins are finalized.
-</div>
-                  <div class="checkbox">
-                    <label class="checkbox">
-                    <input id="update_colors" name="options[]" type="checkbox" value="color" checked/>
-                    Tile Color Templates (customColors)
-                    </label>
-                  </div>
-                  <div class="checkbox">
-                    <label class="checkbox">
-                    <input id="update_css" name="options[]" type="checkbox" value="css" checked />
-                    CSS (base and skin formatting and stock skin icons)
-                    </label>
-                  </div>
-                  <div class="checkbox">
-                    <label class="checkbox">
-                    <input id="update_settings" name="options[]" type="checkbox" value="settings" checked />
-                    Recommended settings (grid, spacing, rounded corners, background etc)
-                    </label>
-                  </div>
-                  <span class="help-block text-muted" id="hint_options">
-                  Instead of clobbering any customized dashboard settings or tile colors, choose what you'd like to update.
-                  </span>
-              </article>
-              <!-- card-body.// -->
-              </div> <!-- collapse .// -->
-            </div>
-          </div>
- <div class="form-group">
-              <div>
-              <button type="button" id="copyclick" class="btn btn-success" data-clipboard-target="#inputjson" onClick='$("#inpustjson").prop( "readonly", false );'>Updated! Copy to Clipboard</button>
-                <button class="btn btn-warning" type="submit" id="smartly_update">Update</button>
-                <div id="update_warning"></div>
-                <div id="update_success">JSON successfully updated!</div>
-              </div>
-            </div>
-
-      </form>
-      </div>
     </div>
-  </div>
-
-
-<!-- Button trigger modal -->
-
-<!-- Modal -->
-<div class="modal fade" id="smartly_modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-  <div class="modal-dialog-centered modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalLabel">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div id="smartly_editor" class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" onClick="smartly_update()">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-
-<!-- Modal -->
-<!--
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-
--->
 
 <script>
 var clipboard = new ClipboardJS('#copyclick');
@@ -339,5 +286,5 @@ elt2.tagsinput({
 
    <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 
-</body>
+    </body>
 </html>
