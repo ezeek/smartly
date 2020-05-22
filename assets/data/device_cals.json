@@ -141,6 +141,7 @@
 { "value": "sony_xperia-z", "text": "Sony Xperia Z" , "width": 360 , "height": 640 , "force_cols": 2 },
 { "value": "sony_xperia-z3", "text": "Sony Xperia Z3" , "width": 360 , "height": 598 , "force_cols": 2 },
 { "value": "vivo_vivo-y55s", "text": "Vivo Y55s" , "width": 360 , "height": 640 , "force_cols": 2 },
+{ "value": "wink_relay", "text": "Wink Relay" , "width": 480 , "height": 671 , "force_cols": 2 },
 { "value": "xiaomi_mi-3", "text": "Xiaomi Mi 3" , "width": 360 , "height": 640 , "force_cols": 2 },
 { "value": "xiaomi_mi-4", "text": "Xiaomi Mi 4" , "width": 360 , "height": 640 , "force_cols": 2 },
 { "value": "xiaomi_redmi-node5", "text": "Xiaomi Redmi Note 5" , "width": 393 , "height": 786 , "force_cols": 2 },
