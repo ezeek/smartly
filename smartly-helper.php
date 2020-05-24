@@ -86,12 +86,15 @@ $template_nonudge = array(
 
 
 
-
-$smartly_css = array(
+/*
+$smartly_css = ["mods" => [
   "title" => array(), // id and replacement title
   "label" => array(), // id and label to add
   "icon" => array() // each state, icon content code and icon font
-);
+]];
+*/
+
+
 
 // define deliiters used when parsing and building smartly css
 
@@ -383,81 +386,58 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
 
     // BUILDFIELDS
 
-    // LABEL-ENABLED TILE SPECIFIC OPTIONS
-    // if image,video or thermostat, no title replacement is possible because it doesn't exist
+    // DYNAMIC RETREIVE AND BUILD STORAGE FOR FIELDS
 
-    if ($tile['template'] == "images" | $tile['template'] == "video" | $tile['template'] == "thermostat") { 
+    // iterate through all available mods
 
-      // retrieve existing value of label
+    foreach ($mods_enabled['tiletype'] as $mod => $tiletype) {
+      // determine if tiletype is enabled for a particular mod
 
-      $tile_data['label'] = $smartly_data['tiles'][$tile['id']]['label'] ? $smartly_data['tiles'][$tile['id']]['label'] : null;
+      if (in_array($tile_data['template'], $tiletype)) {
+        // tiletype is found enabled for a mod, import existing data or build field with null.
+        $tile_data['mods'][$mod]['value'] = $smartly_data['tiles'][$tile['id']]['mods'][$mod]['value'] ? $smartly_data['tiles'][$tile['id']]['mods'][$mod]['value'] : null;
 
-//      add to smartly_css so it can build the css
-//      $smartly_css['label'][$tile['id']]['label'] = $tile_data['label'];
+        // LEGACY SUPPORT - pre ['mod']
+        $tile_data['mods'][$mod]['value'] = $smartly_data['tiles'][$tile['id']][$mod] ? $smartly_data['tiles'][$tile['id']][$mod] : $tile_data['mods'][$mod]['value'];
 
-    } elseif (!(in_array($tile_data['template'], $template_noconfig)))  {
-
-    // TITLE-ENABLED SPECIFIC OPTIONS
-
-      // retrieve existing title_replacement
-
-      $tile_data['title'] = $smartly_data['tiles'][$tile['id']]['title'] ? $smartly_data['tiles'][$tile['id']]['title'] : null;
-
-      if ($tile_data['title_wrap']) { // legacy support
-        $tile_data['icon_nudge'] = $smartly_data['tiles'][$tile['id']]['title_wrap'] ? $smartly_data['tiles'][$tile['id']]['title_wrap'] : null;
-      } elseif (!(in_array($tile_data['template'], $template_nonudge))) {          
-        $tile_data['icon_nudge'] = $smartly_data['tiles'][$tile['id']]['icon_nudge'] ? $smartly_data['tiles'][$tile['id']]['icon_nudge'] : null;
-      }
-
-//      add to smartly_css so it can build the css
-//      $smartly_css['title'][$tile['id']]['title'] = $tile_data['title'];
-
-    } else {
-
-    // future
-
-    }
-
-    // ATTRIBUTE SPECIFIC OPTIONS
-
-
-    // TILETYPE MODS
-
-    if (in_array($tile_data['template'], $mods['tiletype'])) {
-      foreach ($mods['tiletype'][$tile_data['template']] as $mod) {
-        $tile_data['mods']['tiletype'][$tile_data['template']][$mod]['value'] = $smartly_data['tiles'][$tile['id']]['mods']['tiletype'][$tile_data['template']][$mod]['value'] ? $smartly_data['tiles'][$tile['id']]['mods']['tiletype'][$tile_data['template']][$mod]['value'] : null;
       }
     }
 
+    // SPECIFIC LEGACY FIXES
+
+    // NUDGE
+
+    if (in_array($tile_data['template'], $mods_enabled['tiles']['nudge']))  {
+      if ($tile_data['title_wrap']) {
+        $tile_data['mods']['nudge'] = $smartly_data['tiles'][$tile['id']]['title_wrap'] ? $smartly_data['tiles'][$tile['id']]['title_wrap'] :  $tile_data['nudge'];
+      } elseif ($tile_data['icon_nudge']) { 
+        $tile_data['mods']['nudge'] = $smartly_data['tiles'][$tile['id']]['icon_nudge'] ? $smartly_data['tiles'][$tile['id']]['icon_nudge'] :  $tile_data['nudge'];
+      }
+    }   
+
+    // ATTRIBUTE
 
     if ($tile['template'] == "attribute") {
 
       // DYNAMIC 3RD PARTY ATTRIBUTE MODS
 
+/*
       $templateExtra_vendor = explode('-', $tile_data['templateExtra']);
 
-      if (stripos_array($templateExtra_vendor[0], $mods['3rdparty'])) {
+      if (in_array($templateExtra_vendor[0], $mods['3rdparty'])) {
         foreach ($mods['3rdparty'][$templateExtra_vendor] as $mod) {
+
 $tile_data['mods']['3rdparty'][$templateExtra_vendor][$mod]['value'] = $smartly_data['tiles'][$tile['id']]['mods']['3rdparty'][$templateExtra_vendor][$mod]['value'] ? $smartly_data['tiles'][$tile['id']]['mods']['3rdparty'][$templateExtra_vendor][$mod]['value'] : null;
         }
       }
+*/
 
-      // LEGACY ATTRIBUTE MODS
-
-      $tile_data['mods']['tiletype']['attribute']['unit'] = $smartly_data['tiles'][$tile['id']]['attribute']['unit'] ? $smartly_data['tiles'][$tile['id']]['attribute']['unit'] : $tile_data['mods']['tiletype']['attribute']['unit']['value'];
-      $tile_data['mods']['tiletype']['attribute']['numeric'] = $smartly_data['tiles'][$tile['id']]['attribute']['numeric'] ? $smartly_data['tiles'][$tile['id']]['attribute']['numeric'] : $tile_data['mods']['tiletype']['attribute']['numeric']['value'];
+      $tile_data['mods']['unit'] = $smartly_data['tiles'][$tile['id']]['attribute']['unit'] ? $smartly_data['tiles'][$tile['id']]['attribute']['unit'] : $tile_data['mods']['unit'];
+      $tile_data['mods']['numeric'] = $smartly_data['tiles'][$tile['id']]['attribute']['numeric'] ? $smartly_data['tiles'][$tile['id']]['attribute']['numeric'] : $tile_data['mods']['numeric'];
     }
 
 
-    // DYNAMIC DASHBOARD MODS
 
-    if (in_array($tile_data['template'], $template_zoomable))  {
-      // retrieve existing value of label
-
-      $tile_data['attribute']['unit'] = $smartly_data['tiles'][$tile['id']]['attribute']['unit'] ? $smartly_data['tiles'][$tile['id']]['attribute']['unit'] : null;
-      $tile_data['attribute']['numeric'] = $smartly_data['tiles'][$tile['id']]['attribute']['numeric'] ? $smartly_data['tiles'][$tile['id']]['attribute']['numeric'] : null;
-
-    }
 
 
 // TODO: to make scalable, this should probably be based on a case statement, based on template type.
@@ -662,191 +642,32 @@ Add your custom CSS in the space below.. */
 
 function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css = null, $skin_css = null, $user_css = null, $settings = array()) {
 
+  $mods_repo = $GLOBALS['mods_repo'];
+  $mods_enabled = $GLOBALS['mods_enabled'];
   $inputJSON = $GLOBALS['inputJSON'];
+  $fontsize_calc = strval($settings['fontSize'] * 1.5) . "px";
+  $fontsize_calc_lg = strval($settings['fontSize'] * 1.75) . "px";
 
-  // parse through all smartly data and build necessary "auto" CSS
   foreach ($smartly_tiles as $smart_id => $smart_data) {
 
-    if ($smart_data['title'] != "") {
+    foreach ($mods_enabled['tiletype'] as $mod => $tiletype) {
+      if (in_array($smart_data['template'], $tiletype)) {  
 
-      // if title will fit on one line, no need to wrap the space allocated for the new title // HACKYHACK
-      $icon_nudge = $smart_data['icon_nudge'] == true? "" : "white-space: nowrap;"; // default
-      $icon_nudge_hz = $smart_data['icon_nudge'] == true? "margin-right: 0px;" : "margin-right: -5px;"; // illuminance
-      $icon_nudge_hz_2 = $smart_data['icon_nudge'] == true? "margin-right: 5px;" : "margin-right: 0px;"; // attribute
+        $token_repacements = array(
+          '[tile_id]' => $smart_id,
+          '[value]' => $smart_data['mods'][$mod],
+          '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
+          '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px"
+        ); 
 
-      // TODO: allow html instead of escaping all characters
-      $title_replacement = addslashes($smart_data['title']);
-      $fontsize_calc = strval($settings['fontSize'] * 1.5) . "px;";
-
-
-      // TITLE-DISABLED TYPE SPECIFIC CSS BUILDS
-
-      switch ($smart_data['template']) {
-
-        case 'dashboard':
-
-          $smartly_css['title'][] = <<<EOF
-
-#tile-$smart_id .tile-primary {
-        font-size: 0 !important;
-        color: transparent;
-}
-
-#tile-$smart_id .tile-primary:after {
-        color: black;
-        content: "$title_replacement";
-        margin-left: 5px;
-        font-size: $fontsize_calc
-}
-
-#tile-$smart_id .tile-primary:before {
-        color: black;
-        font-size: $fontsize_calc
-}
-
-EOF;
-            break;
-
-        default:
-
-          // using css optimizer downstream, redundant is fine
-          $smartly_css['title'][] = <<<EOF
-
-#tile-$smart_id .tile-title {
-        visibility: hidden;
-        $icon_nudge
-}
-
-#tile-$smart_id .tile-title:after {
-        content: "$title_replacement";
-        visibility: visible;
-        position: absolute;
-        left: 0;
-        padding: .5em .5em 3px .5em;
-        width: 100%;
-        top: 0;
-}
-
-EOF;
-            break;
-
-      } // template case
-
-    } else { // if tile uses TITLE replacement
-
-      // even though we aren't doing a title replacement, 'icon nudge' should still
-      // do something to help.
-   
-      if ($smart_data['icon_nudge'] == true) {
-
-        $smartly_css['icon'][] = <<<EOF
-
-#tile-$smart_id .tile-primary i.material-icons {
-    padding-top: 5px;
-    margin-bottom: 0px;
-}
-
-EOF;
-        
+        // check if the mod has tiletype specific css and if not, use default css.  do token replacements as needed.
+        $smartly_css['mods'][$mod][] = str_replace(array_keys($token_replacements), $token_replacements, 
+          $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] ? $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] : $mods_repo['tiletype'][$mod]['css']['default']
+        );
       }
-    }
+    } 
 
-
-    // LABEL-ENABLED TILE CSS
-
-    if ($smart_data['label'] != "") {
-
-      // TODO: allow html instead of escaping all characters
-      $label = addslashes($smart_data['label']);
-
-      switch ($smart_data['template']) {
-
-        case 'thermostat':
-
-        // using css optimizer downstream, redundant is fine
-        $smartly_css['label'][] = <<<EOF
-
-#tile-$smart_id>.absolute.bottom-0 {
-    visibility: hidden;
-}
-
-#tile-$smart_id>.absolute.bottom-0:after {
-    visibility: visible;
-    content: "$label";
-    position: absolute;
-    left: 0;
-    white-space: nowrap;
-    width: 100%;
-    text-align: center;
-}
-
-EOF;
-          break;
-
-        default:
-
-        // using css optimizer downstream, redundant is fine
-        $smartly_css['label'][] = <<<EOF
-
-#tile-$smart_id .inset-auto:after {
-    content: "$label";
-    position: absolute;
-    font-size: 1.5em;
-    text-shadow: 2px 2px rgba(0,0,0,.7);
-    padding: .5em;
-    left: 0;
-    width: 100%;
-    text-align: left;
-    line-height: 1em;
-    background-color: rgba(0,0,0,.3);
-    padding-left: .5em;
-}
-
-EOF;
-          break;
-
-      }
-    }
-
-
-    // ALL OTHER TILE CSS
-
-    if ($smart_data['mods']['tiletype']['attribute']['unit'] != "") {
-
-      // TODO: allow html instead of escaping all characters
-      $unit = addslashes($smart_data['mods']['tiletype']['attribute']['unit']);
-
-
-      // using css optimizer downstream, redundant is fine
-      $smartly_css['mods']['tiletype']['attribute']['unit'][] = <<<EOF
-
-#tile-$smart_id .tile-primary:after {
-    content: " $unit";
-    font-size: 50%;
-}
-
-EOF;
-
-    }
-
-    if ($smart_data['mods']['tiletype']['attribute']['numeric'] == true) {
-
-      $bump_fontsize = strval($inputJSON['fontSize'] * 1.75) . "px";
-
-      // using css optimizer downstream, redundant is fine
-      $smartly_css['mods']['tiletype']['attribute']['numeric'][] = <<<EOF
-
-#tile-$smart_id .tile-primary {
-    font-size: $bump_fontsize !important;
-}
-
-EOF;
-
-    }
-
-
-    // ICON-ENABLED TILE CSS
-
+    // check if tile has icon functionality (by checking if it has states)
     if ($smart_data['states']) {
 
       foreach ($smart_data['states'] as $state_name => $state_data) { //$state_code) {
@@ -854,119 +675,32 @@ EOF;
         $icon_class = str_replace("_", ".", $state_data['class']);
         $state_name = str_replace("_", ".", $state_name);
 
+        $token_repacements = array(
+          '[tile_id]' => $smart_id,
+          '[value]' => $icon_code,
+          '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
+          '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
+          '[state]' => $state_name,
+          '[class]' => $icon_class
+        );
+
+        // icon is selected
+
         if (strlen($state_data['code']) > 0) {
 
-          switch ($smart_data['template']) {
+          // if specific css exists for this tiletype, use it, otherwise use the default css.
+          $processed_css =  $mods_repo['tiletype']['icon']['css'][$smart_data['template']] ? $mods_repo['tiletype']['icon']['css'][$smart_data['template']] : $mods_repo['tiletype']['icon']['css']['default'];
 
-            case 'bulb-color':
-              $smartly_css['icon'][] = <<<EOF
+          // look for and replace 'fixup' tokens with their specific fixup css
+          preg_match_all('/\[fixup-(.*)\]/',  $processed_css, $fixup_matches, PREG_SET_ORDER);
 
-#tile-$smart_id .tile-primary i.material-icons.$icon_class {
-    visibility: hidden;
-}
-
-#tile-$smart_id .tile-primary i.material-icons.$icon_class:after {
-    content: "\\$icon_code";
-    font-family: "Material Design Icons" !important;
-    visibility: hidden;
-}
-
-#tile-$smart_id .tile-primary i.material-icons.$icon_class:before {
-    content: "\\$icon_code";
-    font-family: "Material Design Icons" !important;
-    visibility: visible;
-    position: absolute;
-    left:0;
-    right:0;
-}
-
-EOF;
-              break;
-
-            case 'buttons':
-              $smartly_css['icon'][] = <<<EOF
-
-#tile-$smart_id .tile-primary i.material-icons {
-    visibility: hidden;
-}
-
-#tile-$smart_id .tile-primary i.material-icons:after {
-    content: "\\$icon_code";
-    font-family: "Material Design Icons" !important;
-    visibility: hidden;
-}
-
-#tile-$smart_id .tile-primary i.material-icons:before {
-    content: "\\$icon_code";
-    font-family: "Material Design Icons" !important;
-    visibility: visible;
-    position: absolute;
-    left:0;
-    right:0;
-}
-
-EOF;
-              break;
-
-            case 'temperature':
-            case 'humidity':
-            case 'energy':
-            case 'illuminance':
-              $smartly_css['icon'][] = <<<EOF
-
-#tile-$smart_id .tile-primary:before {
-    content: "\\$icon_code";
-    font-family: "Material Design Icons" !important;
-    opacity: .7;
-    display: inline-block;
-    $icon_nudge_hz
-}
-
-EOF;
-              break;
-
-            case 'dashboard':
-            case 'attribute':
-              $smartly_css['icon'][] = <<<EOF
-
-#tile-$smart_id .tile-primary:before {
-    content: "\\$icon_code";
-    font-family: "Material Design Icons" !important;
-    opacity: .7;
-    display: inline-block;
-    $icon_nudge_hz_2
-}
-
-EOF;
-              break;
-
-            default:
-
-              $smartly_css['icon'][] = <<<EOF
-
-#tile-$smart_id .tile-primary.$state_name i.material-icons {
-    visibility: hidden;
-}
-
-#tile-$smart_id .tile-primary.$state_name i.material-icons:after {
-    content: "\\$icon_code";
-    font-family: "Material Design Icons" !important;
-    visibility: hidden;
-}
-
-#tile-$smart_id .tile-primary.$state_name i.material-icons:before {
-    content: "\\$icon_code";
-    font-family: "Material Design Icons" !important;
-    visibility: visible;
-    position: absolute;
-    left:0;
-    right:0;
-}
-
-EOF;
-              break;
-
+          // add to the token replacement array
+          foreach ($fixup_matches as $index => $match) {
+            $token_replacements[$match[0]] = $mods_repo['tiletype'][$match[1]]['css']['fixup']['icon'];
           }
+
+          // check if the mod has tiletype specific css and if not, use default css.  do token replacements as needed.
+          $smartly_css['mods']['icon'][] = str_replace(array_keys($token_replacements), $token_replacements, $processed_css);
         }
       }
     }
@@ -1018,36 +752,30 @@ EOF;
   $lb = "\r\n\r\n"; // line break for future use
 
   $optimize = new \CssOptimizer\Css\Optimizer;
-  $optimized_css['title'] =  $optimize->optimizeCss(implode($lb, $smartly_css['title']));
-  $optimized_css['label'] =  $optimize->optimizeCss(implode($lb, $smartly_css['label']));
-  $optimized_css['unit'] =  $optimize->optimizeCss(implode($lb, $smartly_css['attribute']['unit']));
-  $optimized_css['numeric'] =  $optimize->optimizeCss(implode($lb, $smartly_css['attribute']['numeric']));  
-  $optimized_css['icon'] =  $optimize->optimizeCss(implode($lb, $smartly_css['icon']));
-  $optimized_css['calibration'] = $optimize->optimizeCss(implode($lb, $smartly_css['calibration']));
 
-foreach ($smartly_css['template_mods'] as $tile_types) {
-  foreach ($tile_types as $tile_type => $tile_mods) {
-    foreach ($tile_mods as $tile_mod => $tile_css) {
-      $optimized_css[$tile_type . "_" . $tile_mod] = $optimize->optimizeCss(implode($lb, $smartly_css['template'][$tile_type][$tile_mod]));
+  // iterate through individual mods css, optimize 
+  foreach ($smartly_css['mods'] as $mod_name => $mod_css) {
+    foreach ($mod_css as $css) {
+
+      $smartly_mods_css[] = $css;
+
     }
   }
-}
 
-  $smartly_css_flat = array(
+  $optimized_css['mods'] = $optimize->optimizeCss(implode($lb, $smartly_mods_css));
+  $optimized_css['calibration'] = $optimize->optimizeCss(implode($lb, $smartly_css['calibration']));
+
+  $smartly_css_flat = [
     $delimiters['base'],
     trim($base_css),
     $delimiters['skin'],
     trim($skin_css),
     $delimiters['auto'],
-    $optimized_css['title'],
-    $optimized_css['label'],
-    $optimized_css['unit'],
-    $optimized_css['numeric'],
-    $optimized_css['icon'],
+    $optimized_css['mods'],
     $optimized_css['calibration'],
     $delimiters['user'],
     $user_css
-  );
+  ];
 
   $smartly_css_flat = implode($lb, array_filter($smartly_css_flat));
 

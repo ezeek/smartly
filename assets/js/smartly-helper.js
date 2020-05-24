@@ -1,10 +1,17 @@
 // allow access within functions
 var smartlyDATA = '';
 var hubitatJSON = '';
+var smartlyMODS = [];
 
-var debug = '';
+var debug = true;
 
 $(document).ready(function() {
+
+  // retrieve smartly_mods from json
+  $.getJSON("assets/data/smartly_mods.json", function(data) {
+    smartlyMODS = data;
+  });
+
 
   $("#update_colors").prop("disabled", true);
   $("#update_css").prop("disabled", true);
@@ -237,9 +244,8 @@ function smartly_restart() {
  */
 
 function smartly_editor(tile_id) {
-
   var editor = $('#smartly_editor');
-
+console.log(smartlyMODS, "INSIDE");
   if (!(tile_id) && (tile_id !== 0)) {
 
     if (debug) { console.log("no tile id sent!"); }
@@ -254,7 +260,7 @@ function smartly_editor(tile_id) {
   } else { // if editing a specific tile
 
     var data = smartlyDATA['tiles'][tile_id];
-
+console.log(data);
     // open the editor modal
     $("#smartly_modal").modal();
     var modal_label = $("#modalLabel");
@@ -267,11 +273,69 @@ function smartly_editor(tile_id) {
     editor.append('<input type="hidden" id="smart_edit_id" name="smart_edit_id" value="' + tile_id + '">');
 
 
+    // iterate through all available tiletype mods, creating form html if activated.
+    $.each(Object.getOwnPropertyNames(smartlyMODS.tiletype), function (index, mod) {
+//                    arrItems.push(value);       // Push the value inside the array.
+
+      if (typeof data.mods[mod] !== 'undefined') {
+
+//      console.log(data.mods[value], "FOUND");
+
+
+      console.log(smartlyMODS.tiletype[mod], "MATCHED OPTIONS");
+
+
+
+
+      // retrieve and process value for specific input type
+      var formValue = '';
+
+      switch(smartlyMODS.tiletype[mod].type) {
+        case checkbox:
+
+          if (data.mods[mod].value === true) {
+            formValue = ' value="' + mod + '" checked';
+          } else {
+            formValue = ' value="' + mod + '"';
+          }
+          break;
+
+        default:
+
+          formValue = data.mods[mod].value ? data.mods[mod].value : '';
+      }
+
+      // retrieve helptext if it exists for tiletype, else default if exists.
+      var helpText = '';
+
+      if (typeof smartlyMODS.tiletype[mod].text === 'undefined') {
+        helpText = "NO TEXT";
+      } else if (typeof smartlyMODS.tiletype[mod].text[data.template] !== 'undefined') {
+        helpText = "FOUND SPECIFIC TEXT";
+      } else if (typeof smartlyMODS.tiletype[mod].text['default'] !== 'undefined') {
+        helpText = "FOUND DEFAULT TEXT"
+      }
+
+      var html = '<div class="form-group row"><label class="col-4 col-form-label" for="title">' + smartlyMODS.tiletype[mod].label + '</label><div class="col-8">';
+      html += '<input id="smart_edit_' + mod + '" name="smart_edit_' + mod + '" type="' + smartlyMODS.tiletype[mod].type + '" class="form-control" aria-describedby="' + mod + 'HelpBlock"' + formValue + '><span id="' + mod + 'HelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
+
+console.log(html);
+      
+
+
+
+
+
+      }
+
+    });
+
+
     // TITLE REPLACEMENT
 
-    if (typeof data.title !== 'undefined') {
+    if (typeof data.mods.title !== 'undefined') {
 
-      var title = data.title ? data.title : '';
+      var title = data.mods.title.value ? data.mods.title.value : '';
       //console.log(data.tile_wrap, tile_id + " : TITLEWRAP");
 
       editor.append('  <div class="form-group row">    <label class="col-4 col-form-label" for="title">Title replacement</label>     <div class="col-8">      <input id="smart_edit_title" name="smart_edit_title" type="text" class="form-control" aria-describedby="titleHelpBlock" value="' + title + '">   </div>  </div>');
@@ -281,44 +345,41 @@ function smartly_editor(tile_id) {
   
     // LABEL REPLACEMENT
 
-    if (typeof data.label !== 'undefined') { 
+    if (typeof data.mods.label !== 'undefined') { 
 
-      var label = data.label ? data.label : '';
+      var label = data.mods.label.value ? data.mods.label.value : '';
       editor.append(' <div class="form-group row">    <label for="label" class="col-4 col-form-label">Add/Replace Label</label>     <div class="col-8">      <input id="smart_edit_label" name="smart_edit_label" type="text" class="form-control" aria-describedby="labelHelpBlock" value="' + label + '">       <span id="labelHelpBlock" class="form-text text-muted">For image and video tiles, this will add a highly visible label.  For others this will replace the existing label.</span>    </div>  </div> ');
     }
 
+      // ICON NUDGE 
+
+      if (typeof data.mods.nudge !== 'undefined') {
+        var iconnudge = data.mods.nudge.value === true ? 'checked' : '';
+        editor.append('<div class="form-group row">    <label class="col-4">Icon Nudge</label>     <div class="col-8">      <div class="custom-control custom-checkbox custom-control-inline">        <input name="smart_edit_iconnudge" id="smart_edit_iconnudge" type="checkbox" class="custom-control-input" value="icon_nudge" ' + iconnudge + '>         <label for="smart_edit_iconnudge" class="custom-control-label">Nudge the icon to give it more space..</label>      </div>   </div>  </div>');
+
+      }
 
     // UNIT ADDITON 
 
-    if (typeof data.attribute !== 'undefined') {
 
-      if (typeof data.attribute.unit !== 'undefined') {
+      if (typeof data.mods.unit !== 'undefined') {
 
-        var unit = data.attribute.unit ? data.attribute.unit : '';
+        var unit = data.mods.unit.value ? data.mods.unit.value : '';
         editor.append(' <div class="form-group row">    <label for="label" class="col-4 col-form-label">Add Custom Unit text</label>     <div class="col-8">      <input id="smart_edit_unit" name="smart_edit_unit" type="text" class="form-control" aria-describedby="labelHelpBlock" value="' + unit + '">       <span id="labelHelpBlock" class="form-text text-muted">For attribute tiles, this will add your custom unit label immediately after the tile value.</span>    </div>  </div> ');
       }
 
-      if (typeof data.attribute.numeric !== 'undefined') {
+      if (typeof data.mods.numeric !== 'undefined') {
 
-        var numeric = data.attribute.numeric === true ? 'checked' : '';
+        var numeric = data.mods.numeric.value === true ? 'checked' : '';
 
         editor.append('<div class="form-group row">    <label class="col-4">Increase Font Size</label>     <div class="col-8">      <div class="custom-control custom-checkbox custom-control-inline">        <input name="smart_edit_numeric" id="smart_edit_numeric" type="checkbox" class="custom-control-input" value="numeric" ' + numeric + '>         <label for="smart_edit_numeric" class="custom-control-label">This is normally used to increase attribute tile font size to match temperature, humidity and other numeric-based tile types.</label>      </div>   </div>  </div>');
 
       }
-    }
 
 
     // STATE ICONS
 
     if (data.states) {
-
-      // ICON NUDGE 
-
-      if (typeof data.icon_nudge !== 'undefined') {
-        var iconnudge = data.icon_nudge === true ? 'checked' : '';
-        editor.append('<div class="form-group row">    <label class="col-4">Icon Nudge</label>     <div class="col-8">      <div class="custom-control custom-checkbox custom-control-inline">        <input name="smart_edit_iconnudge" id="smart_edit_iconnudge" type="checkbox" class="custom-control-input" value="icon_nudge" ' + iconnudge + '>         <label for="smart_edit_iconnudge" class="custom-control-label">Nudge the icon to give it more space..</label>      </div>   </div>  </div>');
-
-      }
 
       // ICON REPLACEMENT
 
