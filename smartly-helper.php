@@ -400,6 +400,10 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
         // LEGACY SUPPORT - pre ['mod']
         $tile_data['mods'][$mod]['value'] = $smartly_data['tiles'][$tile['id']][$mod] ? $smartly_data['tiles'][$tile['id']][$mod] : $tile_data['mods'][$mod]['value'];
 
+        foreach ($mods_repo['tiletype'][$mod]['modifiers'] as $modifier_name => $modifier_data) {
+          $tile_data['mods'][$mod]['modifier'][$modifier_name]['value'] = $smartly_data['tiles'][$tile['id']][$mod]['modifier'][$modifier_name]['value'] ? null;
+        }
+
       }
     }
 
@@ -651,19 +655,20 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
   foreach ($smartly_tiles as $smart_id => $smart_data) {
 
     foreach ($mods_enabled['tiletype'] as $mod => $tiletype) {
-      if (in_array($smart_data['template'], $tiletype)) {  
+      if (in_array($smart_data['template'], $tiletype) && $smart_data['mods'][$mod]['value']) {  
 
-        $token_repacements = array(
+        $token_replacements = array(
           '[tile_id]' => $smart_id,
-          '[value]' => $smart_data['mods'][$mod],
+          '[value]' => $smart_data['mods'][$mod]['value'],
           '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
-          '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px"
+          '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
+          '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
         ); 
 
+        $css = $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] ? $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] : $mods_repo['tiletype'][$mod]['css']['default'];
+
         // check if the mod has tiletype specific css and if not, use default css.  do token replacements as needed.
-        $smartly_css['mods'][$mod][] = str_replace(array_keys($token_replacements), $token_replacements, 
-          $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] ? $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] : $mods_repo['tiletype'][$mod]['css']['default']
-        );
+        $smartly_css['mods'][$mod][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
       }
     } 
 
@@ -675,7 +680,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
         $icon_class = str_replace("_", ".", $state_data['class']);
         $state_name = str_replace("_", ".", $state_name);
 
-        $token_repacements = array(
+        $token_replacements = array(
           '[tile_id]' => $smart_id,
           '[value]' => $icon_code,
           '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",

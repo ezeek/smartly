@@ -501,7 +501,7 @@ $mods_repo['tiletype']['numeric']['text']['default'] = "This is normally used to
 $mods_repo['tiletype']['numeric']['type'] = 'checkbox';
 $mods_repo['tiletype']['numeric']['css']['default'] = <<<EOF
 #tile-[tile_id] .tile-primary {
-    font-size: [fontsize_calc_lg !important;
+    font-size: [fontsize_calc_lg] !important;
 }
 
 EOF;
@@ -537,7 +537,7 @@ $mods_repo['tiletype']['zoomable']['css']['thermostat'] = <<<EOF
 
 #tile-[tile_id]>.flex.items-stretch {
     zoom: [value];
-    padding-top: [padding-calc];
+    padding-top: [padding_calc];
 }
 
 EOF;
@@ -560,6 +560,15 @@ EOF;
 
 $mods_repo['tiletype']['buttonize']['label'] = "Buttonize!";
 $mods_repo['tiletype']['buttonize']['type'] = 'checkbox';
+$mods_repo['tiletype']['buttonize']['modifier']['icon_only']['label'] = "Icon only";
+$mods_repo['tiletype']['buttonize']['modifier']['icon_only']['type'] = 'checkbox';
+$mods_repo['tiletype']['buttonize']['modifier']['icon_only']['text']['default'] = 'Hide the text, only show the icon.';
+$mods_repo['tiletype']['buttonize']['modifier']['icon_only']['css']['checked']['default'] = <<<EOF
+#tile-[tile_id] .material-icons::before,
+#tile-[tile_id] .material-icons::after {
+  color: green;
+}
+EOF;
 $mods_repo['tiletype']['buttonize']['text']['default'] = 'Change the layout of this tile to be more button-like.';
 $mods_repo['tiletype']['buttonize']['text']['dashboard'] = 'Change the layout of this Dashboard Link to be a stacked large icon and small text.';
 $mods_repo['tiletype']['buttonize']['css']['default'] = <<<EOF
@@ -574,7 +583,8 @@ $mods_repo['tiletype']['buttonize']['css']['dashboard'] = <<<EOF
 }
 
 #tile-[tile_id] .tile-primary {
-    /* visibility: hidden; */
+    visibility: hidden;
+    line-height: 1.2em;
 }
 
 #tile-[tile_id] .tile-primary:before {
@@ -588,7 +598,7 @@ $mods_repo['tiletype']['buttonize']['css']['dashboard'] = <<<EOF
     font-size: 18px;
     margin-left: 0px;
     line-height: 1.2em;
-    /* display: none; */
+     display: none; 
 }
 
 EOF;

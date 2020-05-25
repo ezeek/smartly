@@ -260,7 +260,7 @@ console.log(smartlyMODS, "INSIDE");
   } else { // if editing a specific tile
 
     var data = smartlyDATA['tiles'][tile_id];
-console.log(data);
+
     // open the editor modal
     $("#smartly_modal").modal();
     var modal_label = $("#modalLabel");
@@ -272,65 +272,58 @@ console.log(data);
     editor.empty();
     editor.append('<input type="hidden" id="smart_edit_id" name="smart_edit_id" value="' + tile_id + '">');
 
-
     // iterate through all available tiletype mods, creating form html if activated.
     $.each(Object.getOwnPropertyNames(smartlyMODS.tiletype), function (index, mod) {
-//                    arrItems.push(value);       // Push the value inside the array.
 
       if (typeof data.mods[mod] !== 'undefined') {
 
-//      console.log(data.mods[value], "FOUND");
+        // retrieve and process value for specific input type
+        var formValue = '';
+        var formInsert = '';
 
+        var helpText = '';
+        var labelText = '';
 
-      console.log(smartlyMODS.tiletype[mod], "MATCHED OPTIONS");
+        var formHtml = '';
 
+        if (typeof smartlyMODS.tiletype[mod].text !== 'undefined') {
 
-
-
-      // retrieve and process value for specific input type
-      var formValue = '';
-
-      switch(smartlyMODS.tiletype[mod].type) {
-        case checkbox:
-
-          if (data.mods[mod].value === true) {
-            formValue = ' value="' + mod + '" checked';
-          } else {
-            formValue = ' value="' + mod + '"';
+          if (typeof smartlyMODS.tiletype[mod].text[data.template] !== 'undefined') {
+            helpText = smartlyMODS.tiletype[mod].text[data.template];
+          } else if (typeof smartlyMODS.tiletype[mod].text['default'] !== 'undefined') {
+            helpText = smartlyMODS.tiletype[mod].text['default'];
           }
-          break;
+        }
 
-        default:
+        switch(smartlyMODS.tiletype[mod].type) {
+          case 'checkbox':
 
-          formValue = data.mods[mod].value ? data.mods[mod].value : '';
-      }
+            if (data.mods[mod].value === true) {
+              formValue = 'checked';
+            } 
 
-      // retrieve helptext if it exists for tiletype, else default if exists.
-      var helpText = '';
+            formHtml = '<div class="form-group row"><label class="col-4">' + smartlyMODS.tiletype[mod].label + '</label><div class="col-8"><div class="custom-control custom-checkbox custom-control-inline"><input name="smart_edit_' + mod + '" id="smart_edit_' + mod + '" type="checkbox" class="custom-control-input" value="' + mod + '" ' + formValue + '>         <label for="smart_edit_' + mod + '" class="custom-control-label">' + helpText + '</label></div></div></div>';
 
-      if (typeof smartlyMODS.tiletype[mod].text === 'undefined') {
-        helpText = "NO TEXT";
-      } else if (typeof smartlyMODS.tiletype[mod].text[data.template] !== 'undefined') {
-        helpText = "FOUND SPECIFIC TEXT";
-      } else if (typeof smartlyMODS.tiletype[mod].text['default'] !== 'undefined') {
-        helpText = "FOUND DEFAULT TEXT"
-      }
+            break;
 
-      var html = '<div class="form-group row"><label class="col-4 col-form-label" for="title">' + smartlyMODS.tiletype[mod].label + '</label><div class="col-8">';
-      html += '<input id="smart_edit_' + mod + '" name="smart_edit_' + mod + '" type="' + smartlyMODS.tiletype[mod].type + '" class="form-control" aria-describedby="' + mod + 'HelpBlock"' + formValue + '><span id="' + mod + 'HelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
+          default:
 
-console.log(html);
-      
+            formValue = data.mods[mod].value ? data.mods[mod].value : '';
+
+            formHtml = '<div class="form-group row"><label class="col-4 col-form-label" for="title">' + smartlyMODS.tiletype[mod].label + '</label><div class="col-8">';
+            formHtml += '<input id="smart_edit_' + mod + '" name="smart_edit_' + mod + '" type="' + smartlyMODS.tiletype[mod].type + '" class="form-control" aria-describedby="' + mod + 'HelpBlock" value="' + formValue + '" ' + formInsert + '><span id="' + mod + 'HelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
 
 
+        } // switch
 
-
+editor.append(formHtml);
 
       }
 
     });
 
 
+/*
     // TITLE REPLACEMENT
 
     if (typeof data.mods.title !== 'undefined') {
@@ -375,7 +368,7 @@ console.log(html);
         editor.append('<div class="form-group row">    <label class="col-4">Increase Font Size</label>     <div class="col-8">      <div class="custom-control custom-checkbox custom-control-inline">        <input name="smart_edit_numeric" id="smart_edit_numeric" type="checkbox" class="custom-control-input" value="numeric" ' + numeric + '>         <label for="smart_edit_numeric" class="custom-control-label">This is normally used to increase attribute tile font size to match temperature, humidity and other numeric-based tile types.</label>      </div>   </div>  </div>');
 
       }
-
+*/
 
     // STATE ICONS
 
@@ -521,61 +514,41 @@ function smartly_update() {
     'display': 'unset'
   });
 
+
   if ($("#smart_edit_id").val()) {
     var smart_id = $("#smart_edit_id").val();
 
-    // SAVE TITLE
+    // iterate through all available tiletype mods, check if they are being used and if so, save their values.
+    $.each(Object.getOwnPropertyNames(smartlyMODS.tiletype), function (index, mod) {
 
-    if ($("#smart_edit_title").val()) {
-      if (debug) { console.log("SMART_EDIT_TITLE PRESENT"); }
-      smartlyDATA['tiles'][smart_id]['title'] = $("#smart_edit_title").val();
-    } else {
-      if ($("#smart_edit_title").length) {
-        smartlyDATA['tiles'][smart_id]['title'] = null;
+      if ($("#smart_edit_" + mod).length) {
+        switch(smartlyMODS.tiletype[mod].type) {
+          case 'checkbox':
+  
+            if ($("#smart_edit_" + mod).is(":checked")) {
+              if (debug) { console.log("SMART_EDIT_" + mod  + " PRESENT"); }
+              smartlyDATA['tiles'][smart_id]['mods'][mod]['value'] = true;
+            } else {
+              console.log(smartlyDATA['tiles'][smart_id]['mods'], "smartlyDATA['tiles'][" + smart_id + "]['mods'][" + mod + "]['value']");
+              smartlyDATA['tiles'][smart_id]['mods'][mod]['value'] = null;
+            }
+
+            break;
+
+          default:
+
+            if ($("#smart_edit_" + mod).val()) {
+              if (debug) { console.log("SMART_EDIT_TITLE PRESENT"); }
+              smartlyDATA['tiles'][smart_id]['mods'][mod]['value'] = $("#smart_edit_" + mod).val();
+            } else {
+              if ($("#smart_edit_" + mod).length) {
+                smartlyDATA['tiles'][smart_id]['mods'][mod]['value'] = null;
+              }
+            }
+          // switch
+        }
       }
-    }
-
-    // SAVE ICON NUDGE
-
-    if ($("#smart_edit_iconnudge").is(":checked")) {
-      if (debug) { console.log("SMART_EDIT_TITLEWRAP PRESENT"); }
-      smartlyDATA['tiles'][smart_id]['icon_nudge'] = true;
-    } else {
-      smartlyDATA['tiles'][smart_id]['icon_nudge'] = false;
-    }
-
-    // SAVE LABEL
-
-    if ($("#smart_edit_label").val()) {
-      if (debug) { console.log("SMART_EDIT_LABEL PRESENT"); }
-      smartlyDATA['tiles'][smart_id]['label'] = $("#smart_edit_label").val();
-    } else {
-      if ($("#smart_edit_label").length) {
-        smartlyDATA['tiles'][smart_id]['label'] = null;
-      }
-    }
-
-    // SAVE UNIT
-
-    if ($("#smart_edit_unit").val()) {
-      if (debug) { console.log("SMART_EDIT_UNIT PRESENT"); }
-      smartlyDATA['tiles'][smart_id]['attribute']['unit'] = $("#smart_edit_unit").val();
-    } else {
-      if ($("#smart_edit_unit").length) {
-        smartlyDATA['tiles'][smart_id]['attribute']['unit'] = null;
-      }
-    }
-
-    // SAVE NUMERIC
-
-    if ($("#smart_edit_numeric").val()) {
-      if ($("#smart_edit_numeric").is(":checked")) {
-        if (debug) { console.log("SMART_EDIT_NUMERIC PRESENT"); }
-        smartlyDATA['tiles'][smart_id]['attribute']['numeric'] = true;
-      } else {
-        smartlyDATA['tiles'][smart_id]['attribute']['numeric'] = false;
-      }
-    }
+    });
 
     // SAVE ICONS
 
