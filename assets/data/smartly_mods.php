@@ -2,21 +2,62 @@
 
 // TODO: pull from a separate 'mods' repo 
 
+$mods_repo = array();
+
+$mods_repo['layout'] = [
+  'tiles' => [
+    'basics' => [
+      'title',
+      'label',
+      'unit',
+      'numeric'
+    ],
+    'icons' => [
+      'icon',
+      'nudge'
+    ],
+    'mods' => [
+      'zoomable',
+      'buttonize',
+      ''
+    ],
+    'color' => [
+      'color_bg',
+      'color_fg',
+      'border_size',
+      'border_color'
+    ]
+  ],
+  'dashboard' => [
+    'basics' => [
+      'calibration',
+      'zoomy'
+    ],
+    'mods' => [
+      ''
+    ]
+  ]
+];
+
+
+
 $mods_enabled = array();
+
 
 $mods_enabled['dashboard']['header'] = true;
 $mods_enabled['dashboard']['colorcoding']['temperature'] = true;
 $mods_enabled['dashboard']['colorcoding']['humidity'] = true;
 $mods_enabled['dashboard']['colorcoding']['battery'] = true;
 
-$mods_enabled['tiletype']['zoomable'] = ['clock', 'clock-analog', 'clock-date', 'thermostat'];
+$mods_enabled['tiletype']['zoomable'] = ['attribute', 'battery', 'clock', 'clock-analog', 'clock-date', 'thermostat', 'water'];
 $mods_enabled['tiletype']['unit'] = ['attribute'];
 $mods_enabled['tiletype']['numeric'] = ['attribute'];
-$mods_enabled['tiletype']['buttonize'] = ['button', 'dashboard', 'momentary', 'presence'];
+$mods_enabled['tiletype']['buttonize'] = ['button', 'dashboard', 'momentary', 'presence', 'water'];
 
 $mods_enabled['tiletype']['title'] = [
   'acceleration',
   'attribute',
+  'battery',
   'bulb',
   'bulb-color',
   'buttons',
@@ -105,6 +146,7 @@ $mods_enabled['tiletype']['nudge'] = [
 ];
 
 $mods_enabled['tiletype']['label'] = [
+  'dashboard',
   'image',
   'video',
   'thermostat'
@@ -112,18 +154,9 @@ $mods_enabled['tiletype']['label'] = [
 
 
 
-$mods_layout = [
-  'tiles' => [
-
-
-
-  ]
-];
-
 
 // MODS REPO, to be built in JSON, possibly using foler structure to hold CSS
 
-$mods_repo = array();
 
 $mods_repo['dashboard']['mods']['colorcoding']= '';
 
@@ -518,9 +551,9 @@ $mods_repo['tiletype']['title_color']['css']['default'] = <<<EOF
 }
 EOF;
 
-$mods_repo['tiletype']['zoomable']['label'] = "Largify";
+$mods_repo['tiletype']['zoomable']['label'] = "Zoomable";
 $mods_repo['tiletype']['zoomable']['type'] = 'select';
-$mods_repo['tiletype']['zoomable']['options'] = [1, 1.5, 2, 2.5, 3, 3.5, 4];
+$mods_repo['tiletype']['zoomable']['options'] = ["1" => "1x", "1.5" => "1.5x", "2" => "2x", "2.5" => "2.5x", "3" => "3x", "3.5" => "3.5x", "4" => "4x"];
 $mods_repo['tiletype']['zoomable']['text']['default'] = 'Make everything within the tile x times larger.';
 $mods_repo['tiletype']['zoomable']['text']['thermostat'] = 'Make everything within the thermostat tile x times larger.';
 $mods_repo['tiletype']['zoomable']['text']['attribute'] = 'Make the content of this tile x times larger while keeping the title the same size.';

@@ -1,11 +1,14 @@
 <?php
-include '../data/smartly_mods.php';
+include './assets/data/smartly_mods.php';
 
-echo "1";
-$json = json_encode($mods_repo);
-
-print_r($json);
+$mods = json_encode($mods_repo);
 
 
+$fp = fopen('./assets/data/smartly_mods.json', 'w');
+fwrite($fp, $mods);
+fclose($fp);
+
+
+echo "done\r\n";
 
 ?>

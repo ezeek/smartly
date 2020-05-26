@@ -245,7 +245,7 @@ function smartly_restart() {
 
 function smartly_editor(tile_id) {
   var editor = $('#smartly_editor');
-console.log(smartlyMODS, "INSIDE");
+
   if (!(tile_id) && (tile_id !== 0)) {
 
     if (debug) { console.log("no tile id sent!"); }
@@ -270,11 +270,59 @@ console.log(smartlyMODS, "INSIDE");
     //console.log(smartlyDATA[tile_id],"passed tile_id within smartlyDATA"); 
 
     editor.empty();
+
+console.log(smartlyMODS, "MODS, menu");
+
+
+var layout_sections = '';
+
+    $.each(Object.getOwnPropertyNames(smartlyMODS.layout.tiles), function (index, section) {
+console.log(section, "section");
+layout_sections.section = "FOO";
+});
+
+//layout_sections = "BAR";
+
+console.log(layout_sections,"LAYOUT");
+
+
     editor.append('<input type="hidden" id="smart_edit_id" name="smart_edit_id" value="' + tile_id + '">');
 
+editor.append(`<ul class="nav nav-pills"><li class="nav-item">
+    <a class="nav-link active" data-toggle="pill" href="#basics">basics</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="pill" href="#icons">icons</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="pill" href="#mods">mods</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="pill" href="#color">color</a>
+  </li>
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+  <div class="tab-pane container active" id="home">...</div>
+  <div class="tab-pane container fade" id="menu1">...</div>
+  <div class="tab-pane container fade" id="menu2">...</div>
+</div>
+`);
+
+
+
+
+console.log(smartlyMODS.tiletype, "TILETYPE");
+//console.log(data, "DATA");
     // iterate through all available tiletype mods, creating form html if activated.
+
+
+
     $.each(Object.getOwnPropertyNames(smartlyMODS.tiletype), function (index, mod) {
 
+console.log(data.mods[mod], mod);
+//console.log(data, "DATA");
       if (typeof data.mods[mod] !== 'undefined') {
 
         // retrieve and process value for specific input type
@@ -285,13 +333,24 @@ console.log(smartlyMODS, "INSIDE");
         var labelText = '';
 
         var formHtml = '';
+        var modWrap = false;
+
+//console.log(smartlyMODS.tiletype[mod].text, "TEXT");
+//console.log(smartlyMODS.tiletype[mod].text.default, "TEST DEFAILT");
+        if (typeof smartlyMODS.tiletype[mod].modifier !== 'undefined') {
+
+modWrap = true;
+formHtml+= '<fieldset class="form-group">';
+
+
+        }
 
         if (typeof smartlyMODS.tiletype[mod].text !== 'undefined') {
 
           if (typeof smartlyMODS.tiletype[mod].text[data.template] !== 'undefined') {
             helpText = smartlyMODS.tiletype[mod].text[data.template];
           } else if (typeof smartlyMODS.tiletype[mod].text['default'] !== 'undefined') {
-            helpText = smartlyMODS.tiletype[mod].text['default'];
+            helpText = smartlyMODS.tiletype[mod].text.default;
           }
         }
 
@@ -300,9 +359,29 @@ console.log(smartlyMODS, "INSIDE");
 
             if (data.mods[mod].value === true) {
               formValue = 'checked';
-            } 
+            }
 
-            formHtml = '<div class="form-group row"><label class="col-4">' + smartlyMODS.tiletype[mod].label + '</label><div class="col-8"><div class="custom-control custom-checkbox custom-control-inline"><input name="smart_edit_' + mod + '" id="smart_edit_' + mod + '" type="checkbox" class="custom-control-input" value="' + mod + '" ' + formValue + '>         <label for="smart_edit_' + mod + '" class="custom-control-label">' + helpText + '</label></div></div></div>';
+            formHtml += '<div class="form-group row"><label class="col-4">' + smartlyMODS.tiletype[mod].label + '</label><div class="col-8"><div class="custom-control custom-checkbox custom-control-inline"><input name="smart_edit_' + mod + '" id="smart_edit_' + mod + '" type="checkbox" class="custom-control-input" value="' + mod + '" ' + formValue + '>         <label for="smart_edit_' + mod + '" class="custom-control-label">' + helpText + '</label></div></div></div>';
+
+            break;
+
+          case 'select':
+
+            formHtml += '<div class="form-group row"><label for="select" class="col-4 col-form-label">' + smartlyMODS.tiletype[mod].label + '</label><div class="col-8"><select id="smart_edit_' + mod + '" name="smart_edit_' + mod + '" class="custom-select">';
+
+            for (let [value, name] of Object.entries(smartlyMODS.tiletype[mod]['options'])) {
+              console.log(`${value}: ${name}`);
+
+              formValue = '';
+
+              if (data.mods[mod].value === value) {
+                formValue = 'selected';
+              } 
+
+              formHtml += '<option value="' + value + '" ' + formValue + '>' + name + '</option>';
+            };
+
+            formHtml += '</select><span id="selectHelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
 
             break;
 
@@ -310,15 +389,30 @@ console.log(smartlyMODS, "INSIDE");
 
             formValue = data.mods[mod].value ? data.mods[mod].value : '';
 
-            formHtml = '<div class="form-group row"><label class="col-4 col-form-label" for="title">' + smartlyMODS.tiletype[mod].label + '</label><div class="col-8">';
+            formHtml += '<div class="form-group row"><label class="col-4 col-form-label" for="title">' + smartlyMODS.tiletype[mod].label + '</label><div class="col-8">';
             formHtml += '<input id="smart_edit_' + mod + '" name="smart_edit_' + mod + '" type="' + smartlyMODS.tiletype[mod].type + '" class="form-control" aria-describedby="' + mod + 'HelpBlock" value="' + formValue + '" ' + formInsert + '><span id="' + mod + 'HelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
 
 
         } // switch
 
+
+
+if (modWrap) {
+  formHtml +='</fieldset>';
+}
+
 editor.append(formHtml);
 
-      }
+/*
+console.log(smartlyMODS.tiletype[mod], "MOD");
+if (typeof smartlyMODS.tiletype[mod].modifier === undefined) {
+ } else {
+    $.each(Object.getOwnPropertyNames(smartlyMODS.tiletype[mod].modifier), function (modifier_index, modifier) {
+console.log(modifier, "MODIFIER");
+    });
+}
+*/
+      } // if mod is enabled and active
 
     });
 
