@@ -352,7 +352,8 @@ function smartly_editor(tile_id) {
 
           editor.append(formHtml);
 
-        }); // for mods
+        }; // for mods
+      });
     };
 
     // STATE ICONS
