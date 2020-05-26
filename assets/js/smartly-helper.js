@@ -12,7 +12,6 @@ $(document).ready(function() {
     smartlyMODS = data;
   });
 
-
   $("#update_colors").prop("disabled", true);
   $("#update_css").prop("disabled", true);
   $("#update_settings").prop("disabled", true);
@@ -271,198 +270,90 @@ function smartly_editor(tile_id) {
 
     editor.empty();
 
-console.log(smartlyMODS, "MODS, menu");
-
-
-var layout_sections = '';
-
-    $.each(Object.getOwnPropertyNames(smartlyMODS.layout.tiles), function (index, section) {
-console.log(section, "section");
-layout_sections.section = "FOO";
-});
-
-//layout_sections = "BAR";
-
-console.log(layout_sections,"LAYOUT");
-
-
     editor.append('<input type="hidden" id="smart_edit_id" name="smart_edit_id" value="' + tile_id + '">');
 
-editor.append(`<ul class="nav nav-pills"><li class="nav-item">
-    <a class="nav-link active" data-toggle="pill" href="#basics">basics</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" data-toggle="pill" href="#icons">icons</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" data-toggle="pill" href="#mods">mods</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" data-toggle="pill" href="#color">color</a>
-  </li>
-</ul>
+    for (let [section, mods] of Object.entries(smartlyMODS.layout.tiles)) {
 
-<!-- Tab panes -->
-<div class="tab-content">
-  <div class="tab-pane container active" id="home">...</div>
-  <div class="tab-pane container fade" id="menu1">...</div>
-  <div class="tab-pane container fade" id="menu2">...</div>
-</div>
-`);
+      mods.forEach(function(mod){ 
 
+        if (typeof data.mods[mod] !== 'undefined') {
 
+          console.log(mod + " enabled within " + section, "MOD ACTIVE");
 
+          // retrieve and process value for specific input type
+          var formValue = '';
+          var formInsert = '';
 
-console.log(smartlyMODS.tiletype, "TILETYPE");
-//console.log(data, "DATA");
-    // iterate through all available tiletype mods, creating form html if activated.
+          var helpText = '';
+          var labelText = '';
 
+          var formHtml = '';
+          var modWrap = false;
 
-
-    $.each(Object.getOwnPropertyNames(smartlyMODS.tiletype), function (index, mod) {
-
-console.log(data.mods[mod], mod);
-//console.log(data, "DATA");
-      if (typeof data.mods[mod] !== 'undefined') {
-
-        // retrieve and process value for specific input type
-        var formValue = '';
-        var formInsert = '';
-
-        var helpText = '';
-        var labelText = '';
-
-        var formHtml = '';
-        var modWrap = false;
-
-//console.log(smartlyMODS.tiletype[mod].text, "TEXT");
-//console.log(smartlyMODS.tiletype[mod].text.default, "TEST DEFAILT");
-        if (typeof smartlyMODS.tiletype[mod].modifier !== 'undefined') {
-
-modWrap = true;
-formHtml+= '<fieldset class="form-group">';
-
-
-        }
-
-        if (typeof smartlyMODS.tiletype[mod].text !== 'undefined') {
-
-          if (typeof smartlyMODS.tiletype[mod].text[data.template] !== 'undefined') {
-            helpText = smartlyMODS.tiletype[mod].text[data.template];
-          } else if (typeof smartlyMODS.tiletype[mod].text['default'] !== 'undefined') {
-            helpText = smartlyMODS.tiletype[mod].text.default;
+          if (typeof smartlyMODS.tiletype[mod].modifier !== 'undefined') {
+            modWrap = true;
+            formHtml += '<fieldset class="form-group">';
           }
-        }
 
-        switch(smartlyMODS.tiletype[mod].type) {
-          case 'checkbox':
+          if (typeof smartlyMODS.tiletype[mod].text !== 'undefined') {
 
-            if (data.mods[mod].value === true) {
-              formValue = 'checked';
+            if (typeof smartlyMODS.tiletype[mod].text[data.template] !== 'undefined') {
+              helpText = smartlyMODS.tiletype[mod].text[data.template];
+            } else if (typeof smartlyMODS.tiletype[mod].text['default'] !== 'undefined') {
+              helpText = smartlyMODS.tiletype[mod].text.default;
             }
+          }
 
-            formHtml += '<div class="form-group row"><label class="col-4">' + smartlyMODS.tiletype[mod].label + '</label><div class="col-8"><div class="custom-control custom-checkbox custom-control-inline"><input name="smart_edit_' + mod + '" id="smart_edit_' + mod + '" type="checkbox" class="custom-control-input" value="' + mod + '" ' + formValue + '>         <label for="smart_edit_' + mod + '" class="custom-control-label">' + helpText + '</label></div></div></div>';
+          switch (smartlyMODS.tiletype[mod].type) {
+            case 'checkbox':
 
-            break;
+              if (data.mods[mod].value === true) {
+                formValue = 'checked';
+              }
 
-          case 'select':
+              formHtml += '<div class="form-group row"><label class="col-4">' + smartlyMODS.tiletype[mod].label + '</label><div class="col-8"><div class="custom-control custom-checkbox custom-control-inline"><input name="smart_edit_' + mod + '" id="smart_edit_' + mod + '" type="checkbox" class="custom-control-input" value="' + mod + '" ' + formValue + '>         <label for="smart_edit_' + mod + '" class="custom-control-label">' + helpText + '</label></div></div></div>';
 
-            formHtml += '<div class="form-group row"><label for="select" class="col-4 col-form-label">' + smartlyMODS.tiletype[mod].label + '</label><div class="col-8"><select id="smart_edit_' + mod + '" name="smart_edit_' + mod + '" class="custom-select">';
+              break;
 
-            for (let [value, name] of Object.entries(smartlyMODS.tiletype[mod]['options'])) {
-              console.log(`${value}: ${name}`);
+            case 'select':
 
-              formValue = '';
+              formHtml += '<div class="form-group row"><label for="select" class="col-4 col-form-label">' + smartlyMODS.tiletype[mod].label + '</label><div class="col-8"><select id="smart_edit_' + mod + '" name="smart_edit_' + mod + '" class="custom-select">';
 
-              if (data.mods[mod].value === value) {
-                formValue = 'selected';
-              } 
+              for (let [value, name] of Object.entries(smartlyMODS.tiletype[mod]['options'])) {
+                console.log(`${value}: ${name}`);
 
-              formHtml += '<option value="' + value + '" ' + formValue + '>' + name + '</option>';
-            };
+                formValue = '';
 
-            formHtml += '</select><span id="selectHelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
+                if (data.mods[mod].value === value) {
+                  formValue = 'selected';
+                }
 
-            break;
+                formHtml += '<option value="' + value + '" ' + formValue + '>' + name + '</option>';
+              };
 
-          default:
+              formHtml += '</select><span id="selectHelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
 
-            formValue = data.mods[mod].value ? data.mods[mod].value : '';
+              break;
 
-            formHtml += '<div class="form-group row"><label class="col-4 col-form-label" for="title">' + smartlyMODS.tiletype[mod].label + '</label><div class="col-8">';
-            formHtml += '<input id="smart_edit_' + mod + '" name="smart_edit_' + mod + '" type="' + smartlyMODS.tiletype[mod].type + '" class="form-control" aria-describedby="' + mod + 'HelpBlock" value="' + formValue + '" ' + formInsert + '><span id="' + mod + 'HelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
+            default:
 
+              formValue = data.mods[mod].value ? data.mods[mod].value : '';
 
-        } // switch
-
-
-
-if (modWrap) {
-  formHtml +='</fieldset>';
-}
-
-editor.append(formHtml);
-
-/*
-console.log(smartlyMODS.tiletype[mod], "MOD");
-if (typeof smartlyMODS.tiletype[mod].modifier === undefined) {
- } else {
-    $.each(Object.getOwnPropertyNames(smartlyMODS.tiletype[mod].modifier), function (modifier_index, modifier) {
-console.log(modifier, "MODIFIER");
-    });
-}
-*/
-      } // if mod is enabled and active
-
-    });
+              formHtml += '<div class="form-group row"><label class="col-4 col-form-label" for="title">' + smartlyMODS.tiletype[mod].label + '</label><div class="col-8">';
+              formHtml += '<input id="smart_edit_' + mod + '" name="smart_edit_' + mod + '" type="' + smartlyMODS.tiletype[mod].type + '" class="form-control" aria-describedby="' + mod + 'HelpBlock" value="' + formValue + '" ' + formInsert + '><span id="' + mod + 'HelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
 
 
-/*
-    // TITLE REPLACEMENT
-
-    if (typeof data.mods.title !== 'undefined') {
-
-      var title = data.mods.title.value ? data.mods.title.value : '';
-      //console.log(data.tile_wrap, tile_id + " : TITLEWRAP");
-
-      editor.append('  <div class="form-group row">    <label class="col-4 col-form-label" for="title">Title replacement</label>     <div class="col-8">      <input id="smart_edit_title" name="smart_edit_title" type="text" class="form-control" aria-describedby="titleHelpBlock" value="' + title + '">   </div>  </div>');
-
-    }
-
-  
-    // LABEL REPLACEMENT
-
-    if (typeof data.mods.label !== 'undefined') { 
-
-      var label = data.mods.label.value ? data.mods.label.value : '';
-      editor.append(' <div class="form-group row">    <label for="label" class="col-4 col-form-label">Add/Replace Label</label>     <div class="col-8">      <input id="smart_edit_label" name="smart_edit_label" type="text" class="form-control" aria-describedby="labelHelpBlock" value="' + label + '">       <span id="labelHelpBlock" class="form-text text-muted">For image and video tiles, this will add a highly visible label.  For others this will replace the existing label.</span>    </div>  </div> ');
-    }
-
-      // ICON NUDGE 
-
-      if (typeof data.mods.nudge !== 'undefined') {
-        var iconnudge = data.mods.nudge.value === true ? 'checked' : '';
-        editor.append('<div class="form-group row">    <label class="col-4">Icon Nudge</label>     <div class="col-8">      <div class="custom-control custom-checkbox custom-control-inline">        <input name="smart_edit_iconnudge" id="smart_edit_iconnudge" type="checkbox" class="custom-control-input" value="icon_nudge" ' + iconnudge + '>         <label for="smart_edit_iconnudge" class="custom-control-label">Nudge the icon to give it more space..</label>      </div>   </div>  </div>');
-
-      }
-
-    // UNIT ADDITON 
+          } // switch
 
 
-      if (typeof data.mods.unit !== 'undefined') {
+          if (modWrap) {
+            formHtml +='</fieldset>';
+          }
 
-        var unit = data.mods.unit.value ? data.mods.unit.value : '';
-        editor.append(' <div class="form-group row">    <label for="label" class="col-4 col-form-label">Add Custom Unit text</label>     <div class="col-8">      <input id="smart_edit_unit" name="smart_edit_unit" type="text" class="form-control" aria-describedby="labelHelpBlock" value="' + unit + '">       <span id="labelHelpBlock" class="form-text text-muted">For attribute tiles, this will add your custom unit label immediately after the tile value.</span>    </div>  </div> ');
-      }
+          editor.append(formHtml);
 
-      if (typeof data.mods.numeric !== 'undefined') {
-
-        var numeric = data.mods.numeric.value === true ? 'checked' : '';
-
-        editor.append('<div class="form-group row">    <label class="col-4">Increase Font Size</label>     <div class="col-8">      <div class="custom-control custom-checkbox custom-control-inline">        <input name="smart_edit_numeric" id="smart_edit_numeric" type="checkbox" class="custom-control-input" value="numeric" ' + numeric + '>         <label for="smart_edit_numeric" class="custom-control-label">This is normally used to increase attribute tile font size to match temperature, humidity and other numeric-based tile types.</label>      </div>   </div>  </div>');
-
-      }
-*/
+        }); // for mods
+    };
 
     // STATE ICONS
 
