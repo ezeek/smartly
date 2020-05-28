@@ -13,8 +13,8 @@ $mods_repo['layout'] = [
       'numeric'
     ],
     'icons' => [
-      'icon',
-      'nudge'
+      'nudge',
+      'icon'
     ],
     'mods' => [
       'zoomable',
@@ -141,8 +141,54 @@ $mods_enabled['tiletype']['nudge'] = [
   'video',
 //  'volume',
   'water',
-  'window',
-  'scene'
+  'window'
+//'scene'
+];
+
+$mods_enabled['tiletype']['icon'] = [
+  'acceleration',
+  'attribute',
+  'battery',
+  'bulb',
+  'bulb-color',
+  'buttons',
+  'carbon-monoxide',
+//'clock',
+//'clock-analog',
+//'clock-date',
+  'contact',
+  'dashboard',
+  'dimmer',
+  'door',
+  'door-control',
+  'fan',
+  'garage',
+  'garage-control',
+  'illuminance',
+  'energy',
+  'temperature',
+  'humidity',
+//'image',
+  'level-step',
+  'lock',
+  'momentary',
+  'motion',
+  'multi',
+  'music-player',
+  'outlet',
+  'presence',
+  'relay',
+  'shades',
+  'shock',
+  'smoke',
+  'switches',
+//'thermostat',
+  'valve',
+//'video',
+  'volume',
+  'water',
+  'window'
+//'scene'
 ];
 
 $mods_enabled['tiletype']['label'] = [
@@ -284,6 +330,8 @@ EOF;
 
 
 
+$mods_repo['tiletype']['icon']['label'] = "icon replace/add";
+$mods_repo['tiletype']['icon']['type'] = 'fieldset';
 
 $mods_repo['tiletype']['icon']['css']['default'] = <<<EOF
 #tile-[tile_id] .tile-primary. i.material-icons {

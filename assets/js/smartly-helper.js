@@ -272,7 +272,10 @@ function smartly_editor(tile_id) {
 
     editor.append('<input type="hidden" id="smart_edit_id" name="smart_edit_id" value="' + tile_id + '">');
 
+    var section_build = {};
+
     for (let [section, mods] of Object.entries(smartlyMODS.layout.tiles)) {
+      var section_html = [];
 
       mods.forEach(function(mod){ 
 
@@ -335,13 +338,22 @@ function smartly_editor(tile_id) {
 
               break;
 
+            case 'fieldset':
+
+              if (data.states) {
+                formHtml += '<fieldset id="wrapper_states_' + tile_id + '"><legend>' + smartlyMODS.tiletype[mod].label + '</legend></fieldset>';
+              } else {
+                formHtml += '<fieldset>spacer</fieldset>';
+              }
+
+              break;
+
             default:
 
               formValue = data.mods[mod].value ? data.mods[mod].value : '';
 
               formHtml += '<div class="form-group row"><label class="col-4 col-form-label" for="title">' + smartlyMODS.tiletype[mod].label + '</label><div class="col-8">';
               formHtml += '<input id="smart_edit_' + mod + '" name="smart_edit_' + mod + '" type="' + smartlyMODS.tiletype[mod].type + '" class="form-control" aria-describedby="' + mod + 'HelpBlock" value="' + formValue + '" ' + formInsert + '><span id="' + mod + 'HelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
-
 
           } // switch
 
@@ -350,11 +362,63 @@ function smartly_editor(tile_id) {
             formHtml +='</fieldset>';
           }
 
-          editor.append(formHtml);
+          section_html.push(formHtml);
+
+//          editor.append(formHtml);
 
         }; // for mods
+
+        // if the section has elements, add to section_build object for building later
+
+        if (section_html.length > 0) {
+          section_build[section] = section_html;
+        }
+
       });
     };
+
+    var sections_count = Object.keys(section_build);
+    var sections_exist = false;
+
+    // build a reusable indicator for sections
+    
+    if (sections_count.length > 0) {
+      sections_exist = true;
+    }
+
+
+    // build menu and tabs
+
+    var section_menu = '';
+    var section_tab_html = '';
+    var section_counter = 0;
+    var active_class = '';
+  
+    if (sections_exist) {
+      section_menu += '<ul class="nav nav-pills">';
+      section_tab_html += '<div class="tab-content">';
+    }
+
+    for (let [section, section_html] of Object.entries(section_build)) {
+      if (section_counter < 1) { active_class = 'active'; }
+      section_menu += '<li class="nav-item"><a class="nav-link ' + active_class + '" data-toggle="pill" href="#' + section + '">' + section + '</a></li>';
+
+      if (section_counter < 1) { active_class = 'active'; } else { active_class = 'fade'; }
+      section_tab_html += '<div class="tab-pane container ' + active_class + '" id="' + section + '">' + section_html.join('')   + '</div>';
+      section_counter++;
+      active_class = '';
+    }
+
+    if (sections_exist) {
+      section_menu += '</ul>';
+      section_tab_html += '</div>';
+    }
+
+    editor.append(section_menu);
+    editor.append(section_tab_html);
+
+
+
 
     // STATE ICONS
 
@@ -362,7 +426,8 @@ function smartly_editor(tile_id) {
 
       // ICON REPLACEMENT
 
-      editor.append("<fieldset id='wrapper_states_" + tile_id + "'><legend>icon replace/add</legend></fieldset>");
+//      editor.append("<fieldset id='wrapper_states_" + tile_id + "'><legend>icon replace/add</legend></fieldset>");
+
       $('#wrapper_states_' + tile_id).collapse({
         toggle: false
       })
@@ -373,7 +438,8 @@ function smartly_editor(tile_id) {
         //console.log(statename, "STATENAMEX");
         //console.log(icon.class, "ICONX");
         $('#wrapper_states_' + tile_id).append("<button class='icon-picker-reset btn btn-link btn-sm' onClick='iconpicker_reset(\"" + statename + "\")'>reset icon</button><span class='icon-picker-state'>" + statename_pretty + "</span><div class='icon-picker' id='state_" + statename + "'><div id='" + statename + "_picker'></div></div>");
-        editor.append("<input type='hidden' name='" + statename + "' id='state_" + statename + "_value'>");
+
+         $('#wrapper_states_' + tile_id).append("<input type='hidden' name='" + statename + "' id='state_" + statename + "_value'>");
         //console.log(data, "DATA");
 
         //console.log($('#'+statename+'_picker'));
@@ -409,7 +475,7 @@ function smartly_editor(tile_id) {
 
     } else { // this tile type has no states or icon replacement is not permitted
 
-      editor.append("There are no configurable icons for this tile.");
+      el_tab_icon.append("There are no configurable icons for this tile.");
 
     }
   }
