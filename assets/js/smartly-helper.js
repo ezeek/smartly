@@ -301,6 +301,7 @@ function smartly_editor(tile_id) {
           // build the form
 
           formHtml += build_form(tile_id, data, data.mods[mod], smartlyMODS.tiletype[mod], mod);
+console.log(smartlyDATA, "SDATA post root add");
 
           // add to the form for all modifiers
 
@@ -309,7 +310,7 @@ function smartly_editor(tile_id) {
             formHtml += build_form(tile_id, data, data.mods[mod]['modifier'][modifier_mod], modifier_construct, mod + '__' + modifier_mod);
             }
           }
-
+console.log(smartlyDATA, "SDATA post moidifier add");
           if (modWrap) {
             formHtml +='</fieldset>';
           }
@@ -525,6 +526,10 @@ function smartly_update() {
     // iterate through all available tiletype mods, check if they are being used and if so, save their values.
     $.each(Object.getOwnPropertyNames(smartlyMODS.tiletype), function (index, mod) {
 
+
+      parse_form(smart_id, mod, smartlyMODS.tiletype[mod]);
+
+/*
       if ($("#smart_edit_" + mod).length) {
         switch(smartlyMODS.tiletype[mod].type) {
           case 'checkbox':
@@ -552,6 +557,17 @@ function smartly_update() {
           // switch
         }
       }
+*/
+
+          if (typeof smartlyMODS.tiletype[mod].modifier !== 'undefined') {
+            for (let [modifier_mod, modifier_construct] of Object.entries(smartlyMODS.tiletype[mod].modifier)) {
+
+parse_form(smart_id, modifier_mod, modifier_construct, mod);
+
+            }
+          }
+
+
     });
 
     // SAVE ICONS
@@ -643,6 +659,59 @@ function smartly_settings_update() {
  * helper functions
  */
 
+function parse_form(smart_id, mod_name, mod_construct, parent_mod = null) {
+
+var parent_plug = '';
+if (parent_mod) { 
+  parent_plug = parent_mod + "__";
+console.log(parent_plug, "PARENT FOUND");
+}
+
+
+  if ($("#smart_edit_" + parent_plug + mod_name).length) {
+console.log(mod_name, "FOUND ELEMENT");
+    switch(mod_construct.type) {
+      case 'checkbox':
+
+        if ($("#smart_edit_" + parent_plug + mod_name).is(":checked")) {
+          if (debug) { console.log("SMART_EDIT_" + mod_name  + " PRESENT"); }
+
+          if (parent_mod) {
+            smartlyDATA['tiles'][smart_id]['mods'][parent_mod]['modifier'][mod_name]['value'] = true;
+          } else {
+            smartlyDATA['tiles'][smart_id]['mods'][mod_name]['value'] = true;
+          }
+        } else {
+          if (parent_mod) {
+            smartlyDATA['tiles'][smart_id]['mods'][parent_mod]['modifier'][mod_name]['value'] = null;
+          } else {
+            smartlyDATA['tiles'][smart_id]['mods'][mod_name]['value'] = null;
+          }
+        }
+
+        break;
+
+      default:
+
+        if ($("#smart_edit_" + parent_plug + mod_name).val()) {
+          if (debug) { console.log("SMART_EDIT_TITLE PRESENT"); }
+
+          smartlyDATA['tiles'][smart_id]['mods'][mod_name]['value'] = $("#smart_edit_" + mod_name).val();
+
+        } else {
+          if ($("#smart_edit_" + mod_name).length) {
+
+            smartlyDATA['tiles'][smart_id]['mods'][mod_name]['value'] = null;
+
+          }
+        }
+      // switch
+    }
+  }
+
+// nothing to return, all changes made to global
+
+}
 
 
 function build_form(tile_id, tile_data, tile_mod, mod_construct, mod_name) {
@@ -668,7 +737,7 @@ function build_form(tile_id, tile_data, tile_mod, mod_construct, mod_name) {
 
   switch (mod_construct.type) {
     case 'checkbox':
-
+console.log(mod_construct, "INCOMING MOD CONSTRUCT - CHECKBOX");
       if (tile_mod.value === true) {
         formValue = 'checked';
       }

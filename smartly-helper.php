@@ -401,9 +401,8 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
         $tile_data['mods'][$mod]['value'] = $smartly_data['tiles'][$tile['id']][$mod] ? $smartly_data['tiles'][$tile['id']][$mod] : $tile_data['mods'][$mod]['value'];
 
         foreach ($mods_repo['tiletype'][$mod]['modifier'] as $modifier_name => $modifier_data) {
-          $tile_data['mods'][$mod]['modifier'][$modifier_name]['value'] = $smartly_data['tiles'][$tile['id']][$mod]['modifier'][$modifier_name]['value'] ? $smartly_data['tiles'][$tile['id']][$mod]['modifier'][$modifier_name]['value'] : null;
+          $tile_data['mods'][$mod]['modifier'][$modifier_name]['value'] = $smartly_data['tiles'][$tile['id']]['mods'][$mod]['modifier'][$modifier_name]['value'] ? $smartly_data['tiles'][$tile['id']]['mods'][$mod]['modifier'][$modifier_name]['value'] : null;
         }
-
       }
     }
 
