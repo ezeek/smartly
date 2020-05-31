@@ -668,6 +668,25 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
 
         // check if the mod has tiletype specific css and if not, use default css.  do token replacements as needed.
         $smartly_css['mods'][$mod][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+
+        // iterate through modifiers that have values and add their css
+        foreach ($smart_data['mods'][$mod]['modifier'] as $mod_modifier => $modifier_data) {
+          if ($smart_data['mods'][$mod]['modifier'][$mod_modifier]['value']) {
+
+            $token_replacements = array(
+              '[tile_id]' => $smart_id,
+              '[value]' => $smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'],
+              '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
+              '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
+              '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
+            );
+
+            $css = $mods_repo['tiletype'][$mod]['modifier'][$mod_modifier]['css'][$smart_data['template']] ? $mods_repo['tiletype'][$mod]['modifier'][$mod_modifier]['css'][$smart_data['template']] : $mods_repo['tiletype'][$mod]['modifier'][$mod_modifier]['css']['default'];
+
+            $smartly_css['mods'][$mod . "__" . $mod_modifier][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+
+          }
+        }
       }
     } 
 

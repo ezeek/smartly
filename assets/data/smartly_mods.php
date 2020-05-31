@@ -34,6 +34,9 @@ $mods_repo['layout'] = [
       'zoomy'
     ],
     'mods' => [
+      'header'
+    ],
+    'color' => [
       ''
     ]
   ]
@@ -204,7 +207,54 @@ $mods_enabled['tiletype']['label'] = [
 // MODS REPO, to be built in JSON, possibly using foler structure to hold CSS
 
 
-$mods_repo['dashboard']['mods']['colorcoding']= '';
+$mods_repo['dashboard']['mods']['colorcoding'] = '';
+$mods_repo['dashboard']['mods']['header']['label'] = '';
+$mods_repo['dashboard']['mods']['header']['type'] = '';
+
+$mods_repo['dashboard']['mods']['header']['label'] = "Header Visibility";
+$mods_repo['dashboard']['mods']['header']['type'] = 'select';
+$mods_repo['dashboard']['mods']['header']['options'] = [
+    "hidden" => "Hidden (but clickable)",
+    "half_height" => "Half height", 
+    "collapsed_top_right" => "Collapsed top right",
+    "collapsed_top_right_vertical" => "Collapsed top right (vertical)", 
+    "collapsed_bottom_right" => "Collapsed bottom right",
+    "collapsed_bottom_right_vertical" => "Collapsed bottom right (vertical)"
+];
+$mods_repo['dashboard']['mods']['header']['text'] = "Change the size and position and visibility of the dashboard header..";
+
+// using value based tree because dashboard mods will include JSON mods, which can't simply use the value of the form in token replacement
+
+$mods_repo['dashboard']['mods']['header']['value']['hidden']['css'] = <<<EOF
+.dashName:after {
+  content: " - [value]";
+}
+EOF;
+$mods_repo['dashboard']['mods']['header']['value']['half_height']['css'] = <<<EOF
+.dashName:after {
+  content: " - [value]";
+}
+EOF;
+$mods_repo['dashboard']['mods']['header']['value']['collapsed_top_right']['css'] = <<<EOF
+.dashName:after {
+  content: " - [value]";
+}
+EOF;
+$mods_repo['dashboard']['mods']['header']['value']['collpased_top_right_vertical']['css'] = <<<EOF
+.dashName:after {
+  content: " - [value]";
+}
+EOF;
+$mods_repo['dashboard']['mods']['header']['value']['collapsed_bottom_right']['css'] = <<<EOF
+.dashName:after {
+  content: " - [value]";
+}
+EOF;
+$mods_repo['dashboard']['mods']['header']['value']['collpased_bottom_right_vertical']['css'] = <<<EOF
+.dashName:after {
+  content: " - [value]";
+}
+EOF;
 
 
 // TITLE REPLACEMENT
@@ -674,10 +724,14 @@ $mods_repo['tiletype']['buttonize']['type'] = 'checkbox';
 $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['label'] = "Icon only";
 $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['type'] = 'checkbox';
 $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['text']['default'] = 'Hide the text, only show the icon.';
-$mods_repo['tiletype']['buttonize']['modifier']['icon_only']['css']['checked']['default'] = <<<EOF
-#tile-[tile_id] .material-icons::before,
-#tile-[tile_id] .material-icons::after {
-  color: green;
+$mods_repo['tiletype']['buttonize']['modifier']['icon_only']['css']['default'] = <<<EOF
+#tile-[tile_id] .tile-primary {
+    font-size: .25em !important;
+    visibility: hidden;
+}
+
+#tile-33 .tile-primary:before {
+    font-size: 60px;
 }
 EOF;
 $mods_repo['tiletype']['buttonize']['text']['default'] = 'Change the layout of this tile to be more button-like.';
