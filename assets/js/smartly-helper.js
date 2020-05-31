@@ -295,75 +295,20 @@ function smartly_editor(tile_id) {
 
           if (typeof smartlyMODS.tiletype[mod].modifier !== 'undefined') {
             modWrap = true;
-            formHtml += '<fieldset class="form-group">';
+            formHtml += '<fieldset class="form-group"><legend>' + mod  + '</legend>';
           }
 
-          // prep mod text if available
+          // build the form
 
+          formHtml += build_form(tile_id, data, data.mods[mod], smartlyMODS.tiletype[mod], mod);
 
+          // add to the form for all modifiers
 
-formHtml += build_form(tile_id, data, data.mods[mod], smartlyMODS.tiletype[mod], mod);
-
-
-          if (typeof smartlyMODS.tiletype[mod].text !== 'undefined') {
-
-            if (typeof smartlyMODS.tiletype[mod].text[data.template] !== 'undefined') {
-              helpText = smartlyMODS.tiletype[mod].text[data.template];
-            } else if (typeof smartlyMODS.tiletype[mod].text['default'] !== 'undefined') {
-              helpText = smartlyMODS.tiletype[mod].text.default;
+          if (typeof smartlyMODS.tiletype[mod].modifier !== 'undefined') {
+            for (let [modifier_mod, modifier_construct] of Object.entries(smartlyMODS.tiletype[mod].modifier)) {
+            formHtml += build_form(tile_id, data, data.mods[mod]['modifier'][modifier_mod], modifier_construct, mod + '__' + modifier_mod);
             }
           }
-
-          switch (smartlyMODS.tiletype[mod].type) {
-            case 'checkbox':
-
-              if (data.mods[mod].value === true) {
-                formValue = 'checked';
-              }
-
-              formHtml += '<div class="form-group row"><label class="col-4">' + smartlyMODS.tiletype[mod].label + '</label><div class="col-8"><div class="custom-control custom-checkbox custom-control-inline"><input name="smart_edit_' + mod + '" id="smart_edit_' + mod + '" type="checkbox" class="custom-control-input" value="' + mod + '" ' + formValue + '>         <label for="smart_edit_' + mod + '" class="custom-control-label">' + helpText + '</label></div></div></div>';
-
-              break;
-
-            case 'select':
-
-              formHtml += '<div class="form-group row"><label for="select" class="col-4 col-form-label">' + smartlyMODS.tiletype[mod].label + '</label><div class="col-8"><select id="smart_edit_' + mod + '" name="smart_edit_' + mod + '" class="custom-select">';
-
-              for (let [value, name] of Object.entries(smartlyMODS.tiletype[mod]['options'])) {
-                console.log(`${value}: ${name}`);
-
-                formValue = '';
-
-                if (data.mods[mod].value === value) {
-                  formValue = 'selected';
-                }
-
-                formHtml += '<option value="' + value + '" ' + formValue + '>' + name + '</option>';
-              };
-
-              formHtml += '</select><span id="selectHelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
-
-              break;
-
-            case 'fieldset':
-
-              if (data.states) {
-                formHtml += '<fieldset id="wrapper_states_' + tile_id + '"><legend>' + smartlyMODS.tiletype[mod].label + '</legend></fieldset>';
-              }
-
-              break;
-
-            default:
-
-              formValue = data.mods[mod].value ? data.mods[mod].value : '';
-
-              formHtml += '<div class="form-group row"><label class="col-4 col-form-label" for="title">' + smartlyMODS.tiletype[mod].label + '</label><div class="col-8">';
-              formHtml += '<input id="smart_edit_' + mod + '" name="smart_edit_' + mod + '" type="' + smartlyMODS.tiletype[mod].type + '" class="form-control" aria-describedby="' + mod + 'HelpBlock" value="' + formValue + '" ' + formInsert + '><span id="' + mod + 'HelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
-
-          } // switch
-
-
-
 
           if (modWrap) {
             formHtml +='</fieldset>';
