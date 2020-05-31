@@ -49,7 +49,7 @@ $mods_enabled['dashboard']['colorcoding']['temperature'] = true;
 $mods_enabled['dashboard']['colorcoding']['humidity'] = true;
 $mods_enabled['dashboard']['colorcoding']['battery'] = true;
 
-$mods_enabled['tiletype']['zoomable'] = ['attribute', 'battery', 'clock', 'clock-analog', 'clock-date', 'thermostat', 'water'];
+$mods_enabled['tiletype']['zoomable'] = ['attribute', 'battery', 'clock', 'clock-analog', 'clock-date', 'music-player', 'thermostat', 'water'];
 $mods_enabled['tiletype']['unit'] = ['attribute'];
 $mods_enabled['tiletype']['numeric'] = ['attribute'];
 $mods_enabled['tiletype']['buttonize'] = ['button', 'dashboard', 'momentary', 'presence', 'water'];
@@ -334,7 +334,7 @@ $mods_repo['tiletype']['icon']['label'] = "icon replace/add";
 $mods_repo['tiletype']['icon']['type'] = 'fieldset';
 
 $mods_repo['tiletype']['icon']['css']['default'] = <<<EOF
-#tile-[tile_id] .tile-primary. i.material-icons {
+#tile-[tile_id] .tile-primary i.material-icons {
     visibility: hidden;
 }
 
@@ -460,7 +460,21 @@ $mods_repo['tiletype']['icon']['css']['attribute'] = <<<EOF
 }
 EOF;
 
+$mods_repo['tiletype']['icon']['css']['music-player'] = <<<EOF
+#tile-[tile_id] .tile-primary i.material-icons {
+    visibility: hidden;
+    width: 1em;
+    height: 1em;
+    overflow: hidden;
+}
 
+#tile-[tile_id] .tile-primary i.material-icons.[class]:before {
+    content: "\\[value]";
+    font-family: "Material Design Icons" !important;
+    visibility: visible;
+}
+
+EOF;
 
 $mods_repo['3rdparty']['bpt']['css'] = <<<EOF
 #tile-[tile_id] .tile-contents {
@@ -611,6 +625,22 @@ $mods_repo['tiletype']['zoomable']['css']['default'] = <<<EOF
 }
 
 EOF;
+
+$mods_repo['tiletype']['zoomable']['css']['music-player'] = <<<EOF
+#tile-[tile_id] {
+    zoom: [value];
+}
+
+#tile-[tile_id] .music-player .material-icons {
+    zoom: [value];
+}
+
+#tile-[tile_id] .tile-primary>.music-player {
+    margin-top: 0;
+}
+
+EOF;
+
 $mods_repo['tiletype']['zoomable']['css']['thermostat'] = <<<EOF
 #tile-[tile_id]>.absolute.bottom-0 {
     zoom: [value];
@@ -664,7 +694,6 @@ $mods_repo['tiletype']['buttonize']['css']['dashboard'] = <<<EOF
 }
 
 #tile-[tile_id] .tile-primary {
-    visibility: hidden;
     line-height: 1.2em;
 }
 

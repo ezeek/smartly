@@ -298,6 +298,13 @@ function smartly_editor(tile_id) {
             formHtml += '<fieldset class="form-group">';
           }
 
+          // prep mod text if available
+
+
+
+formHtml += build_form(tile_id, data, data.mods[mod], smartlyMODS.tiletype[mod], mod);
+
+
           if (typeof smartlyMODS.tiletype[mod].text !== 'undefined') {
 
             if (typeof smartlyMODS.tiletype[mod].text[data.template] !== 'undefined') {
@@ -342,8 +349,6 @@ function smartly_editor(tile_id) {
 
               if (data.states) {
                 formHtml += '<fieldset id="wrapper_states_' + tile_id + '"><legend>' + smartlyMODS.tiletype[mod].label + '</legend></fieldset>';
-              } else {
-                formHtml += '<fieldset>spacer</fieldset>';
               }
 
               break;
@@ -356,6 +361,8 @@ function smartly_editor(tile_id) {
               formHtml += '<input id="smart_edit_' + mod + '" name="smart_edit_' + mod + '" type="' + smartlyMODS.tiletype[mod].type + '" class="form-control" aria-describedby="' + mod + 'HelpBlock" value="' + formValue + '" ' + formInsert + '><span id="' + mod + 'HelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
 
           } // switch
+
+
 
 
           if (modWrap) {
@@ -690,6 +697,82 @@ function smartly_settings_update() {
 /*
  * helper functions
  */
+
+
+
+function build_form(tile_id, tile_data, tile_mod, mod_construct, mod_name) {
+
+         var formValue = '';
+          var formInsert = '';
+
+          var helpText = '';
+          var labelText = '';
+
+          var formHtml = '';
+
+  // prep mod text if available
+
+  if (typeof mod_construct.text !== 'undefined') {
+
+    if (typeof mod_construct.text[tile_data.template] !== 'undefined') {
+      helpText = mod_construct.text[tile_data.template];
+    } else if (typeof mod_construct.text['default'] !== 'undefined') {
+      helpText = mod_construct.text.default;
+    }
+  }
+
+  switch (mod_construct.type) {
+    case 'checkbox':
+
+      if (tile_mod.value === true) {
+        formValue = 'checked';
+      }
+
+      formHtml += '<div class="form-group row"><label class="col-4">' + mod_construct.label + '</label><div class="col-8"><div class="custom-control custom-checkbox custom-control-inline"><input name="smart_edit_' + mod_name + '" id="smart_edit_' + mod_name + '" type="checkbox" class="custom-control-input" value="' + mod_name + '" ' + formValue + '>         <label for="smart_edit_' + mod_name + '" class="custom-control-label">' + helpText + '</label></div></div></div>';
+
+      break;
+
+    case 'select':
+
+      formHtml += '<div class="form-group row"><label for="select" class="col-4 col-form-label">' + mod_construct.label + '</label><div class="col-8"><select id="smart_edit_' + mod_name + '" name="smart_edit_' + mod_name + '" class="custom-select">';
+
+      for (let [value, name] of Object.entries(mod_construct['options'])) {
+        console.log(`${value}: ${name}`);
+
+        formValue = '';
+
+        if (tile_mod.value === value) {
+          formValue = 'selected';
+        }
+
+        formHtml += '<option value="' + value + '" ' + formValue + '>' + name + '</option>';
+      };
+
+      formHtml += '</select><span id="selectHelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
+
+      break;
+
+    case 'fieldset':
+
+      if (tile_data.states) {
+        formHtml += '<fieldset id="wrapper_states_' + tile_id + '"><legend>' + mod_construct.label + '</legend></fieldset>';
+      }
+
+      break;
+
+    default:
+
+      formValue = tile_mod.value ? tile_mod.value : '';
+
+      formHtml += '<div class="form-group row"><label class="col-4 col-form-label" for="title">' + mod_construct.label + '</label><div class="col-8">';
+      formHtml += '<input id="smart_edit_' + mod_name + '" name="smart_edit_' + mod_name + '" type="' + mod_construct.type + '" class="form-control" aria-describedby="' + mod_name + 'HelpBlock" value="' + formValue + '" ' + formInsert + '><span id="' + mod_name + 'HelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
+
+  } // switch
+
+return formHtml;
+
+}
+
 
 function iconpicker_reset(target) {
   var target_id = "#" + target + "_picker";
