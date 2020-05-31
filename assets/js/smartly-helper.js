@@ -284,11 +284,13 @@ function smartly_editor(tile_id) {
           console.log(mod + " enabled within " + section, "MOD ACTIVE");
 
           // retrieve and process value for specific input type
-          var formValue = '';
+/*
+ * var formValue = '';
           var formInsert = '';
 
           var helpText = '';
           var labelText = '';
+*/
 
           var formHtml = '';
           var modWrap = false;
@@ -528,36 +530,6 @@ function smartly_update() {
 
 
       parse_form(smart_id, mod, smartlyMODS.tiletype[mod]);
-
-/*
-      if ($("#smart_edit_" + mod).length) {
-        switch(smartlyMODS.tiletype[mod].type) {
-          case 'checkbox':
-  
-            if ($("#smart_edit_" + mod).is(":checked")) {
-              if (debug) { console.log("SMART_EDIT_" + mod  + " PRESENT"); }
-              smartlyDATA['tiles'][smart_id]['mods'][mod]['value'] = true;
-            } else {
-              console.log(smartlyDATA['tiles'][smart_id]['mods'], "smartlyDATA['tiles'][" + smart_id + "]['mods'][" + mod + "]['value']");
-              smartlyDATA['tiles'][smart_id]['mods'][mod]['value'] = null;
-            }
-
-            break;
-
-          default:
-
-            if ($("#smart_edit_" + mod).val()) {
-              if (debug) { console.log("SMART_EDIT_TITLE PRESENT"); }
-              smartlyDATA['tiles'][smart_id]['mods'][mod]['value'] = $("#smart_edit_" + mod).val();
-            } else {
-              if ($("#smart_edit_" + mod).length) {
-                smartlyDATA['tiles'][smart_id]['mods'][mod]['value'] = null;
-              }
-            }
-          // switch
-        }
-      }
-*/
 
           if (typeof smartlyMODS.tiletype[mod].modifier !== 'undefined') {
             for (let [modifier_mod, modifier_construct] of Object.entries(smartlyMODS.tiletype[mod].modifier)) {
