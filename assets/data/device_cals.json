@@ -108,6 +108,7 @@
 { "value": "redmi_redmi-note-3", "text": "Redmi Note 3" , "width": 360 , "height": 640 , "force_cols": 2 },
 { "value": "redmi_redmi-note-4", "text": "Redmi Note 4" , "width": 360 , "height": 640 , "force_cols": 2 },
 { "value": "redmi_redmi-note-5", "text": "Redmi Note 5" , "width": 393 , "height": 786 , "force_cols": 2 },
+{ "value": "samsung_galaxy-a71", "text": "Samsung Galaxy A71" , "width": 412 , "height": 832 , "force_cols": 2 },
 { "value": "samsung_galaxy-j3", "text": "Samsung Galaxy J3" , "width": 360 , "height": 640 , "force_cols": 2 },
 { "value": "samsung_galaxy-j7", "text": "Samsung Galaxy J7" , "width": 360 , "height": 640 , "force_cols": 2 },
 { "value": "samsung_galaxy-nexus", "text": "Samsung Galaxy Nexus" , "width": 360 , "height": 600 , "force_cols": 2 },

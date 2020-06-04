@@ -158,7 +158,19 @@ $(document).ready(function() {
 
 function update_calibrations(smartlyDATA) {
 
+  // legacy conversion
   if (smartlyDATA['settings']['calibration']['devices'] || smartlyDATA['settings']['calibration']['devices_2col']) {
+    smartlyDATA['dashboard'] = {};
+    smartlyDATA['dashboard']['mods'] = {};
+    smartlyDATA['dashboard']['mods']['cal_devices'] = smartlyDATA['settings']['calibration']['devices'] ? smartlyDATA['settings']['calibration']['devices'] : null;
+    smartlyDATA['dashboard']['mods']['cal_devices_2col'] = smartlyDATA['settings']['calibration']['devices_2col'] ? smartlyDATA['settings']['calibration']['devices_2col'] : null;
+
+//    delete smartlyDATA['settings']['calibration'].devices;
+//    delete smartlyDATA['settings']['calibration'].devices_2col;
+
+  }
+
+  if (smartlyDATA['dashboard']['mods']['cal_devices'] || smartlyDATA['dashboard']['mods']['cal_devices_2col']) {
 
     $.getJSON("assets/data/device_cals.json", function(data) {
 
@@ -166,7 +178,7 @@ function update_calibrations(smartlyDATA) {
       var elt2 = $('#cal_devices_2col')
       var found = '';
 
-      jQuery.each(smartlyDATA['settings']['calibration']['devices'], function(id, device) {
+      jQuery.each(smartlyDATA['dashboard']['mods']['cal_devices'], function(id, device) {
         found = data.filter(x => x.value === device).map(x => x.text);
         if (found !== "") {
           if (debug) { console.log("[" + found + "]", "FOUND"); }
@@ -179,7 +191,7 @@ function update_calibrations(smartlyDATA) {
         }
       });
 
-      jQuery.each(smartlyDATA['settings']['calibration']['devices_2col'], function(id, device) {
+      jQuery.each(smartlyDATA['dashboard']['mods']['cal_devices_2col'], function(id, device) {
         found = data.filter(x => x.value === device).map(x => x.text);
         if (found !== "") {
           if (debug) { console.log("[" + found + "]", "FOUND"); }
@@ -248,7 +260,7 @@ function smartly_editor(tile_id) {
   if (!(tile_id) && (tile_id !== 0)) {
 
     if (debug) { console.log("no tile id sent!"); }
-    $("#smartly_settings_modal").modal()
+    $("#smartly_modal").modal()
 
     // var modal_label = $("#modalLabel");
     // modal_label.html("Advanced Settings" + " [ <span style='color:grey;'>zoom calibration</span> ]");
@@ -436,6 +448,134 @@ console.log(smartlyDATA, "SDATA post moidifier add");
   }
 } // end
 
+/*
+ * smartly_settings_editor()
+ * launches and populates modal that provides editing options for the dashboard
+ */
+
+function smartly_settings_editor() {
+
+  var tile_id = null;
+  var editor = $('#smartly_settings_editor');
+
+  var data = smartlyDATA['dashboard'];
+
+  // open the editor modal
+  $("#smartly_settings_modal").modal();
+  var modal_label = $("#settings_modalLabel");
+  modal_label.html("Dashboard Settings");
+
+  //console.log(smartlyDATA, "outside smartlyDATA");
+  //console.log(smartlyDATA[tile_id],"passed tile_id within smartlyDATA"); 
+
+  editor.empty();
+
+  var section_build = {};
+
+  for (let [section, mods] of Object.entries(smartlyMODS.layout.dashboard)) {
+    var section_html = [];
+
+    mods.forEach(function(mod){ 
+
+//      if (typeof data.mods[mod] !== 'undefined') {
+
+        console.log(mod + " enabled within " + section, "MOD ACTIVE");
+
+        // retrieve and process value for specific input type
+/*
+* var formValue = '';
+        var formInsert = '';
+
+        var helpText = '';
+        var labelText = '';
+*/
+
+        var formHtml = '';
+        var modWrap = false;
+
+
+        if (typeof smartlyMODS.dashboard[mod].modifier !== 'undefined') {
+          modWrap = true;
+          formHtml += '<fieldset class="form-group"><legend>' + mod  + '</legend>';
+        }
+
+
+        // build the form
+
+        formHtml += build_form(tile_id, data, data.mods[mod], smartlyMODS.dashboard[mod], mod);
+
+        // add to the form for all modifiers
+
+        if (typeof smartlyMODS.dashboard[mod].modifier !== 'undefined') {
+          for (let [modifier_mod, modifier_construct] of Object.entries(smartlyMODS.dashboard[mod].modifier)) {
+          formHtml += build_form(tile_id, data, data.mods[mod]['modifier'][modifier_mod], modifier_construct, mod + '__' + modifier_mod);
+          }
+        }
+
+        if (modWrap) {
+          formHtml +='</fieldset>';
+        }
+
+        section_html.push(formHtml);
+
+//          editor.append(formHtml);
+
+  //    } else {
+
+    //    section_html.push('nothing');
+
+  //    } // for mods
+
+      // if the section has elements, add to section_build object for building later
+
+      if (section_html.length > 0) {
+        section_build[section] = section_html;
+      }
+
+    });
+  };
+
+  var sections_count = Object.keys(section_build);
+  var sections_exist = false;
+
+  // build a reusable indicator for sections
+
+  if (sections_count.length > 0) {
+    sections_exist = true;
+  }
+
+
+  // build menu and tabs
+
+  var section_menu = '';
+  var section_tab_html = '';
+  var section_counter = 0;
+  var active_class = '';
+
+  if (sections_exist) {
+    section_menu += '<ul class="nav nav-pills">';
+    section_tab_html += '<div class="tab-content">';
+  }
+
+  for (let [section, section_html] of Object.entries(section_build)) {
+    if (section_counter < 1) { active_class = 'active'; }
+    section_menu += '<li class="nav-item"><a class="nav-link ' + active_class + '" data-toggle="pill" href="#' + section + '">' + section + '</a></li>';
+
+    if (section_counter < 1) { active_class = 'active'; } else { active_class = 'fade'; }
+    section_tab_html += '<div class="tab-pane container ' + active_class + '" id="' + section + '">' + section_html.join('')   + '</div>';
+    section_counter++;
+    active_class = '';
+  }
+
+  if (sections_exist) {
+    section_menu += '</ul>';
+    section_tab_html += '</div>';
+  }
+
+  editor.append(section_menu);
+  editor.append(section_tab_html);
+
+} // end
 
 /*
  * smartly_grid()
@@ -463,7 +603,7 @@ function smartly_grid(smartly_data, hubitat_json) {
   $grid = $("#grid");
   $gridheader.empty();
   $grid.empty();
-  $gridheader.html("'" + hubitat_json.name + "' tile editor" + "<br><span style='font-size: 70%;'>Click on a tile below to change title, label and/or icons. <i class='fa fa-cog' onclick='smartly_editor();'></i>");
+  $gridheader.html("'" + hubitat_json.name + "' tile editor" + "<br><span style='font-size: 70%;'>Click on a tile below to change title, label and/or icons. <i class='fa fa-cog' onclick='smartly_settings_editor();'></i>");
   $grid.css({
     width: $gridwidth,
     height: $gridheight,
@@ -607,6 +747,7 @@ function smartly_settings_update() {
     console.log(cal_devices_2col);
   }
 
+/*
   // create parent arrays to avoid warnings
   smartlyDATA['settings'] = {};
   smartlyDATA['settings']['calibration'] = {};
@@ -614,6 +755,16 @@ function smartly_settings_update() {
   // save calibration devices
   smartlyDATA['settings']['calibration']['devices'] = cal_devices;
   smartlyDATA['settings']['calibration']['devices_2col'] = cal_devices_2col;
+*/
+
+  // create parent arrays to avoid warnings
+  smartlyDATA['dashboard'] = {};
+  smartlyDATA['dashboard']['mods'] = {};
+
+  // save calibration devices
+  smartlyDATA['dashboard']['mods']['cal_devices'] = cal_devices;
+  smartlyDATA['dashboard']['mods']['cal_devices_2col'] = cal_devices_2col;
+
 
   // populate the hidden smartly_datablock
   var smartly_datablock = $("#smartlydata");
@@ -686,8 +837,8 @@ console.log(mod_name, "FOUND ELEMENT");
 }
 
 
-function build_form(tile_id, tile_data, tile_mod, mod_construct, mod_name) {
-
+function build_form(tile_id, tile_data = null, tile_mod, mod_construct, mod_name) {
+console.log(tile_mod, "build_form: tile_mod");
          var formValue = '';
           var formInsert = '';
 
@@ -699,7 +850,6 @@ function build_form(tile_id, tile_data, tile_mod, mod_construct, mod_name) {
   // prep mod text if available
 
   if (typeof mod_construct.text !== 'undefined') {
-
     if (typeof mod_construct.text[tile_data.template] !== 'undefined') {
       helpText = mod_construct.text[tile_data.template];
     } else if (typeof mod_construct.text['default'] !== 'undefined') {
@@ -707,12 +857,18 @@ function build_form(tile_id, tile_data, tile_mod, mod_construct, mod_name) {
     }
   }
 
+console.log(mod_construct, "MOD CONSTRUCT");
+
   switch (mod_construct.type) {
     case 'checkbox':
 console.log(mod_construct, "INCOMING MOD CONSTRUCT - CHECKBOX");
-      if (tile_mod.value === true) {
-        formValue = 'checked';
+
+      if (typeof tile_mod !== 'undefined') {
+        if (tile_mod.value === true) {
+          formValue = 'checked';
+        }
       }
+
 
       formHtml += '<div class="form-group row"><label class="col-4">' + mod_construct.label + '</label><div class="col-8"><div class="custom-control custom-checkbox custom-control-inline"><input name="smart_edit_' + mod_name + '" id="smart_edit_' + mod_name + '" type="checkbox" class="custom-control-input" value="' + mod_name + '" ' + formValue + '>         <label for="smart_edit_' + mod_name + '" class="custom-control-label">' + helpText + '</label></div></div></div>';
 
@@ -727,8 +883,10 @@ console.log(mod_construct, "INCOMING MOD CONSTRUCT - CHECKBOX");
 
         formValue = '';
 
-        if (tile_mod.value === value) {
-          formValue = 'selected';
+        if (typeof tile_mod !== 'undefined') {
+          if (tile_mod.value === value) {
+            formValue = 'selected';
+          }
         }
 
         formHtml += '<option value="' + value + '" ' + formValue + '>' + name + '</option>';
@@ -745,6 +903,14 @@ console.log(mod_construct, "INCOMING MOD CONSTRUCT - CHECKBOX");
       }
 
       break;
+
+    case 'tagsinput':
+
+      formHtml += '<div class="form-group row"><div class="col-12"><label for="smart_edit_' + mod_name + '" class="col-form-label">' + mod_construct.label + '</label><input type="text" id="smart_edit_' + mod_name + '" class="bootstrap-tagsinput"/></div></div>';
+
+
+
+      break
 
     default:
 

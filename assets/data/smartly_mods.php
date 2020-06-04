@@ -29,15 +29,17 @@ $mods_repo['layout'] = [
     ]
   ],
   'dashboard' => [
-    'basics' => [
-      'calibration',
+    'calibration' => [
+      'cal_devices',
+      'cal_devices_2col',
       'zoomy'
     ],
     'mods' => [
       'header'
     ],
     'color' => [
-      ''
+      'color_temperature',
+      'color_humidity'
     ]
   ]
 ];
@@ -47,10 +49,14 @@ $mods_repo['layout'] = [
 $mods_enabled = array();
 
 
+// all dashboard mods always enabled
+/*
 $mods_enabled['dashboard']['header'] = true;
 $mods_enabled['dashboard']['colorcoding']['temperature'] = true;
 $mods_enabled['dashboard']['colorcoding']['humidity'] = true;
 $mods_enabled['dashboard']['colorcoding']['battery'] = true;
+*/
+
 
 $mods_enabled['tiletype']['zoomable'] = ['attribute', 'battery', 'clock', 'clock-analog', 'clock-date', 'music-player', 'thermostat', 'water'];
 $mods_enabled['tiletype']['unit'] = ['attribute'];
@@ -207,13 +213,34 @@ $mods_enabled['tiletype']['label'] = [
 // MODS REPO, to be built in JSON, possibly using foler structure to hold CSS
 
 
-$mods_repo['dashboard']['mods']['colorcoding'] = '';
-$mods_repo['dashboard']['mods']['header']['label'] = '';
-$mods_repo['dashboard']['mods']['header']['type'] = '';
+$mods_repo['dashboard']['cal_devices']['label'] = "<b>CALIBRATE MY DASHBOARD</b> for the following devices:<br><small>FOR STOCK DEVICE DISPLAY DPI SETTINGS ONLY</small>";
+$mods_repo['dashboard']['cal_devices']['text'] = "some additional help text";
+$mods_repo['dashboard']['cal_devices']['type'] = 'tagsinput';
 
-$mods_repo['dashboard']['mods']['header']['label'] = "Header Visibility";
-$mods_repo['dashboard']['mods']['header']['type'] = 'select';
-$mods_repo['dashboard']['mods']['header']['options'] = [
+$mods_repo['dashboard']['cal_devices_2col']['label'] = "<b>FORCE DISPLAY 2 COLUMNS WIDE</b> <i>(when held vertically)</i><br><small>FOR STOCK DEVICE DISPLAY DPI SETTINGS ONLY</small>";
+$mods_repo['dashboard']['cal_devices_2col']['text'] = "some additional help text";
+$mods_repo['dashboard']['cal_devices_2col']['type'] = 'tagsinput';
+
+$mods_repo['dashboard']['color_temperature']['label'] = "Enable value-based temperature tile color";
+$mods_repo['dashboard']['color_temperature']['text']['default'] = "Change the color of this tile based on the temperature value.";
+$mods_repo['dashboard']['color_temperature']['type'] = 'checkbox';
+$mods_repo['dashboard']['color_temperature']['json']['path'] = '/somepath.json';
+$mods_repo['dashboard']['color_temperature']['json']['method'] = 'overwrite';
+
+$mods_repo['dashboard']['color_humidity']['label'] = "Enable value-based humidity tile color";
+$mods_repo['dashboard']['color_humidity']['text']['default'] = "Change the color of this tile based on the humidity value.";
+$mods_repo['dashboard']['color_humidity']['type'] = 'checkbox';
+$mods_repo['dashboard']['color_humidity']['json']['path'] = '/somepath.json';
+$mods_repo['dashboard']['color_humidity']['json']['method'] = 'overwrite';
+
+$mods_repo['dashboard']['zoomy']['label'] = '<b>Add ZOOMY</b> <small style="color: #da4800;">(This checkbox will uncheck itself after update)</small>';
+$mods_repo['dashboard']['zoomy']['text']['default'] = '<small>Temporarily add a calibration helper tile to generate the perfect css for alignment of columns to the edge of the screen on any device, any device display dpi setting.</small>';
+$mods_repo['dashboard']['zoomy']['type'] = 'checkbox';
+
+
+$mods_repo['dashboard']['header']['label'] = "Header Visibility";
+$mods_repo['dashboard']['header']['type'] = 'select';
+$mods_repo['dashboard']['header']['options'] = [
     "hidden" => "Hidden (but clickable)",
     "half_height" => "Half height", 
     "collapsed_top_right" => "Collapsed top right",
@@ -221,36 +248,36 @@ $mods_repo['dashboard']['mods']['header']['options'] = [
     "collapsed_bottom_right" => "Collapsed bottom right",
     "collapsed_bottom_right_vertical" => "Collapsed bottom right (vertical)"
 ];
-$mods_repo['dashboard']['mods']['header']['text'] = "Change the size and position and visibility of the dashboard header..";
+$mods_repo['dashboard']['header']['text'] = "Change the size and position and visibility of the dashboard header..";
 
 // using value based tree because dashboard mods will include JSON mods, which can't simply use the value of the form in token replacement
 
-$mods_repo['dashboard']['mods']['header']['value']['hidden']['css'] = <<<EOF
+$mods_repo['dashboard']['header']['value']['hidden']['css'] = <<<EOF
 .dashName:after {
   content: " - [value]";
 }
 EOF;
-$mods_repo['dashboard']['mods']['header']['value']['half_height']['css'] = <<<EOF
+$mods_repo['dashboard']['header']['value']['half_height']['css'] = <<<EOF
 .dashName:after {
   content: " - [value]";
 }
 EOF;
-$mods_repo['dashboard']['mods']['header']['value']['collapsed_top_right']['css'] = <<<EOF
+$mods_repo['dashboard']['header']['value']['collapsed_top_right']['css'] = <<<EOF
 .dashName:after {
   content: " - [value]";
 }
 EOF;
-$mods_repo['dashboard']['mods']['header']['value']['collpased_top_right_vertical']['css'] = <<<EOF
+$mods_repo['dashboard']['header']['value']['collpased_top_right_vertical']['css'] = <<<EOF
 .dashName:after {
   content: " - [value]";
 }
 EOF;
-$mods_repo['dashboard']['mods']['header']['value']['collapsed_bottom_right']['css'] = <<<EOF
+$mods_repo['dashboard']['header']['value']['collapsed_bottom_right']['css'] = <<<EOF
 .dashName:after {
   content: " - [value]";
 }
 EOF;
-$mods_repo['dashboard']['mods']['header']['value']['collpased_bottom_right_vertical']['css'] = <<<EOF
+$mods_repo['dashboard']['header']['value']['collpased_bottom_right_vertical']['css'] = <<<EOF
 .dashName:after {
   content: " - [value]";
 }

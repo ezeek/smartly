@@ -49,7 +49,9 @@
 						<p>hubitat dashboard skin engine <small>[v1.07]</small></p>
 					</div>
 					<form method="post" action="smartly-helper.php">
-						<div class="modal fade" id="smartly_settings_modal" tabindex="-1" role="dialog" aria-labelledby="settings_modalLabel" aria-hidden="true">
+
+
+						<!---div class="modal fade" id="smartly_settings_modal" tabindex="-1" role="dialog" aria-labelledby="settings_modalLabel" aria-hidden="true">
 							<div class="modal-dialog-centered modal-dialog" role="document">
 								<div class="modal-content">
 									<div class="modal-header">
@@ -63,7 +65,6 @@
 											<li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#settings-icons" role="tab">icons</a> </li>
 											<li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#settings-mods" role="tab">mods</a> </li>
 										</ul>
-										<!-- Tab panes -->
 										<div class="tab-content">
 											<div class="tab-pane active" id="settings-calibration" role="tabpanel">
 												<div class="alert alert-warning" role="alert"> Device-based calibrations are experimental. </div>
@@ -108,8 +109,9 @@
 									</div>
 								</div>
 							</div>
-						</div>
-						<!-- /modal -->
+						</div--->
+
+
 						<div class="form-group " style="position:relative;">
 							<div class="form-group " style="position:relative;">
 								<label class="control-label requiredField" for="inputjson"> Your Layout JSON <span class="asteriskField">*</span> </label> <span style="position: relative; width: 100%; display: block;">
@@ -192,6 +194,22 @@
 					</div>
 				</div>
 			</div>
+
+                        <div class="modal fade" id="smartly_settings_modal" tabindex="-1" role="dialog" aria-labelledby="settings_modalLabel" aria-hidden="true">
+                                <div class="modal-dialog-centered modal-dialog" role="document">
+                                        <div class="modal-content">
+                                                <div class="modal-header">
+                                                        <h5 class="modal-title" id="settings_modalLabel">Dash Modal title</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                                                </div>
+                                                <div id="smartly_settings_editor" class="modal-body"> ... </div>
+                                                <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-primary" onClick="smartly_settings_update()">Save changes</button>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
         </div>
     </div>
 
@@ -254,8 +272,8 @@ var cal_devices_mobile = new Bloodhound({
 cal_devices.initialize();
 cal_devices_mobile.initialize();
 
-var elt = $('#cal_devices');
-var elt2 = $('#cal_devices_2col');
+var elt = $('#smart_edit_cal_devices');
+var elt2 = $('#smart_edit_cal_devices_2col');
 
 elt.tagsinput({
   itemValue: 'value',

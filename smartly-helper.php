@@ -496,7 +496,8 @@ $tile_data['mods']['3rdparty'][$templateExtra_vendor][$mod]['value'] = $smartly_
 // any existing smartly_data, but will have added and deleted tiles as necessary to
 // sync with inputJSON tiles[].
 
-if ($smartly_data['tiles'] && $smartly_touched == true) { $tiles = $smartly_data['tiles']; } 
+if ($smartly_data['tiles'] && $smartly_touched == true) { $tiles = $smartly_data['tiles']; } // LEGACY
+
 if ($smartly_data['settings']) { 
   $smartly_data['settings']['calibration']['source'] = $device_cals_path;
   $smartly_data['settings']['calibration']['colwidth'] = $inputJSON['colWidth'];
