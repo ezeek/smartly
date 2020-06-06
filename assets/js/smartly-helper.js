@@ -159,23 +159,40 @@ $(document).ready(function() {
 function update_calibrations(smartlyDATA) {
 
   // legacy conversion
-  if (smartlyDATA['settings']['calibration']['devices'] || smartlyDATA['settings']['calibration']['devices_2col']) {
+/*
+  if (smartlyDATA['settings']['calibration']['devices'][0].length > 0 || smartlyDATA['settings']['calibration']['devices_2col'][0].length > 0) {
+console.log("LEGACY CAL?IBTATION DEVICES");
     smartlyDATA['dashboard'] = {};
     smartlyDATA['dashboard']['mods'] = {};
     smartlyDATA['dashboard']['mods']['cal_devices'] = smartlyDATA['settings']['calibration']['devices'] ? smartlyDATA['settings']['calibration']['devices'] : null;
     smartlyDATA['dashboard']['mods']['cal_devices_2col'] = smartlyDATA['settings']['calibration']['devices_2col'] ? smartlyDATA['settings']['calibration']['devices_2col'] : null;
 
+//delete smartlyDATA['settings']['calibration'].devices;
+//delete smartlyDATA['settings']['calibration'].devices_2col;
 //    delete smartlyDATA['settings']['calibration'].devices;
 //    delete smartlyDATA['settings']['calibration'].devices_2col;
 
   }
+*/
+
+  // if empty, prepopulate structure
+console.log(smartlyDATA, "prepopulate");  
+
+    if (typeof smartlyDATA['dashboard'] === 'undefined') {
+      smartlyDATA['dashboard'] = {};      
+      if (typeof smartlyDATA['dashboard']['mods'] === 'undefined') {
+        smartlyDATA['dashboard']['mods'] = {};
+      }
+    }
+
+
 
   if (smartlyDATA['dashboard']['mods']['cal_devices'] || smartlyDATA['dashboard']['mods']['cal_devices_2col']) {
 
     $.getJSON("assets/data/device_cals.json", function(data) {
 
-      var elt = $('#cal_devices');
-      var elt2 = $('#cal_devices_2col')
+      var elt = $('#smart_edit_cal_devices');
+      var elt2 = $('#smart_edit_cal_devices_2col')
       var found = '';
 
       jQuery.each(smartlyDATA['dashboard']['mods']['cal_devices'], function(id, device) {
@@ -315,7 +332,7 @@ function smartly_editor(tile_id) {
           // build the form
 
           formHtml += build_form(tile_id, data, data.mods[mod], smartlyMODS.tiletype[mod], mod);
-console.log(smartlyDATA, "SDATA post root add");
+//console.log(smartlyDATA, "SDATA post root add");
 
           // add to the form for all modifiers
 
@@ -324,7 +341,7 @@ console.log(smartlyDATA, "SDATA post root add");
             formHtml += build_form(tile_id, data, data.mods[mod]['modifier'][modifier_mod], modifier_construct, mod + '__' + modifier_mod);
             }
           }
-console.log(smartlyDATA, "SDATA post moidifier add");
+//console.log(smartlyDATA, "SDATA post moidifier add");
           if (modWrap) {
             formHtml +='</fieldset>';
           }
@@ -336,6 +353,9 @@ console.log(smartlyDATA, "SDATA post moidifier add");
         }; // for mods
 
         // if the section has elements, add to section_build object for building later
+
+        // trim empty array elements
+        section_html = section_html.filter(Boolean);
 
         if (section_html.length > 0) {
           section_build[section] = section_html;
@@ -440,11 +460,11 @@ console.log(smartlyDATA, "SDATA post moidifier add");
         });
       });
 
-    } else { // this tile type has no states or icon replacement is not permitted
+    } //else { // this tile type has no states or icon replacement is not permitted
 
-      el_tab_icon.append("There are no configurable icons for this tile.");
+//      el_tab_icon.append("There are no configurable icons for this tile.");
 
-    }
+//    }
   }
 } // end
 
@@ -472,6 +492,7 @@ function smartly_settings_editor() {
 
   var section_build = {};
 
+console.log(smartlyDATA, "SDATA");
   for (let [section, mods] of Object.entries(smartlyMODS.layout.dashboard)) {
     var section_html = [];
 
@@ -574,6 +595,11 @@ function smartly_settings_editor() {
 
   editor.append(section_menu);
   editor.append(section_tab_html);
+initialize_tagsinput();
+
+        update_calibrations(smartlyDATA);
+
+// XXX
 
 } // end
 
@@ -735,8 +761,10 @@ function smartly_settings_update() {
   });
 
   // check calibration values
-  var cal_devices_val = $("#cal_devices").val() ? $("#cal_devices").val() : null;
-  var cal_devices_2col_val = $("#cal_devices_2col").val() ? $("#cal_devices_2col").val() : null;;
+
+    
+  var cal_devices_val = $("#smart_edit_cal_devices").val() ? $("#smart_edit_cal_devices").val() : null;
+  var cal_devices_2col_val = $("#smart_edit_cal_devices_2col").val() ? $("#smart_edit_cal_devices_2col").val() : null;;
 
   // if calibration values, split into array
   var cal_devices = cal_devices_val ? cal_devices_val.split(',') : null;
@@ -857,11 +885,11 @@ console.log(tile_mod, "build_form: tile_mod");
     }
   }
 
-console.log(mod_construct, "MOD CONSTRUCT");
+//console.log(mod_construct, "MOD CONSTRUCT");
 
   switch (mod_construct.type) {
     case 'checkbox':
-console.log(mod_construct, "INCOMING MOD CONSTRUCT - CHECKBOX");
+//console.log(mod_construct, "INCOMING MOD CONSTRUCT - CHECKBOX");
 
       if (typeof tile_mod !== 'undefined') {
         if (tile_mod.value === true) {
@@ -906,6 +934,8 @@ console.log(mod_construct, "INCOMING MOD CONSTRUCT - CHECKBOX");
 
     case 'tagsinput':
 
+      formValue = tile_mod ? tile_mod : '';
+
       formHtml += '<div class="form-group row"><div class="col-12"><label for="smart_edit_' + mod_name + '" class="col-form-label">' + mod_construct.label + '</label><input type="text" id="smart_edit_' + mod_name + '" class="bootstrap-tagsinput"/></div></div>';
 
 
@@ -946,4 +976,67 @@ function disableEnterKey(e) {
     key = e.which; //firefox      
 
   return (key != 13);
+}
+
+
+function initialize_tagsinput() {
+
+var cal_devices = new Bloodhound({
+  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('text'),
+  queryTokenizer: Bloodhound.tokenizers.whitespace,
+//  prefetch: 'https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/assets/cities.json',
+  prefetch: {
+    url: 'assets/data/device_cals.json',
+    cache: false
+  }
+});
+
+var cal_devices_mobile = new Bloodhound({
+  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('text'),
+  queryTokenizer: Bloodhound.tokenizers.whitespace,
+//  prefetch: 'https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/assets/cities.json',
+  prefetch: {
+    url: 'assets/data/device_cals.json',
+    cache: false,
+    filter: function(devices) {
+      return $.map(devices, function(device) { 
+        if (device.force_cols != null) {
+          return device;
+        //return { value: 'one', text: 'One', width: 111, height: 222, pwidth: 2 }; });
+        }
+      });
+    }
+  }
+});
+
+
+cal_devices.initialize();
+cal_devices_mobile.initialize();
+
+var elt = $('#smart_edit_cal_devices');
+var elt2 = $('#smart_edit_cal_devices_2col');
+
+elt.tagsinput({
+  itemValue: 'value',
+  itemText: 'text',
+  typeaheadjs: {
+    name: 'cal_devices',
+    displayKey: 'text',
+    source: cal_devices.ttAdapter(),
+    limit: 100
+  }
+});
+
+elt2.tagsinput({
+  itemValue: 'value',
+  itemText: 'text',
+  typeaheadjs: {
+    name: 'cal_devices_mobile',
+    displayKey: 'text',
+    source: cal_devices_mobile,
+    limit: 100
+  }
+});
+
+//elt.tagsinput('add', { "value": "google_pixel-4a" , "text": "Google Pixel 4a"   , "continent": "Something"    });
 }

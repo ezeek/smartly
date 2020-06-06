@@ -348,6 +348,20 @@ if ($inputJSON['tiles'][0]['template'] != "smartly") {  // first time running
  * and deleting tiles as necessary
 */
 
+//var_dump($smartly_data, "SDATA");
+
+foreach ($smartly_data['dashboard']['mods'] as $mod_name => $mod_data) {
+ 
+
+ 
+//echo $mod_name;
+
+
+
+}
+
+
+
 // build refreshed smartly data from tiles
 
 foreach ($inputJSON['tiles'] as $pos => $tile) {
@@ -508,9 +522,11 @@ if ($smartly_data['settings']) {
   $smartly_data['settings']['commit'] = $smartly_head;
   $smartly_settings = $smartly_data['settings'];
 } else {
-  $smartly_settings = array('calibration' => array('devices' => null, 'devices_2col' => null),'commit' => $smartly_head . "two");
+  $smartly_settings = array('commit' => $smartly_head . "two"); //'calibration' => array('devices' => null, 'devices_2col' => null),
 }
 
+$dashboard_mods['mods']['cal_devices'] = $smartly_data['dashboard']['mods']['cal_devices'] ? $smartly_data['dashboard']['mods']['cal_devices'] : null;
+$dashboard_mods['mods']['cal_devices_2col'] = $smartly_data['dashboard']['mods']['cal_devices_2col'] ? $smartly_data['dashboard']['mods']['cal_devices_2col'] : null;
 
 //var_dump($smartly_settings);
 /*a
@@ -532,7 +548,7 @@ $inputJSON['tiles'] = array_values($inputJSON['tiles']); // Hubitat Dashboard do
 // @TODO why on earth am I splitting smartly_data into separate variables instead of just writing null corrections to inputSDADA
 
 // update smartly tile with new new smartly data
-$inputJSON['tiles'][0]['templateExtra'] = json_encode(array("tiles" => $tiles, "settings" => $smartly_settings));
+$inputJSON['tiles'][0]['templateExtra'] = json_encode(array("tiles" => $tiles, "settings" => $smartly_settings, "dashboard" => $dashboard_mods));
 
 // set up css replacements so they are accessible globally.
 $css_title_replacements = array();
@@ -553,7 +569,7 @@ if ($update_options['zoomy']) {
 }
 
 // build the return array of json for smartly-helper form
-$return_json = array("outputJSON" => json_encode($inputJSON), "smartlyDATA" => array('tiles' => $tiles, 'settings' => $smartly_settings));
+$return_json = array("outputJSON" => json_encode($inputJSON), "smartlyDATA" => array('tiles' => $tiles, 'settings' => $smartly_settings, "dashboard" => $dashboard_mods));
 echo json_encode($return_json);
 
 
@@ -731,14 +747,14 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
   }
 
 
-  if ($settings['calibration']['devices'] || $settings['calibration']['devices_2col']) {
+  if ($smartly_data['dashboard']['mods']['cal_devices'] || $settings['dashboard']['mods']['cal_devices_2col']) {
 
     $cal_devices_json = file_get_contents($settings['calibration']['source']); //json_dev
     $cal_devices_json = json_decode($cal_devices_json, true);
 
-    if ($settings['calibration']['devices']) {
+    if ($smartly_data['dashboard']['mods']['cal_devices']) {
 
-     foreach ($settings['calibration']['devices'] as $index => $device) {
+     foreach ($smartly_data['dashboard']['mods']['cal_devices'] as $index => $device) {
 
        $key = array_search($device, array_column($cal_devices_json, 'value'));
        $height = $cal_devices_json[$key]['height'];
@@ -755,9 +771,9 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
       }
     }
 
-    if ($settings['calibration']['devices_2col']) {
+    if ($smartly_data['dashboard']['mods']['cal_devices_2col']) {
 
-      foreach ($settings['calibration']['devices_2col'] as $index => $device) {
+      foreach ($smartly_data['dashboard']['mods']['cal_devices_2col'] as $index => $device) {
 
         $key = array_search($device, array_column($cal_devices_json, 'value'));
         $width = $cal_devices_json[$key]['width'];
