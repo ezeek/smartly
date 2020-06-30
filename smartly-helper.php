@@ -795,6 +795,7 @@ EOF;
       foreach ($smart_data['states'] as $state_name => $state_data) { //$state_code) {
         $icon_code = $state_data['code'];
         $icon_class = str_replace("_", ".", $state_data['class']);
+        $icon_class_stock = $state_data['class'];
         $state_name = str_replace("_", ".", $state_name);
 
         if (strlen($state_data['code']) > 0) {
@@ -804,17 +805,17 @@ EOF;
             case 'bulb-color':
               $smartly_css['icon'][] = <<<EOF
 
-#tile-$smart_id .tile-primary i.material-icons.$icon_class {
+#tile-$smart_id .tile-primary i.material-icons.$icon_class_stock {
     visibility: hidden;
 }
 
-#tile-$smart_id .tile-primary i.material-icons.$icon_class:after {
+#tile-$smart_id .tile-primary i.material-icons.$icon_class_stock:after {
     content: "\\$icon_code";
     font-family: "Material Design Icons" !important;
     visibility: hidden;
 }
 
-#tile-$smart_id .tile-primary i.material-icons.$icon_class:before {
+#tile-$smart_id .tile-primary i.material-icons.$icon_class_stock:before {
     content: "\\$icon_code";
     font-family: "Material Design Icons" !important;
     visibility: visible;
