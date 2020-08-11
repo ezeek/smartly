@@ -531,17 +531,17 @@ EOF;
 
 
 $mods_repo['tiletype']['icon']['css']['bulb-color'] = <<<EOF
-#tile-[tile_id] .tile-primary i.material-icons.[class] {
+#tile-[tile_id] .tile-primary i.material-icons.[class_stock] {
     visibility: hidden;
 }
 
-#tile-[tile_id] .tile-primary i.material-icons.[class]:after {
+#tile-[tile_id] .tile-primary i.material-icons.[class_stock]:after {
     content: "\\[value]";
     font-family: "Material Design Icons" !important;
     visibility: hidden;
 }
 
-#tile-[tile_id] .tile-primary i.material-icons.[class]:before {
+#tile-[tile_id] .tile-primary i.material-icons.[class_stock]:before {
     content: "\\[value]";
     font-family: "Material Design Icons" !important;
     visibility: visible;

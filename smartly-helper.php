@@ -751,6 +751,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
       foreach ($smart_data['states'] as $state_name => $state_data) { //$state_code) {
         $icon_code = $state_data['code'];
         $icon_class = str_replace("_", ".", $state_data['class']);
+        $icon_class_stock = $state_data['class'];
         $state_name = str_replace("_", ".", $state_name);
 
         $token_replacements = array(
@@ -759,6 +760,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
           '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
           '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
           '[state]' => $state_name,
+          '[class_stock]' => $icon_class_stock,
           '[class]' => $icon_class
         );
 
