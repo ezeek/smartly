@@ -662,12 +662,50 @@ Add your custom CSS in the space below.. */
 
 function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css = null, $skin_css = null, $user_css = null, $settings = array()) {
 
+  $smartly_data = $GLOBALS['smartly_data'];
   $mods_repo = $GLOBALS['mods_repo'];
   $mods_enabled = $GLOBALS['mods_enabled'];
   $inputJSON = $GLOBALS['inputJSON'];
   $fontsize_calc = strval($settings['fontSize'] * 1.5) . "px";
   $fontsize_calc_lg = strval($settings['fontSize'] * 1.75) . "px";
 
+//print_r($smartly_data);
+  foreach ($smartly_data['dashboard']['mods'] as $mod => $mod_data) {
+//echo "MOD!: " . $mod . "\r\n";
+
+    if (!(is_null($mod_data['value'])) && $mods_repo['dashboard'][$mod]) {
+//print_r($mods_repo['dashboard'][$mod]['type']);
+
+/*
+      switch ($mods_repo['dashboard'][$mod]['type']) {
+        case 'select':
+
+          $token_replacements = array(
+            '[value]' => $mod_data['value'];
+          );
+
+          $css = $mods_repo['dashboard'][$mod]['value'][$mod_val]['css'] ? $mods_repo['dashboard'][$mod]['value'][$mod_val]['css'] : $mods_repo['dashboard'][$mod]['value']['default']['css'];
+
+          break;
+
+        default:
+
+          $token_replacements = array(
+            '[value]' => $mod_data['value'];
+          ); 
+
+          $css = $mods_repo['dashboard'][$mod]['css'] ? $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] : $mods_repo['tiletype'][$mod]['css']['default'];
+
+      }
+
+
+      // check if the mod has tiletype specific css and if not, use default css.  do token replacements as needed.
+      $smartly_css['mods'][$mod][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+*/
+    } 
+  }
+
+	
   foreach ($smartly_tiles as $smart_id => $smart_data) {
 
     foreach ($mods_enabled['tiletype'] as $mod => $tiletype) {

@@ -36,11 +36,14 @@ $mods_repo['layout'] = [
     ],
     'mods' => [
       'header'
-    ],
+    ]
+/*
+,
     'color' => [
       'color_temperature',
       'color_humidity'
     ]
+*/
   ]
 ];
 
@@ -207,7 +210,97 @@ $mods_enabled['tiletype']['label'] = [
   'thermostat'
 ];
 
+$mods_enabled['tiletype']['color_fg'] = [
+  'acceleration',
+  'attribute',
+  'battery',
+  'bulb',
+  'bulb-color',
+  'buttons',
+  'carbon-monoxide',
+//'clock',
+//'clock-analog',
+//'clock-date',
+  'contact',
+//'dashboard',
+  'dimmer',
+  'door',
+  'door-control',
+  'fan',
+  'garage',
+  'garage-control',
+  'illuminance',
+  'energy',
+  'temperature',
+  'humidity',
+//'image',
+  'level-step',
+  'lock',
+  'momentary',
+  'motion',
+  'multi',
+  'music-player',
+  'outlet',
+  'presence',
+  'relay',
+  'shades',
+  'shock',
+  'smoke',
+  'switches',
+//'thermostat',
+  'valve',
+//'video',
+  'volume',
+  'water',
+  'window',
+  'scene'
+];
 
+$mods_enabled['tiletype']['color_bg'] = [
+  'acceleration',
+  'attribute',
+//  'battery',
+//  'bulb',
+//  'bulb-color',
+  'buttons',
+//  'carbon-monoxide',
+  'clock',
+  'clock-analog',
+  'clock-date',
+//  'contact',
+  'dashboard',
+//  'dimmer',
+//  'door',
+//  'door-control',
+//  'fan',
+//  'garage',
+//  'garage-control',
+  'illuminance',
+  'energy',
+  'temperature',
+  'humidity',
+  'image',
+  'level-step',
+  'lock',
+  'momentary',
+  'motion',
+  'multi',
+  'music-player',
+  'outlet',
+  'presence',
+  'relay',
+  'shades',
+  'shock',
+  'smoke',
+  'switches',
+  'thermostat',
+  'valve',
+  'video',
+  'volume',
+  'water',
+  'window',
+  'scene'
+];
 
 
 // MODS REPO, to be built in JSON, possibly using foler structure to hold CSS
@@ -241,6 +334,7 @@ $mods_repo['dashboard']['zoomy']['type'] = 'checkbox';
 $mods_repo['dashboard']['header']['label'] = "Header Visibility";
 $mods_repo['dashboard']['header']['type'] = 'select';
 $mods_repo['dashboard']['header']['options'] = [
+    "default" => "Default",
     "hidden" => "Hidden (but clickable)",
     "half_height" => "Half height", 
     "collapsed_top_right" => "Collapsed top right",
@@ -251,6 +345,9 @@ $mods_repo['dashboard']['header']['options'] = [
 $mods_repo['dashboard']['header']['text'] = "Change the size and position and visibility of the dashboard header..";
 
 // using value based tree because dashboard mods will include JSON mods, which can't simply use the value of the form in token replacement
+
+$mods_repo['dashboard']['header']['value']['default']['css'] = <<<EOF
+EOF;
 
 $mods_repo['dashboard']['header']['value']['hidden']['css'] = <<<EOF
 .dashName:after {
