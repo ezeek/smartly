@@ -818,7 +818,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
 
         $bestmatch = smartly_calibrate(.8, $width, $settings['calibration']['colwidth'], $settings['calibration']['gridgap'], $settings['calibration']['colcount']);
 
-        $smartly_css['calibration'][] = "@media screen and (orientation: portrait) and (max-width:" . ($width + 1) . "px) and (min-width:" . ($width - 1) . "px){.dashboard{zoom:1; -moz-transform:scale(1);} .dashboard .wrapper { grid-template-columns: repeat(" . $settings['calibration']['colcount'] . ", calc(50% - " . ($settings['calibration']['gridgap'] - 1) . "px))!important;}" . $lb;
+        $smartly_css['calibration'][] = "@media screen and (orientation: portrait) and (max-width:" . ($width + 1) . "px) and (min-width:" . ($width - 1) . "px){.dashboard{zoom:1; -moz-transform:scale(1);} .dashboard .wrapper { grid-template-columns: repeat(" . $settings['calibration']['colcount'] . ", calc(50% - " . ($settings['calibration']['gridgap'] - 1) . "px))!important;}}" . $lb;
 
       }
     }
