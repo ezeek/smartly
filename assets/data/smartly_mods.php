@@ -213,51 +213,51 @@ $mods_enabled['tiletype']['label'] = [
 $mods_enabled['tiletype']['color_fg'] = [
   'acceleration',
   'attribute',
-  'battery',
-  'bulb',
-  'bulb-color',
+//  'battery',
+//  'bulb',
+//  'bulb-color',
   'buttons',
-  'carbon-monoxide',
-//'clock',
-//'clock-analog',
-//'clock-date',
-  'contact',
-//'dashboard',
-  'dimmer',
-  'door',
-  'door-control',
-  'fan',
-  'garage',
-  'garage-control',
+//  'carbon-monoxide',
+  'clock',
+  'clock-analog',
+  'clock-date',
+//  'contact',
+  'dashboard',
+//  'dimmer',
+//  'door',
+//  'door-control',
+//  'fan',
+//  'garage',
+//  'garage-control',
   'illuminance',
   'energy',
   'temperature',
   'humidity',
 //'image',
   'level-step',
-  'lock',
+//  'lock',
   'momentary',
-  'motion',
-  'multi',
+//  'motion',
+//  'multi',
   'music-player',
-  'outlet',
-  'presence',
+//  'outlet',
+//  'presence',
   'relay',
-  'shades',
-  'shock',
-  'smoke',
-  'switches',
-//'thermostat',
+//  'shades',
+//  'shock',
+//  'smoke',
+//  'switches',
+//  'thermostat',
   'valve',
-//'video',
+  'video',
   'volume',
-  'water',
-  'window',
+//  'water',
+//  'window',
   'scene'
 ];
 
 $mods_enabled['tiletype']['color_bg'] = [
-  'acceleration',
+//  'acceleration',
   'attribute',
 //  'battery',
 //  'bulb',
@@ -281,24 +281,24 @@ $mods_enabled['tiletype']['color_bg'] = [
   'humidity',
   'image',
   'level-step',
-  'lock',
+//  'lock',
   'momentary',
-  'motion',
-  'multi',
+//  'motion',
+//  'multi',
   'music-player',
-  'outlet',
-  'presence',
+//  'outlet',
+//  'presence',
   'relay',
-  'shades',
-  'shock',
-  'smoke',
-  'switches',
-  'thermostat',
-  'valve',
+//  'shades',
+//  'shock',
+//  'smoke',
+//  'switches',
+//  'thermostat',
+//  'valve',
   'video',
   'volume',
-  'water',
-  'window',
+//  'water',
+//  'window',
   'scene'
 ];
 
@@ -892,4 +892,40 @@ $mods_repo['tiletype']['buttonize']['css']['dashboard'] = <<<EOF
 EOF;
 
 
+$mods_repo['tiletype']['color_fg']['label'] = "Text Color";
+$mods_repo['tiletype']['color_fg']['text']['default'] = 'The tile text and icon color (overrides state colors).  Format: rgba(x,x,x,x).';
+$mods_repo['tiletype']['color_fg']['type'] = 'textbox';
+$mods_repo['tiletype']['color_fg']['placeholder'] = 'rgba(x,x,x,x)';
+$mods_repo['tiletype']['color_fg']['css']['default'] = <<<EOF
+#tile-[tile_id] {
+  color: [value] !important;
+}
+EOF;
+
+$mods_repo['tiletype']['color_bg']['label'] = "Background Color";
+$mods_repo['tiletype']['color_bg']['text']['default'] = 'The tile background color (overrides state colors).  Format: rgba(x,x,x,x).';
+$mods_repo['tiletype']['color_bg']['type'] = 'textbox';
+$mods_repo['tiletype']['color_bg']['css']['default'] = <<<EOF
+#tile-[tile_id] {
+  background-color: [value] !important;
+}
+EOF;
+
+$mods_repo['tiletype']['border_size']['label'] = "Border Size";
+$mods_repo['tiletype']['border_size']['text']['default'] = 'The width (in pixels) of the tile border.  Border Color required to see it.';
+$mods_repo['tiletype']['border_size']['type'] = 'textbox';
+$mods_repo['tiletype']['border_size']['css']['default'] = <<<EOF
+#tile-[tile_id] {
+  border: [value]px !important;
+}
+EOF;
+
+$mods_repo['tiletype']['border_color']['label'] = "Border Color";
+$mods_repo['tiletype']['border_color']['text']['default'] = 'The tile border color.  FormatL: rgba(x,x,x,x).';
+$mods_repo['tiletype']['border_color']['type'] = 'textbox';
+$mods_repo['tiletype']['border_color']['css']['default'] = <<<EOF
+#tile-[tile_id] {
+  border-color: [value] !important;
+}
+EOF;
 ?>

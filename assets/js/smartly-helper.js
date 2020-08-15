@@ -323,7 +323,7 @@ function smartly_editor(tile_id) {
 
           var formHtml = '';
           var modWrap = false;
-
+console.log(mod, "mod");
           if (typeof smartlyMODS.tiletype[mod].modifier !== 'undefined') {
             modWrap = true;
             formHtml += '<fieldset class="form-group"><legend>' + mod  + '</legend>';
