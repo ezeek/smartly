@@ -687,6 +687,10 @@ function smartly_update() {
     'display': 'unset'
   });
 
+//console.log(pickr_color_fg, "clearing picker_color_fg");
+//pickr_color_fg.destroyAndRemove();
+//pickr_color_bg.destroyAndRemove();
+//pickr_border_color.destroyAndRemove();
 
   if ($("#smart_edit_id").val()) {
     var smart_id = $("#smart_edit_id").val();
@@ -945,6 +949,21 @@ console.log(tile_mod, "build_form: tile_mod");
       formValue = tile_mod ? tile_mod : '';
 
       formHtml += '<div class="form-group row"><div class="col-12"><label for="smart_edit_' + mod_name + '" class="col-form-label">' + mod_construct.label + '</label><input type="text" id="smart_edit_' + mod_name + '" class="bootstrap-tagsinput"/></div></div>';
+
+      break
+
+    case 'color':
+
+      formValue = tile_mod.value ? tile_mod.value : '';
+
+      formHtml += '<div class="form-group row"><label class="col-4 col-form-label" for="title">' + mod_construct.label + '</label><div class="col-8">';
+
+      formHtml += '<div id="pickr_' + mod_name + '">&nbsp;</div><input id="smart_edit_' + mod_name + '" name="smart_edit_' + mod_name + '" type="text" class="form-control" aria-describedby="' + mod_name + 'HelpBlock" value="' + formValue + '" ' + formInsert + '><span id="' + mod_name + 'HelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
+
+
+      formHtml += '<script type="text/javascript">var pickr_' + mod_name + ' = new Pickr({el: "#pickr_' + mod_name + '",default: $("#smart_edit_' + mod_name + '").val(), comparison: false, defaultRepresentation: "RGBA",toRGBA: true,components: {preview: true,opacity: true,hue: true,interaction: {input: true,clear: false,save: true}},onChange(hsva, instance) { $("#smart_edit_' + mod_name + '").val(hsva.toRGBA().toString()); console.log(hsva, "object"); }});</script>';
+
+      formHtml += '<script type="text/javascript">$("#smart_edit_' + mod_name + '").on("change paste",function() { if ($(this).val()) { pickr_' + mod_name + '.setColor( $(this).val() ); } else { pickr_' + mod_name + '.setColor(null); }    });</script>';
 
 
 

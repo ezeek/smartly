@@ -941,7 +941,7 @@ EOF;
 
 $mods_repo['tiletype']['color_fg']['label'] = "Text Color";
 $mods_repo['tiletype']['color_fg']['text']['default'] = 'The tile text and icon color (overrides state colors).  Format: rgba(x,x,x,x).';
-$mods_repo['tiletype']['color_fg']['type'] = 'textbox';
+$mods_repo['tiletype']['color_fg']['type'] = 'color';
 $mods_repo['tiletype']['color_fg']['placeholder'] = 'rgba(x,x,x,x)';
 $mods_repo['tiletype']['color_fg']['css']['default'] = <<<EOF
 #tile-[tile_id] {
@@ -951,7 +951,7 @@ EOF;
 
 $mods_repo['tiletype']['color_bg']['label'] = "Background Color";
 $mods_repo['tiletype']['color_bg']['text']['default'] = 'The tile background color (overrides state colors).  Format: rgba(x,x,x,x).';
-$mods_repo['tiletype']['color_bg']['type'] = 'textbox';
+$mods_repo['tiletype']['color_bg']['type'] = 'color';
 $mods_repo['tiletype']['color_bg']['css']['default'] = <<<EOF
 #tile-[tile_id] {
   background-color: [value] !important;
@@ -960,7 +960,7 @@ EOF;
 
 $mods_repo['tiletype']['border_color']['label'] = "Border Color";
 $mods_repo['tiletype']['border_color']['text']['default'] = 'The tile border color.  FormatL: rgba(x,x,x,x).';
-$mods_repo['tiletype']['border_color']['type'] = 'textbox';
+$mods_repo['tiletype']['border_color']['type'] = 'color';
 $mods_repo['tiletype']['border_color']['css']['default'] = <<<EOF
 #tile-[tile_id] {
   border-color: [value] !important;
