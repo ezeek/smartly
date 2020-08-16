@@ -845,14 +845,22 @@ console.log(mod_name, "FOUND ELEMENT");
       default:
 
         if ($("#smart_edit_" + parent_plug + mod_name).val()) {
-          if (debug) { console.log("SMART_EDIT_TITLE PRESENT"); }
-
-          smartlyDATA['tiles'][smart_id]['mods'][mod_name]['value'] = $("#smart_edit_" + mod_name).val();
+          if (debug) { console.log("#smart_edit_" + parent_plug + mod_name, "SMART_EDIT_TITLE PRESENT"); }
+   
+          if (parent_mod) {
+            smartlyDATA['tiles'][smart_id]['mods'][parent_mod]['modifier'][mod_name]['value'] = $("#smart_edit_" + parent_plug + mod_name).val();
+          } else {
+            smartlyDATA['tiles'][smart_id]['mods'][mod_name]['value'] = $("#smart_edit_" + mod_name).val();
+          }
 
         } else {
           if ($("#smart_edit_" + mod_name).length) {
 
-            smartlyDATA['tiles'][smart_id]['mods'][mod_name]['value'] = null;
+            if (parent_mod) {
+              smartlyDATA['tiles'][smart_id]['mods'][parent_mod]['modifier'][mod_name]['value'] = null;
+            } else {
+              smartlyDATA['tiles'][smart_id]['mods'][mod_name]['value'] = null;
+            }
 
           }
         }
