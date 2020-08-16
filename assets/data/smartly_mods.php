@@ -964,6 +964,8 @@ $mods_repo['tiletype']['border_color']['type'] = 'textbox';
 $mods_repo['tiletype']['border_color']['css']['default'] = <<<EOF
 #tile-[tile_id] {
   border-color: [value] !important;
+  border-style: solid !important;
+  border-width: 1px;
 }
 EOF;
 
@@ -974,7 +976,7 @@ $mods_repo['tiletype']['border_color']['modifier']['border_size']['type'] = 'sel
 $mods_repo['tiletype']['border_color']['modifier']['border_size']['options'] = ['1', '2', '3', '4'];
 $mods_repo['tiletype']['border_color']['modifier']['border_size']['css']['default'] = <<<EOF
 #tile-[tile_id] {
-  border: [value]px !important;
+  border-width: [value]px !important;
 }
 EOF;
 
