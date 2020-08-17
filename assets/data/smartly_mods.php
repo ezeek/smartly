@@ -697,6 +697,14 @@ $mods_repo['tiletype']['icon']['css']['music-player'] = <<<EOF
 
 EOF;
 
+
+
+
+
+// 3rd party CSS patching
+
+// BPT General
+
 $mods_repo['3rdparty']['bpt']['css'] = <<<EOF
 #tile-[tile_id] .tile-contents {
    height: calc(90%);
@@ -707,6 +715,160 @@ $mods_repo['3rdparty']['bpt']['css'] = <<<EOF
    padding-bottom: 0;
 }
 EOF;
+
+
+// BPT Weather Dot Gov
+
+$mods_repo['3rdparty']['bpt-currentDataTile']['css'] = <<<EOF
+#tile-[tile_id] .tile-title {
+    position: absolute;
+    bottom: .5em;
+    left: .5em;
+}
+
+#tile-[tile_id] .tile-primary tbody:nth-child(1) td small {
+    position: absolute;
+    right: 3.5em;
+}
+
+#tile-[tile_id] .tile-primary {
+    line-height: 1.4em;
+}
+EOF;
+
+
+
+// BPT Life360
+
+$mods_repo['3rdparty']['bpt-history']['css'] = <<<EOF
+#tile-[tile_id] {
+  background-color: rgba(0,0,0,.6);
+}
+
+#tile-[tile_id] table {
+  border-collapse: collapse;
+}
+
+#tile-[tile_id] .tile-contents {
+  padding: 0;
+}
+
+#tile-[tile_id] .tile-title {
+position: absolute;
+  bottom: .75em;
+  right: 1.25em;
+  width: auto;
+  text-align: right;
+  opacity: .5;
+}
+
+#tile-[tile_id] tr {
+    display: flex;
+}
+
+#tile-[tile_id] .tile-primary tbody tr:nth-child(1) td p:nth-child(2) {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: .5em 0 .25em .5em;
+  background-color: rgba(255,255,255,.7);
+  border-radius: 0 0 0 15px;
+  color: rgba(0,0,0,0.7);
+  width: unset !important;
+  padding-top: 3em;
+  font-size: 14px !important;
+  margin-right: -1em;
+}
+
+#tile-[tile_id] .tile-primary tbody tr:nth-child(1) td p:nth-child(1) {
+  text-align: left;
+}
+
+#tile-[tile_id] .tile-primary tbody tr:nth-child(1) td:nth-child(1) {
+  text-align: left;
+  width: 135px !important;
+}
+
+#tile-[tile_id] .tile-primary tbody tr:nth-child(1) td:nth-child(2) {
+  vertical-align: top;
+  padding: .25em .5em;
+  text-align: left;
+  vertical-align: top;
+}
+
+#tile-[tile_id] .tile-primary {
+  line-height: 1.4em;
+  padding: 0;
+  vertical-align: top;
+}
+
+#tile-[tile_id] .tile-primary>div {
+  overflow: hidden !important;
+  height: unset !important;
+  margin: 0;
+}
+
+#tile-[tile_id] .tile-primary img {
+  text-align: left;
+  margin-top: -1px;
+  margin-left: -1px;
+}
+
+#tile-[tile_id] .tile-primary tbody tr:nth-child(1) td p:nth-child(2):after {
+  content: " ";
+  background-image: url(https://hubitat.ezeek.us/smartly-base/assets/images/logo_life360_75px.png);
+  width: 100px;
+  height: 3em;
+  display: block;
+  position: absolute;
+  top: 0;
+  margin-top: .5em;
+  background-repeat: no-repeat;
+  background-position: .25em 0;
+}
+EOF;
+
+$mods_repo['3rdparty']['bpt-history']['modifier']['theme']['label'] = "BPT Life360 - Theme";
+$mods_repo['3rdparty']['bpt-history']['modifier']['theme']['type'] = 'select';
+$mods_repo['3rdparty']['bpt-history']['modifier']['theme']['options'] = ['stock','light','dark'];
+$mods_repo['3rdparty']['bpt-history']['modifier']['theme']['text']['default'] = 'Select a color theme.';
+$mods_repo['3rdparty']['bpt-history']['modifier']['theme']['css']['light'] = <<<EOF
+#tile-[tile_id] {
+    background-color: rgba(255,255,255,.8);
+}
+
+#tile-[tile_id] .tile-primary tbody tr:nth-child(1) td p:nth-child(2) {
+    background-color: white;
+}
+EOF;
+
+$mods_repo['3rdparty']['bpt-history']['modifier']['theme']['css']['dark'] = <<<EOF
+#tile-[tile_id] {
+    background-color: rgba(0,0,0,.8);
+}
+
+#tile-[tile_id] .tile-primary tbody tr:nth-child(1) td p:nth-child(2) {
+    background-color: white;
+}
+EOF;
+
+$mods_repo['3rdparty']['bpt-history']['modifier']['logo']['label'] = "BPT Life360 - Logo";
+$mods_repo['3rdparty']['bpt-history']['modifier']['logo']['type'] = 'checkbox';
+$mods_repo['3rdparty']['bpt-history']['modifier']['logo']['text']['default'] = 'Check to remove the embedded Life360 logo.';
+$mods_repo['3rdparty']['bpt-history']['modifier']['logo']['css']['default'] = <<<EOF
+#tile-[tile_id] .tile-primary tbody tr:nth-child(1) td p:nth-child(2):after {
+    display: none;
+}
+
+#tile-[tile_id] .tile-primary tbody tr:nth-child(1) td p:nth-child(2) {
+    padding-right: .25em;
+    padding-top: .5em;
+}
+EOF;
+
+
+// BPT Tilemaster
+
 $mods_repo['3rdparty']['tm']['css'] = <<<EOF
 #tile-[tile_id] {
    border: 0px none;
@@ -737,38 +899,45 @@ $mods_repo['3rdparty']['tm']['css'] = <<<EOF
 
 EOF;
 $mods_repo['3rdparty']['Graph']['css'] = <<<EOF
+#tile-[tile_id] .tile-primary,
+#tile-[tile_id] .tile-contents {
+    height: 100%;
+}
+
 #tile-[tile_id] {
-   border: 0px none;
-   content: "3RD-GRAPH";
+  border: 0px none;
 }
 
 #tile-[tile_id] .tile-contents {
-   height: calc(100%);
+  height: calc(100%);
 }
 
 #tile-[tile_id] .tile-contents,
 #tile-[tile_id] .tile-primary,
 #tile-[tile_id] .tile-primary>div {
-   margin: 0;
-   padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 #tile-[tile_id] .tile-title {
-   position: absolute;
-   z-index: 9;
-   padding: .25em;
-   width: 100%;
-   text-align: center;
-   opacity: .5;
-   font-weight: normal;
-   font-size: .9em;
+  position: absolute;
+  z-index: 9;
+  padding: .25em;
+  width: 100%;
+  text-align: center;
+  opacity: .5;
+  font-weight: normal;
+  font-size: .9em;
+  z-index: 1;
 }
 
 EOF;
+
+
+
 $mods_repo['3rdparty']['myFrame']['css'] = <<<EOF
 #tile-[tile_id] {
    border: 0px none;
-   content: "3RD-MYFRAME";
 }
 
 #tile-[tile_id] .tile-contents {
