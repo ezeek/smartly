@@ -757,36 +757,10 @@ EOF;
 
     // if attribute tile, it could potentially be a 3rd party tile
     if ($smart_data['template'] == 'attribute') {
-            $smartly_css['mods']['test'][] = <<<EOF
-#tile-000-is-attribute {
-   content: "$smart_id $templateExtra";
-}
-
-EOF;
-
       if ($smart_data['templateExtra']) {
-            $smartly_css['mods']['test'][] = <<<EOF
-#tile-000-has-extra {
-   content: "$smart_id $templateExtra";
-}
-
-EOF;
         if (strpos($smart_data['templateExtra'], '-') === FALSE) {
-            $smartly_css['mods']['test'][] = <<<EOF
-#tile-000-no-hyphern {
-   content: "$smart_id $templateExtra";
-}
-
-EOF;
           // may have has explicit match 3rd party patch
-          if (in_array($smart_data['templateExtra'], $mods_repo['3rdparty'])) {
-
-            $smartly_css['mods']['test'][] = <<<EOF
-#tile-000-in-array {
-   content: "$smart_id $templateExtra";
-}
-
-EOF;
+          if (array_key_exists($smart_data['templateExtra'], $mods_repo['3rdparty'])) {
 
             $token_replacements = array(
               '[tile_id]' => $smart_id,
@@ -797,28 +771,15 @@ EOF;
 
             $css = $mods_repo['3rdparty'][$smart_data['templateExtra']]['css'];
             $smartly_css['3rdparty'][$smart_data['templateExtra']][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
-            $smartly_css['mods']['test'][] = <<<EOF
-#tile-000 {
-   content: "3RD-TEST";
-}
-
-EOF;
-
 
           }
 
         } else {
-            $smartly_css['mods']['test'][] = <<<EOF
-#tile-000-else {
-   content: "ELSE";
-}
-
-EOF;
           // check for fuzzy 3rd party patch
           $sub_match_array = explode("-", $smart_data['templateExtra']);
           $sub_match = $sub_match_array[0];
 
-          if (in_array($mods_repo['3rdparty'], $sub_match)) {
+          if (array_key_exists($sub_match,$mods_repo['3rdparty'])) {
 
             $token_replacements = array(
               '[tile_id]' => $smart_id,
@@ -829,12 +790,6 @@ EOF;
 
             $css = $mods_repo['3rdparty'][$sub_match]['css'];
             $smartly_css['3rdparty'][$sub_match][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
-            $smartly_css['mods']['test'][] = <<<EOF
-#tile-000 {
-   content: "3RD-TEST2";
-}  
-
-EOF;
 
           }
         }
