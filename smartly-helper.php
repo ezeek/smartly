@@ -372,6 +372,7 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
     $tile_data = array(); // reset tile_data
     $tile_data['id'] = $tile['id'];
     $tile_data['template'] = $tile['template'];
+    $tile_data['templateExtra'] = $tile['templateExtra'];
     $tile_data['pos'] = $pos;
     
 /*
@@ -745,6 +746,103 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
       }
     } 
 
+$templateExtra = $smart_data['templateExtra'];
+
+            $smartly_css['mods']['test'][] = <<<EOF
+#tile-000-init {
+   content: "$smart_id $templateExtra";
+}
+
+EOF;
+
+    // if attribute tile, it could potentially be a 3rd party tile
+    if ($smart_data['template'] == 'attribute') {
+            $smartly_css['mods']['test'][] = <<<EOF
+#tile-000-is-attribute {
+   content: "$smart_id $templateExtra";
+}
+
+EOF;
+
+      if ($smart_data['templateExtra']) {
+            $smartly_css['mods']['test'][] = <<<EOF
+#tile-000-has-extra {
+   content: "$smart_id $templateExtra";
+}
+
+EOF;
+        if (strpos($smart_data['templateExtra'], '-') === FALSE) {
+            $smartly_css['mods']['test'][] = <<<EOF
+#tile-000-no-hyphern {
+   content: "$smart_id $templateExtra";
+}
+
+EOF;
+          // may have has explicit match 3rd party patch
+          if (in_array($smart_data['templateExtra'], $mods_repo['3rdparty'])) {
+
+            $smartly_css['mods']['test'][] = <<<EOF
+#tile-000-in-array {
+   content: "$smart_id $templateExtra";
+}
+
+EOF;
+
+            $token_replacements = array(
+              '[tile_id]' => $smart_id,
+              '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
+              '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
+              '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
+            );
+
+            $css = $mods_repo['3rdparty'][$smart_data['templateExtra']]['css'];
+            $smartly_css['3rdparty'][$smart_data['templateExtra']][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+            $smartly_css['mods']['test'][] = <<<EOF
+#tile-000 {
+   content: "3RD-TEST";
+}
+
+EOF;
+
+
+          }
+
+        } else {
+            $smartly_css['mods']['test'][] = <<<EOF
+#tile-000-else {
+   content: "ELSE";
+}
+
+EOF;
+          // check for fuzzy 3rd party patch
+          $sub_match_array = explode("-", $smart_data['templateExtra']);
+          $sub_match = $sub_match_array[0];
+
+          if (in_array($mods_repo['3rdparty'], $sub_match)) {
+
+            $token_replacements = array(
+              '[tile_id]' => $smart_id,
+              '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
+              '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
+              '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
+            );
+
+            $css = $mods_repo['3rdparty'][$sub_match]['css'];
+            $smartly_css['3rdparty'][$sub_match][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+            $smartly_css['mods']['test'][] = <<<EOF
+#tile-000 {
+   content: "3RD-TEST2";
+}  
+
+EOF;
+
+          }
+        }
+      }
+    }
+
+
+
     // check if tile has icon functionality (by checking if it has states)
     if ($smart_data['states']) {
 
@@ -836,11 +934,17 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
   // iterate through individual mods css, optimize 
   foreach ($smartly_css['mods'] as $mod_name => $mod_css) {
     foreach ($mod_css as $css) {
-
       $smartly_mods_css[] = $css;
-
     }
   }
+
+  // iterate through individual mods css, optimize 
+  foreach ($smartly_css['3rdparty'] as $mod_name => $mod_css) {
+    foreach ($mod_css as $css) {
+      $smartly_mods_css[] = $css;
+    }
+  }
+
 
   $optimized_css['mods'] = $optimize->optimizeCss(implode($lb, $smartly_mods_css));
   $optimized_css['calibration'] = $optimize->optimizeCss(implode($lb, $smartly_css['calibration']));

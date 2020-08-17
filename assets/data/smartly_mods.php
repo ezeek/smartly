@@ -700,6 +700,7 @@ EOF;
 $mods_repo['3rdparty']['bpt']['css'] = <<<EOF
 #tile-[tile_id] .tile-contents {
    height: calc(90%);
+   content: "3RD-BPT";
 }
 
 #tile-[tile_id] .tile-primary {
@@ -709,6 +710,7 @@ EOF;
 $mods_repo['3rdparty']['tm']['css'] = <<<EOF
 #tile-[tile_id] {
    border: 0px none;
+   content: "3RD-TM";
 }
 
 #tile-[tile_id] .tile-contents {
@@ -737,6 +739,7 @@ EOF;
 $mods_repo['3rdparty']['Graph']['css'] = <<<EOF
 #tile-[tile_id] {
    border: 0px none;
+   content: "3RD-GRAPH";
 }
 
 #tile-[tile_id] .tile-contents {
@@ -765,6 +768,7 @@ EOF;
 $mods_repo['3rdparty']['myFrame']['css'] = <<<EOF
 #tile-[tile_id] {
    border: 0px none;
+   content: "3RD-MYFRAME";
 }
 
 #tile-[tile_id] .tile-contents {
