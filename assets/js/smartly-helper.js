@@ -113,7 +113,7 @@ $(document).ready(function() {
         console.log(hubitatJSON, "hubitatJSON");
 
         // various UI/UX runtime tweaks
-        $("#checkbox_zoomy").prop("checked", false);
+        $("#smart_edit_zoomy").prop("checked", false);
         update_calibrations(smartlyDATA);
         smartly_grid(smartlyDATA, hubitatJSON);
         $("#smartly_update").html('Update');
@@ -768,7 +768,8 @@ function smartly_settings_update() {
 
     
   var cal_devices_val = $("#smart_edit_cal_devices").val() ? $("#smart_edit_cal_devices").val() : null;
-  var cal_devices_2col_val = $("#smart_edit_cal_devices_2col").val() ? $("#smart_edit_cal_devices_2col").val() : null;;
+  var cal_devices_2col_val = $("#smart_edit_cal_devices_2col").val() ? $("#smart_edit_cal_devices_2col").val() : null;
+  var zoomy_val = $("#smart_edit_zoomy").is(":checked" ? true : false;
 
   // if calibration values, split into array
   var cal_devices = cal_devices_val ? cal_devices_val.split(',') : null;
@@ -777,6 +778,7 @@ function smartly_settings_update() {
   if (debug) { 
     console.log(cal_devices);
     console.log(cal_devices_2col);
+    console.log(zoomy_val);
   }
 
 /*
@@ -796,6 +798,7 @@ function smartly_settings_update() {
   // save calibration devices
   smartlyDATA['dashboard']['mods']['cal_devices'] = cal_devices;
   smartlyDATA['dashboard']['mods']['cal_devices_2col'] = cal_devices_2col;
+  smartlyDATA['dashboard']['mods']['zoomy'] = zoomy_val;
 
 
   // populate the hidden smartly_datablock

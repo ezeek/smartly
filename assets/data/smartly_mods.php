@@ -25,7 +25,7 @@ $mods_repo['layout'] = [
       'color_bg',
       'color_fg',
       'border_size',
-      'border_color'
+      'border'
     ]
   ],
   'dashboard' => [
@@ -61,7 +61,6 @@ $mods_enabled['dashboard']['colorcoding']['battery'] = true;
 */
 
 
-$mods_enabled['tiletype']['zoomable'] = ['attribute', 'battery', 'clock', 'clock-analog', 'clock-date', 'music-player', 'thermostat', 'water'];
 $mods_enabled['tiletype']['unit'] = ['attribute'];
 $mods_enabled['tiletype']['numeric'] = ['attribute'];
 $mods_enabled['tiletype']['buttonize'] = ['button', 'dashboard', 'momentary', 'presence', 'water'];
@@ -203,6 +202,52 @@ $mods_enabled['tiletype']['icon'] = [
 //'scene'
 ];
 
+$mods_enabled['tiletype']['zoomable'] = [
+  'acceleration',
+  'attribute',
+  'battery',
+  'bulb',
+  'bulb-color',
+  'buttons',
+  'carbon-monoxide',
+  'clock',
+  'clock-analog',
+  'clock-date',
+  'contact',
+  'dashboard',
+  'dimmer',
+  'door',
+  'door-control',
+  'fan',
+  'garage',
+  'garage-control',
+  'illuminance',
+  'energy',
+  'temperature',
+  'humidity',
+  'image',
+  'level-step',
+  'lock',
+  'momentary',
+  'motion',
+  'multi',
+  'music-player',
+  'outlet',
+  'presence',
+  'relay',
+  'shades',
+  'shock',
+  'smoke',
+  'switches',
+  'thermostat',
+  'valve',
+  'video',
+  'volume',
+  'water',
+  'window',
+  'scene'
+];
+
 $mods_enabled['tiletype']['label'] = [
   'dashboard',
   'image',
@@ -303,7 +348,7 @@ $mods_enabled['tiletype']['color_bg'] = [
 ];
 
 
-$mods_enabled['tiletype']['border_color'] = [
+$mods_enabled['tiletype']['border'] = [
   'acceleration',
   'attribute',
   'battery',
@@ -708,7 +753,6 @@ EOF;
 $mods_repo['3rdparty']['bpt']['css'] = <<<EOF
 #tile-[tile_id] .tile-contents {
    height: calc(90%);
-   content: "3RD-BPT";
 }
 
 #tile-[tile_id] .tile-primary {
@@ -1131,10 +1175,10 @@ $mods_repo['tiletype']['color_bg']['css']['default'] = <<<EOF
 }
 EOF;
 
-$mods_repo['tiletype']['border_color']['label'] = "Border Color";
-$mods_repo['tiletype']['border_color']['text']['default'] = 'The tile border color.  FormatL: rgba(x,x,x,x).';
-$mods_repo['tiletype']['border_color']['type'] = 'color';
-$mods_repo['tiletype']['border_color']['css']['default'] = <<<EOF
+$mods_repo['tiletype']['border']['label'] = "Border Color";
+$mods_repo['tiletype']['border']['text']['default'] = 'The tile border color.  FormatL: rgba(x,x,x,x).';
+$mods_repo['tiletype']['border']['type'] = 'color';
+$mods_repo['tiletype']['border']['css']['default'] = <<<EOF
 #tile-[tile_id] {
   border-color: [value] !important;
   border-style: solid !important;
@@ -1143,11 +1187,11 @@ $mods_repo['tiletype']['border_color']['css']['default'] = <<<EOF
 EOF;
 
 
-$mods_repo['tiletype']['border_color']['modifier']['border_size']['label'] = "Border Size";
-$mods_repo['tiletype']['border_color']['modifier']['border_size']['text']['default'] = 'The width (in pixels) of the tile border.  Border Color required to see it.';
-$mods_repo['tiletype']['border_color']['modifier']['border_size']['type'] = 'select';
-$mods_repo['tiletype']['border_color']['modifier']['border_size']['options'] = ['1', '2', '3', '4'];
-$mods_repo['tiletype']['border_color']['modifier']['border_size']['css']['default'] = <<<EOF
+$mods_repo['tiletype']['border']['modifier']['border_size']['label'] = "Border Size";
+$mods_repo['tiletype']['border']['modifier']['border_size']['text']['default'] = 'The width (in pixels) of the tile border.  Border Color required to see it.';
+$mods_repo['tiletype']['border']['modifier']['border_size']['type'] = 'select';
+$mods_repo['tiletype']['border']['modifier']['border_size']['options'] = ['1', '2', '3', '4'];
+$mods_repo['tiletype']['border']['modifier']['border_size']['css']['default'] = <<<EOF
 #tile-[tile_id] {
   border-width: [value]px !important;
 }
