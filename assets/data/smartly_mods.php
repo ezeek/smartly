@@ -466,9 +466,10 @@ $mods_repo['dashboard']['header']['value']['collapsed_bottom_right']['css'] = <<
   content: " - [value]";
 }
 EOF;
-$mods_repo['dashboard']['header']['value']['collpased_bottom_right_vertical']['css'] = <<<EOF
+$mods_repo['dashboard']['header']['value']['collapsed_bottom_right_vertical']['css'] = <<<EOF
 .dashName:after {
   content: " - [value]";
+  border: 1px solid red;
 }
 EOF;
 

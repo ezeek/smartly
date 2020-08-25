@@ -401,7 +401,7 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
 
     // BUILDFIELDS
 
-    // DYNAMIC RETREIVE AND BUILD STORAGE FOR FIELDS
+    // DYNAMIC RETRIEVE AND BUILD STORAGE FOR FIELDS
 
     // iterate through all available mods
 
@@ -454,12 +454,7 @@ $tile_data['mods']['3rdparty'][$templateExtra_vendor][$mod]['value'] = $smartly_
       $tile_data['mods']['numeric'] = $smartly_data['tiles'][$tile['id']]['attribute']['numeric'] ? $smartly_data['tiles'][$tile['id']]['attribute']['numeric'] : $tile_data['mods']['numeric'];
     }
 
-
-
-
-
 // TODO: to make scalable, this should probably be based on a case statement, based on template type.
-
 
     // refresh states for tile template type
 
@@ -528,6 +523,8 @@ if ($smartly_data['settings']) {
 
 $dashboard_mods['mods']['cal_devices'] = $smartly_data['dashboard']['mods']['cal_devices'] ? $smartly_data['dashboard']['mods']['cal_devices'] : null;
 $dashboard_mods['mods']['cal_devices_2col'] = $smartly_data['dashboard']['mods']['cal_devices_2col'] ? $smartly_data['dashboard']['mods']['cal_devices_2col'] : null;
+$dashboard_mods['mods']['header']['value'] = $smartly_data['dashboard']['mods']['header']['value'] ? $smartly_data['dashboard']['mods']['header']['value'] : 'default';
+
 
 //var_dump($smartly_settings);
 /*a
@@ -672,27 +669,28 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
 
 //print_r($smartly_data);
   foreach ($smartly_data['dashboard']['mods'] as $mod => $mod_data) {
-//echo "MOD!: " . $mod . "\r\n";
+print_r($mod_data, "MOD DATA");
 
     if (!(is_null($mod_data['value'])) && $mods_repo['dashboard'][$mod]) {
-//print_r($mods_repo['dashboard'][$mod]['type']);
 
-/*
+      //print_r($mods_repo['dashboard'][$mod]['type']);
+
+
       switch ($mods_repo['dashboard'][$mod]['type']) {
         case 'select':
 
           $token_replacements = array(
-            '[value]' => $mod_data['value'];
+            '[value]' => $mod_data['value']
           );
 
-          $css = $mods_repo['dashboard'][$mod]['value'][$mod_val]['css'] ? $mods_repo['dashboard'][$mod]['value'][$mod_val]['css'] : $mods_repo['dashboard'][$mod]['value']['default']['css'];
+          $css = $mods_repo['dashboard'][$mod]['value'][$mod_data['value']]['css'] ? $mods_repo['dashboard'][$mod]['value'][$mod_data['value']]['css'] : $mods_repo['dashboard'][$mod]['value']['default']['css'];
 
           break;
 
         default:
 
           $token_replacements = array(
-            '[value]' => $mod_data['value'];
+            '[value]' => $mod_data['value']
           ); 
 
           $css = $mods_repo['dashboard'][$mod]['css'] ? $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] : $mods_repo['tiletype'][$mod]['css']['default'];
@@ -702,7 +700,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
 
       // check if the mod has tiletype specific css and if not, use default css.  do token replacements as needed.
       $smartly_css['mods'][$mod][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
-*/
+
     } 
   }
 

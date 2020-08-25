@@ -528,6 +528,7 @@ console.log(smartlyDATA, "SDATA");
 
 
         // build the form
+console.log(data.mods[mod], "sending DATA " + mod);
 
         formHtml += build_form(tile_id, data, data.mods[mod], smartlyMODS.dashboard[mod], mod);
 
@@ -776,6 +777,7 @@ function smartly_settings_update() {
   var cal_devices_val = $("#smart_edit_cal_devices").val() ? $("#smart_edit_cal_devices").val() : null;
   var cal_devices_2col_val = $("#smart_edit_cal_devices_2col").val() ? $("#smart_edit_cal_devices_2col").val() : null;
   var zoomy_val = $("#smart_edit_zoomy").is(":checked") ? true : false;
+  var header_val = $("#smart_edit_header").val() ? $("#smart_edit_header").val() : null;
 
   // if calibration values, split into array
   var cal_devices = cal_devices_val ? cal_devices_val.split(',') : null;
@@ -785,6 +787,7 @@ function smartly_settings_update() {
     console.log(cal_devices);
     console.log(cal_devices_2col);
     console.log(zoomy_val,"zoomy val");
+    console.log(header_val, "header val");
   }
 
 /*
@@ -800,12 +803,13 @@ function smartly_settings_update() {
   // create parent arrays to avoid warnings
   smartlyDATA['dashboard'] = {};
   smartlyDATA['dashboard']['mods'] = {};
+  smartlyDATA['dashboard']['mods']['header'] = {};
 
   // save calibration devices
   smartlyDATA['dashboard']['mods']['cal_devices'] = cal_devices;
   smartlyDATA['dashboard']['mods']['cal_devices_2col'] = cal_devices_2col;
   smartlyDATA['dashboard']['mods']['zoomy'] = zoomy_val;
-
+  smartlyDATA['dashboard']['mods']['header']['value'] = header_val;
 
   // populate the hidden smartly_datablock
   var smartly_datablock = $("#smartlydata");
@@ -885,6 +889,7 @@ console.log(mod_name, "FOUND ELEMENT");
 
 }
 
+//build_form(tile_id, data, data.mods[mod], smartlyMODS.dashboard[mod], mod);
 
 function build_form(tile_id, tile_data = null, tile_mod, mod_construct, mod_name) {
 console.log(tile_mod, "build_form: tile_mod");
@@ -929,6 +934,7 @@ console.log(tile_mod, "build_form: tile_mod");
 
       for (let [value, name] of Object.entries(mod_construct['options'])) {
         console.log(`${value}: ${name}`);
+        console.log(tile_mod.value, "value selected");
 
         formValue = '';
 
