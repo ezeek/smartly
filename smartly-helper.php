@@ -693,7 +693,7 @@ print_r($mod_data, "MOD DATA");
             '[value]' => $mod_data['value']
           ); 
 
-          $css = $mods_repo['dashboard'][$mod]['css'] ? $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] : $mods_repo['tiletype'][$mod]['css']['default'];
+          $css = $mods_repo['dashboard'][$mod]['css'][$mod_data['value']] ? $mods_repo['dashboard'][$mod]['css'][$mod_data['value']] : $mods_repo['dashboard'][$mod]['css']['default'];
 
       }
 

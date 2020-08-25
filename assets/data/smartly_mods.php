@@ -456,7 +456,7 @@ $mods_repo['dashboard']['header']['value']['collapsed_top_right']['css'] = <<<EO
   content: " - [value]";
 }
 EOF;
-$mods_repo['dashboard']['header']['value']['collpased_top_right_vertical']['css'] = <<<EOF
+$mods_repo['dashboard']['header']['value']['collapsed_top_right_vertical']['css'] = <<<EOF
 .dashName:after {
   content: " - [value]";
 }
@@ -467,9 +467,30 @@ $mods_repo['dashboard']['header']['value']['collapsed_bottom_right']['css'] = <<
 }
 EOF;
 $mods_repo['dashboard']['header']['value']['collapsed_bottom_right_vertical']['css'] = <<<EOF
-.dashName:after {
-  content: " - [value]";
-  border: 1px solid red;
+.dashboard div .header {
+    position: fixed;
+    bottom: 0;
+    right: 1em;
+    z-index: 999;
+    opacity: .2;
+    zoom: .6;
+    -moz-transform:scale(.6);
+}
+
+.wrapper {
+    height: 100%;
+    margin-top: 0;
+    padding-top: 1em;
+}
+
+.dashBack,
+.dashName {
+    display: none;
+}
+
+.dashboard div .header>.flex-auto.justify-end,
+.dashboard div .header>.flex-auto.justify-end>.flex {
+    display: block;
 }
 EOF;
 
