@@ -220,8 +220,14 @@ console.log(smartlyDATA, "prepopulate");
           elt2.removeClass("stealth");
         }
       });
-
     });
+  }
+
+  if (smartlyDATA['dashboard']['mods']['zoomy']) {
+    if (smartlyDATA['dashboard']['mods']['zoomy'] === true) {
+      console.log("istrue");
+      $("#smart_edit_zoomy").prop("checked", true);
+    }
   }
 }
 
@@ -769,7 +775,7 @@ function smartly_settings_update() {
     
   var cal_devices_val = $("#smart_edit_cal_devices").val() ? $("#smart_edit_cal_devices").val() : null;
   var cal_devices_2col_val = $("#smart_edit_cal_devices_2col").val() ? $("#smart_edit_cal_devices_2col").val() : null;
-  var zoomy_val = $("#smart_edit_zoomy").is(":checked" ? true : false;
+  var zoomy_val = $("#smart_edit_zoomy").is(":checked") ? true : false;
 
   // if calibration values, split into array
   var cal_devices = cal_devices_val ? cal_devices_val.split(',') : null;
@@ -778,7 +784,7 @@ function smartly_settings_update() {
   if (debug) { 
     console.log(cal_devices);
     console.log(cal_devices_2col);
-    console.log(zoomy_val);
+    console.log(zoomy_val,"zoomy val");
   }
 
 /*

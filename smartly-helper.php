@@ -563,7 +563,7 @@ $smartly_css_parsed = smartly_parse_css($inputJSON['customCSS'], $smartly_css_de
 $inputJSON['customCSS'] = smartly_build_css($tiles, $smartly_css_delimiters, $smartly_css_parsed['base'], $smartly_css_parsed['skin'], $smartly_css_parsed['user'], $smartly_settings);
 
 // build and attach a zoomy helper tile to the tiles array
-if ($update_options['zoomy']) {
+if ($smartly_data['dashboard']['mods']['zoomy'] === true) {
   $zoomy_tile = smartly_zoomy((max(array_keys($tiles))+1), $inputJSON['colWidth'], $inputJSON['gridGap'], $inputJSON['cols']);
   array_push($inputJSON['tiles'], $zoomy_tile);
   $inputJSON['tiles'] = array_values($inputJSON['tiles']); // Hubitat Dashboard doesn't like indexed array for tiles.
