@@ -1243,15 +1243,14 @@ $mods_repo['tiletype']['buttonize']['css']['dashboard'] = <<<EOF
 
 EOF;
 
-
 $mods_repo['tiletype']['color_fg']['label'] = "Text Color";
 $mods_repo['tiletype']['color_fg']['text']['default'] = 'The tile text and icon color (overrides state colors).  Format: rgba(x,x,x,x).';
 $mods_repo['tiletype']['color_fg']['type'] = 'color';
 $mods_repo['tiletype']['color_fg']['placeholder'] = 'rgba(x,x,x,x)';
 $mods_repo['tiletype']['color_fg']['css']['default'] = <<<EOF
-#tile-[tile_id],
-#tile-[tile-id] .tile-primary,
-#tile-[tile-id] .tile-contents {
+#tile-[tile_id] .tile-primary,
+#tile-[tile_id] .tile-contents,
+#tile-[tile_id] {
   color: [value] !important;
 }
 EOF;
