@@ -1249,7 +1249,9 @@ $mods_repo['tiletype']['color_fg']['text']['default'] = 'The tile text and icon 
 $mods_repo['tiletype']['color_fg']['type'] = 'color';
 $mods_repo['tiletype']['color_fg']['placeholder'] = 'rgba(x,x,x,x)';
 $mods_repo['tiletype']['color_fg']['css']['default'] = <<<EOF
-#tile-[tile_id] {
+#tile-[tile_id],
+#tile-[tile-id] .tile-primary,
+#tile-[tile-id] .tile-contents {
   color: [value] !important;
 }
 EOF;
