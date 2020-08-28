@@ -109,8 +109,8 @@ $(document).ready(function() {
         // split smartlydata from hubitatjson data
         smartlyDATA = resDATA.smartlyDATA;
         hubitatJSON = JSON.parse(resDATA.outputJSON);
-        console.log(smartlyDATA, "smartlyDATA");
-        console.log(hubitatJSON, "hubitatJSON");
+        if (debug) {  console.log(smartlyDATA, "smartlyDATA"); }
+        if (debug) {  console.log(hubitatJSON, "hubitatJSON"); }
 
         // various UI/UX runtime tweaks
         $("#smart_edit_zoomy").prop("checked", false);
@@ -176,7 +176,7 @@ console.log("LEGACY CAL?IBTATION DEVICES");
 */
 
   // if empty, prepopulate structure
-console.log(smartlyDATA, "prepopulate");  
+  if (debug) {  console.log(smartlyDATA, "prepopulate");  }
 
     if (typeof smartlyDATA['dashboard'] === 'undefined') {
       smartlyDATA['dashboard'] = {};      
@@ -225,7 +225,7 @@ console.log(smartlyDATA, "prepopulate");
 
   if (smartlyDATA['dashboard']['mods']['zoomy']) {
     if (smartlyDATA['dashboard']['mods']['zoomy'] === true) {
-      console.log("istrue");
+      if (debug) {  console.log("istrue");}
       $("#smart_edit_zoomy").prop("checked", true);
     }
   }
@@ -316,20 +316,13 @@ function smartly_editor(tile_id) {
 
         if (typeof data.mods[mod] !== 'undefined') {
 
-          console.log(mod + " enabled within " + section, "MOD ACTIVE");
+          if (debug) {  console.log(mod + " enabled within " + section, "MOD ACTIVE");}
 
           // retrieve and process value for specific input type
-/*
- * var formValue = '';
-          var formInsert = '';
-
-          var helpText = '';
-          var labelText = '';
-*/
 
           var formHtml = '';
           var modWrap = false;
-console.log(mod, "mod");
+          if (debug) {  console.log(mod, "mod");}
           if (typeof smartlyMODS.tiletype[mod].modifier !== 'undefined') {
             modWrap = true;
             formHtml += '<fieldset class="form-group"><legend>' + mod  + '</legend>';
@@ -356,17 +349,64 @@ console.log(mod, "mod");
 
 //          editor.append(formHtml);
 
-        }; // for mods
-
-        // if the section has elements, add to section_build object for building later
-
-        // trim empty array elements
-        section_html = section_html.filter(Boolean);
-
-        if (section_html.length > 0) {
-          section_build[section] = section_html;
         }
 
+
+        else if (typeof data.contrib !== 'undefined') {
+          if (typeof data.contrib[mod] !== 'undefined') {
+            if (typeof data.contrib[mod]['value'] !== 'undefined') {
+              if (debug) {
+                console.log(mod + " enabled within " + section, "CONTRIB MOD ACTIVE");
+
+                var formHtml = '';
+                var modWrap = false;
+                if (debug) {
+                  console.log(mod, "mod");
+                }
+                if (typeof smartlyMODS.contrib[mod].modifier !== 'undefined') {
+                  modWrap = true;
+                  formHtml += '<fieldset class="form-group"><legend>' + mod + '</legend>';
+                }
+
+                // build the form
+
+                formHtml += build_form(tile_id, data, data.contrib[mod], smartlyMODS.contrib[mod], mod);
+//console.log(smartlyDATA, "SDATA post root add");
+
+                // add to the form for all modifiers
+
+                if (typeof smartlyMODS.contrib[mod].modifier !== 'undefined') {
+                  for (let [modifier_mod, modifier_construct] of Object.entries(smartlyMODS.contrib[mod].modifier)) {
+                    formHtml += build_form(tile_id, data, data.contrib[mod]['modifier'][modifier_mod], modifier_construct, mod + '__' + modifier_mod);
+                  }
+                }
+//console.log(smartlyDATA, "SDATA post moidifier add");
+                if (modWrap) {
+                  formHtml += '</fieldset>';
+                }
+
+                section_html.push(formHtml);
+
+
+              }
+            }
+          }
+
+
+//console.log(data, "DATA");
+
+
+          // for mods
+
+          // if the section has elements, add to section_build object for building later
+
+          // trim empty array elements
+          section_html = section_html.filter(Boolean);
+
+          if (section_html.length > 0) {
+            section_build[section] = section_html;
+          }
+        }
       });
     };
 
@@ -498,7 +538,7 @@ function smartly_settings_editor() {
 
   var section_build = {};
 
-console.log(smartlyDATA, "SDATA");
+  if (debug) {  console.log(smartlyDATA, "SDATA");}
   for (let [section, mods] of Object.entries(smartlyMODS.layout.dashboard)) {
     var section_html = [];
 
@@ -506,7 +546,7 @@ console.log(smartlyDATA, "SDATA");
 
 //      if (typeof data.mods[mod] !== 'undefined') {
 
-        console.log(mod + " enabled within " + section, "MOD ACTIVE");
+      if (debug) {    console.log(mod + " enabled within " + section, "MOD ACTIVE");}
 
         // retrieve and process value for specific input type
 /*
@@ -528,7 +568,7 @@ console.log(smartlyDATA, "SDATA");
 
 
         // build the form
-console.log(data.mods[mod], "sending DATA " + mod);
+      if (debug) {  console.log(data.mods[mod], "sending DATA " + mod);}
 
         formHtml += build_form(tile_id, data, data.mods[mod], smartlyMODS.dashboard[mod], mod);
 
@@ -704,19 +744,22 @@ function smartly_update() {
 
     // iterate through all available tiletype mods, check if they are being used and if so, save their values.
     $.each(Object.getOwnPropertyNames(smartlyMODS.tiletype), function (index, mod) {
-
-
       parse_form(smart_id, mod, smartlyMODS.tiletype[mod]);
-
-          if (typeof smartlyMODS.tiletype[mod].modifier !== 'undefined') {
-            for (let [modifier_mod, modifier_construct] of Object.entries(smartlyMODS.tiletype[mod].modifier)) {
-
-parse_form(smart_id, modifier_mod, modifier_construct, mod);
-
-            }
+        if (typeof smartlyMODS.tiletype[mod].modifier !== 'undefined') {
+          for (let [modifier_mod, modifier_construct] of Object.entries(smartlyMODS.tiletype[mod].modifier)) {
+            parse_form(smart_id, modifier_mod, modifier_construct, mod);
           }
+        }
+    });
 
-
+    // iterate through all available tiletype mods, check if they are being used and if so, save their values.
+    $.each(Object.getOwnPropertyNames(smartlyMODS.contrib), function (index, mod) {
+      parse_form(smart_id, mod, smartlyMODS.contrib[mod], null, "contrib");
+      if (typeof smartlyMODS.contrib[mod].modifier !== 'undefined') {
+        for (let [modifier_mod, modifier_construct] of Object.entries(smartlyMODS.contrib[mod].modifier)) {
+          parse_form(smart_id, modifier_mod, modifier_construct, mod, "contrib");
+        }
+      }
     });
 
     // SAVE ICONS
@@ -827,17 +870,18 @@ function smartly_settings_update() {
  * helper functions
  */
 
-function parse_form(smart_id, mod_name, mod_construct, parent_mod = null) {
+function parse_form(smart_id, mod_name, mod_construct, parent_mod = null, section = 'mods') {
 
 var parent_plug = '';
 if (parent_mod) { 
   parent_plug = parent_mod + "__";
-console.log(parent_plug, "PARENT FOUND");
+  if (debug) {  console.log(parent_plug, "PARENT FOUND");}
 }
 
+  if (debug) {  console.log("#smart_edit_" + parent_plug + mod_name, "LOOKING FOR"); }
 
   if ($("#smart_edit_" + parent_plug + mod_name).length) {
-console.log(mod_name, "FOUND ELEMENT");
+    if (debug) {  console.log(mod_name, "FOUND ELEMENT");}
     switch(mod_construct.type) {
       case 'checkbox':
 
@@ -845,15 +889,15 @@ console.log(mod_name, "FOUND ELEMENT");
           if (debug) { console.log("SMART_EDIT_" + mod_name  + " PRESENT"); }
 
           if (parent_mod) {
-            smartlyDATA['tiles'][smart_id]['mods'][parent_mod]['modifier'][mod_name]['value'] = true;
-          } else {
-            smartlyDATA['tiles'][smart_id]['mods'][mod_name]['value'] = true;
+            smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = true;
+          } else { console.log(smartlyDATA['tiles'][smart_id], section + " " + mod_name);
+            smartlyDATA['tiles'][smart_id][section][mod_name]['value'] = true;
           }
         } else {
           if (parent_mod) {
-            smartlyDATA['tiles'][smart_id]['mods'][parent_mod]['modifier'][mod_name]['value'] = null;
-          } else {
-            smartlyDATA['tiles'][smart_id]['mods'][mod_name]['value'] = null;
+            smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = "unchecked";
+          } else { console.log(smartlyDATA['tiles'][smart_id], section + " " + mod_name);
+            smartlyDATA['tiles'][smart_id][section][mod_name]['value'] = "unchecked";
           }
         }
 
@@ -865,18 +909,18 @@ console.log(mod_name, "FOUND ELEMENT");
           if (debug) { console.log("#smart_edit_" + parent_plug + mod_name, "SMART_EDIT_TITLE PRESENT"); }
    
           if (parent_mod) {
-            smartlyDATA['tiles'][smart_id]['mods'][parent_mod]['modifier'][mod_name]['value'] = $("#smart_edit_" + parent_plug + mod_name).val();
+            smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = $("#smart_edit_" + parent_plug + mod_name).val();
           } else {
-            smartlyDATA['tiles'][smart_id]['mods'][mod_name]['value'] = $("#smart_edit_" + mod_name).val();
+            smartlyDATA['tiles'][smart_id][section][mod_name]['value'] = $("#smart_edit_" + mod_name).val();
           }
 
         } else {
           if ($("#smart_edit_" + mod_name).length) {
 
             if (parent_mod) {
-              smartlyDATA['tiles'][smart_id]['mods'][parent_mod]['modifier'][mod_name]['value'] = null;
+              smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = null;
             } else {
-              smartlyDATA['tiles'][smart_id]['mods'][mod_name]['value'] = null;
+              smartlyDATA['tiles'][smart_id][section][mod_name]['value'] = null;
             }
 
           }
@@ -892,7 +936,7 @@ console.log(mod_name, "FOUND ELEMENT");
 //build_form(tile_id, data, data.mods[mod], smartlyMODS.dashboard[mod], mod);
 
 function build_form(tile_id, tile_data = null, tile_mod, mod_construct, mod_name) {
-console.log(tile_mod, "build_form: tile_mod");
+  if (debug) {  console.log(tile_mod, "build_form: tile_mod");}
          var formValue = '';
           var formInsert = '';
 
@@ -921,6 +965,9 @@ console.log(tile_mod, "build_form: tile_mod");
         if (tile_mod.value === true) {
           formValue = 'checked';
         }
+        console.log(tile_mod.value, "TILEMOD VALUE: " . name);
+      } else {
+        console.log("UNDEFINED TILEMOD");
       }
 
 
@@ -933,8 +980,10 @@ console.log(tile_mod, "build_form: tile_mod");
       formHtml += '<div class="form-group row"><label for="select" class="col-4 col-form-label">' + mod_construct.label + '</label><div class="col-8"><select id="smart_edit_' + mod_name + '" name="smart_edit_' + mod_name + '" class="custom-select">';
 
       for (let [value, name] of Object.entries(mod_construct['options'])) {
-        console.log(`${value}: ${name}`);
-        console.log(tile_mod.value, "value selected");
+        if (debug) {
+          console.log(`${value}: ${name}`);
+          console.log(tile_mod.value, "value selected");
+        }
 
         formValue = '';
 

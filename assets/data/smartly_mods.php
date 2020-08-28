@@ -21,6 +21,12 @@ $mods_repo['layout'] = [
       'buttonize',
       ''
     ],
+    'contrib' => [
+      'bpt',
+      'tm',
+      'Graph',
+      'bpt-history'
+    ],
     'color' => [
       'color_bg',
       'color_fg',
@@ -838,7 +844,7 @@ EOF;
 
 // BPT General
 
-$mods_repo['3rdparty']['bpt']['css'] = <<<EOF
+$mods_repo['contrib']['bpt']['css'] = <<<EOF
 #tile-[tile_id] .tile-contents {
    height: calc(90%);
 }
@@ -851,7 +857,7 @@ EOF;
 
 // BPT Weather Dot Gov
 
-$mods_repo['3rdparty']['bpt-currentDataTile']['css'] = <<<EOF
+$mods_repo['contrib']['bpt-currentDataTile']['css'] = <<<EOF
 #tile-[tile_id] .tile-title {
     position: absolute;
     bottom: .5em;
@@ -871,12 +877,11 @@ EOF;
 
 
 // BPT Life360
-
-$mods_repo['3rdparty']['bpt-history']['css'] = <<<EOF
-#tile-[tile_id] {
-  background-color: rgba(0,0,0,.6);
-}
-
+$mods_repo['contrib']['bpt-history']['label'] = "Enable";
+$mods_repo['contrib']['bpt-history']['type'] = 'checkbox';
+$mods_repo['contrib']['bpt-history']['default'] = true;
+$mods_repo['contrib']['bpt-history']['text']['default'] = "Enable Life360 CSS Patching";
+$mods_repo['contrib']['bpt-history']['css']['default'] = <<<EOF
 #tile-[tile_id] table {
   border-collapse: collapse;
 }
@@ -960,11 +965,15 @@ position: absolute;
 }
 EOF;
 
-$mods_repo['3rdparty']['bpt-history']['modifier']['theme']['label'] = "BPT Life360 - Theme";
-$mods_repo['3rdparty']['bpt-history']['modifier']['theme']['type'] = 'select';
-$mods_repo['3rdparty']['bpt-history']['modifier']['theme']['options'] = ['stock','light','dark'];
-$mods_repo['3rdparty']['bpt-history']['modifier']['theme']['text']['default'] = 'Select a color theme.';
-$mods_repo['3rdparty']['bpt-history']['modifier']['theme']['css']['light'] = <<<EOF
+$mods_repo['contrib']['bpt-history']['modifier']['theme']['label'] = "BPT Life360 - Theme";
+$mods_repo['contrib']['bpt-history']['modifier']['theme']['type'] = 'select';
+$mods_repo['contrib']['bpt-history']['modifier']['theme']['options'] = [
+    "default" => "Default",
+    "light" => "Light",
+    "dark" => "Dark"
+];
+$mods_repo['contrib']['bpt-history']['modifier']['theme']['text']['default'] = 'Select a color theme.';
+$mods_repo['contrib']['bpt-history']['modifier']['theme']['css']['light'] = <<<EOF
 #tile-[tile_id] {
     background-color: rgba(255,255,255,.8);
 }
@@ -974,7 +983,7 @@ $mods_repo['3rdparty']['bpt-history']['modifier']['theme']['css']['light'] = <<<
 }
 EOF;
 
-$mods_repo['3rdparty']['bpt-history']['modifier']['theme']['css']['dark'] = <<<EOF
+$mods_repo['contrib']['bpt-history']['modifier']['theme']['css']['dark'] = <<<EOF
 #tile-[tile_id] {
     background-color: rgba(0,0,0,.8);
 }
@@ -984,10 +993,11 @@ $mods_repo['3rdparty']['bpt-history']['modifier']['theme']['css']['dark'] = <<<E
 }
 EOF;
 
-$mods_repo['3rdparty']['bpt-history']['modifier']['logo']['label'] = "BPT Life360 - Logo";
-$mods_repo['3rdparty']['bpt-history']['modifier']['logo']['type'] = 'checkbox';
-$mods_repo['3rdparty']['bpt-history']['modifier']['logo']['text']['default'] = 'Check to remove the embedded Life360 logo.';
-$mods_repo['3rdparty']['bpt-history']['modifier']['logo']['css']['default'] = <<<EOF
+$mods_repo['contrib']['bpt-history']['modifier']['logo']['label'] = "BPT Life360 - Logo";
+$mods_repo['contrib']['bpt-history']['modifier']['logo']['type'] = 'checkbox';
+$mods_repo['contrib']['bpt-history']['modifier']['logo']['default'] = true;
+$mods_repo['contrib']['bpt-history']['modifier']['logo']['text']['default'] = 'Check to add the Life360 logo.';
+$mods_repo['contrib']['bpt-history']['modifier']['logo']['css']['default'] = <<<EOF
 #tile-[tile_id] .tile-primary tbody tr:nth-child(1) td p:nth-child(2):after {
     display: none;
 }
@@ -1001,7 +1011,7 @@ EOF;
 
 // BPT Tilemaster
 
-$mods_repo['3rdparty']['tm']['css'] = <<<EOF
+$mods_repo['contrib']['tm']['css'] = <<<EOF
 #tile-[tile_id] {
    border: 0px none;
    content: "3RD-TM";
@@ -1030,7 +1040,7 @@ $mods_repo['3rdparty']['tm']['css'] = <<<EOF
 }
 
 EOF;
-$mods_repo['3rdparty']['Graph']['css'] = <<<EOF
+$mods_repo['contrib']['Graph']['css'] = <<<EOF
 #tile-[tile_id] .tile-primary,
 #tile-[tile_id] .tile-contents {
     height: 100%;
@@ -1067,7 +1077,7 @@ EOF;
 
 
 
-$mods_repo['3rdparty']['myFrame']['css'] = <<<EOF
+$mods_repo['contrib']['myFrame']['css'] = <<<EOF
 #tile-[tile_id] {
    border: 0px none;
 }

@@ -343,7 +343,7 @@ if ($inputJSON['tiles'][0]['template'] != "smartly") {  // first time running
 /*
  * TODO: split into smartly_regen() function 
  *
- * rebuilds smartly_data tiles based on inputJSON tiles, preservinfg
+ * rebuilds smartly_data tiles based on inputJSON tiles, preserving
  * data from old smartly_data (if tile type is changed) and adding
  * and deleting tiles as necessary
 */
@@ -351,19 +351,10 @@ if ($inputJSON['tiles'][0]['template'] != "smartly") {  // first time running
 //var_dump($smartly_data, "SDATA");
 
 foreach ($smartly_data['dashboard']['mods'] as $mod_name => $mod_data) {
- 
-
- 
 //echo $mod_name;
-
-
-
 }
 
-
-
 // build refreshed smartly data from tiles
-
 foreach ($inputJSON['tiles'] as $pos => $tile) {
 
   // build smartly data for all tiles, excluding smartly data
@@ -374,19 +365,16 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
     $tile_data['template'] = $tile['template'];
     $tile_data['templateExtra'] = $tile['templateExtra'];
     $tile_data['pos'] = $pos;
-    
 /*
     // strip HE native "Custom Icon" data, as it prevents the use of states icons.
     if (array_key_exists('customIcon', $tile)) {
       unset($inputJSON['tiles'][$pos]['customIcon']);
     }
 */
-    
     $maxrow = ($tile['row']) + ($tile['rowSpan']); // - 1);
     $maxcol = ($tile['col']) + ($tile['colSpan']); // - 1);
     if( $maxrow > $calibrate_rows) { $calibrate_rows = $maxrow; } // needs -3 correction for hubitat JSON format
     if( $maxcol > $calibrate_cols) { $calibrate_cols = $maxcol; }
-
 /*
       $tile_data['col'] = $tile['col'];
       $tile_data['colSpan'] = $tile['colSpan'];
@@ -394,15 +382,12 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
       $tile_data['rowSpan'] = $tile['rowSpan'];
 */
 
-
 // TODO: this is a mess, it should be processing them based on case statement.
 // though, title data is global, every tile will have a title or a label so
 // it will be separate from other regen.. it should be cleaned up though.
 
     // BUILDFIELDS
-
     // DYNAMIC RETRIEVE AND BUILD STORAGE FOR FIELDS
-
     // iterate through all available mods
 
     foreach ($mods_enabled['tiletype'] as $mod => $tiletype) {
@@ -410,16 +395,39 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
 
       if (in_array($tile_data['template'], $tiletype)) {
         // tiletype is found enabled for a mod, import existing data or build field with null.
-        $tile_data['mods'][$mod]['value'] = $smartly_data['tiles'][$tile['id']]['mods'][$mod]['value'] ? $smartly_data['tiles'][$tile['id']]['mods'][$mod]['value'] : null;
+
+        $mod_default = null;
+        if ($mods_repo['tiletype'][$mod]['default']) { $mod_default =  $mods_repo['tiletype'][$tiletype]['default']; }
+
+        $tile_data['mods'][$mod]['value'] = $smartly_data['tiles'][$tile['id']]['mods'][$mod]['value'] ? $smartly_data['tiles'][$tile['id']]['mods'][$mod]['value'] : $mod_default; //null;
 
         // LEGACY SUPPORT - pre ['mod']
         $tile_data['mods'][$mod]['value'] = $smartly_data['tiles'][$tile['id']][$mod] ? $smartly_data['tiles'][$tile['id']][$mod] : $tile_data['mods'][$mod]['value'];
 
         foreach ($mods_repo['tiletype'][$mod]['modifier'] as $modifier_name => $modifier_data) {
-          $tile_data['mods'][$mod]['modifier'][$modifier_name]['value'] = $smartly_data['tiles'][$tile['id']]['mods'][$mod]['modifier'][$modifier_name]['value'] ? $smartly_data['tiles'][$tile['id']]['mods'][$mod]['modifier'][$modifier_name]['value'] : null;
+
+          $mod_modifier_default = null;
+          if ($mods_repo['dashboard'][$mod]['modifier'][$modifier_name]['default']) { $mod_modifier_default =  $mods_repo['dashboard'][$mod]['modifier'][$modifier_name]['default']; }
+
+          $tile_data['mods'][$mod]['modifier'][$modifier_name]['value'] = $smartly_data['tiles'][$tile['id']]['mods'][$mod]['modifier'][$modifier_name]['value'] ? $smartly_data['tiles'][$tile['id']]['mods'][$mod]['modifier'][$modifier_name]['value'] :$mod_modifier_default; //null;
         }
       }
     }
+
+/*
+    foreach ($mods_repo['contrib'] as $mod => $tiletype) {
+      // tiletype is found enabled for a mod, import existing data or build field with null.
+      $tile_data['mods'][$mod]['value'] = $smartly_data['tiles'][$tile['id']]['mods'][$mod]['value'] ? $smartly_data['tiles'][$tile['id']]['mods'][$mod]['value'] : null;
+
+      foreach ($mods_repo['tiletype'][$mod]['modifier'] as $modifier_name => $modifier_data) {
+        $tile_data['mods'][$mod]['modifier'][$modifier_name]['value'] = $smartly_data['tiles'][$tile['id']]['mods'][$mod]['modifier'][$modifier_name]['value'] ? $smartly_data['tiles'][$tile['id']]['mods'][$mod]['modifier'][$modifier_name]['value'] : null;
+      }
+    }
+*/
+
+
+
+
 
     // SPECIFIC LEGACY FIXES
 
@@ -433,19 +441,57 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
       }
     }   
 
-    // ATTRIBUTE
+    // ATTRIBUTE // 3RD PARTY
 
     if ($tile['template'] == "attribute") {
+      if ($tile_data['templateExtra']) {
+        $thirdparty = $tile_data['templateExtra'];
+
+          // check if explicit match first
+        if (array_key_exists($thirdparty, $mods_repo['contrib'])) {
+
+          $mod_default = null;
+          if ($mods_repo['contrib'][$thirdparty]['default']) { $mod_default =  $mods_repo['contrib'][$thirdparty]['default']; }
+
+          $tile_data['contrib'][$thirdparty]['value'] = $smartly_data['tiles'][$tile['id']]['contrib'][$thirdparty]['value'] ? $smartly_data['tiles'][$tile['id']]['contrib'][$thirdparty]['value'] : $mod_default; //null;
+          foreach ($mods_repo['contrib'][$thirdparty]['modifier'] as $modifier_name => $modifier_data) {
+
+            $mod_modifier_default = null;
+            if ($mods_repo['contrib'][$thirdparty]['modifier'][$modifier_name]['default']) { $mod_modifier_default =  $mods_repo['contrib'][$thirdparty]['modifier'][$modifier_name]['default']; }
+
+            $tile_data['contrib'][$thirdparty]['modifier'][$modifier_name]['value'] = $smartly_data['tiles'][$tile['id']]['contrib'][$thirdparty]['modifier'][$modifier_name]['value'] ? $smartly_data['tiles'][$tile['id']]['contrib'][$thirdparty]['modifier'][$modifier_name]['value'] : $mod_modifier_default; //null;
+          }
+        } else if (strpos($tile_data['templateExtra'], '-') === TRUE) {
+          // check for fuzzy 3rd party patch
+          $sub_match_array = explode("-", $tile_data['templateExtra']);
+          $sub_match = $sub_match_array[0];
+
+          if (array_key_exists($sub_match,$mods_repo['contrib'])) {
+
+            $mod_default = null;
+            if ($mods_repo['contrib'][$sub_match]['default']) { $mod_default =  $mods_repo['contrib'][$sub_match]['default']; }
+
+            $tile_data['contrib'][$sub_match]['value'] = $smartly_data['tiles'][$tile['id']]['contrib'][$sub_match]['value'] ? $smartly_data['tiles'][$tile['id']]['contrib'][$sub_match]['value'] : null;
+            foreach ($mods_repo['contrib'][$sub_match]['modifier'] as $modifier_name => $modifier_data) {
+
+              $mod_modifier_default = null;
+              if ($mods_repo['contrib'][$sub_match]['modifier'][$modifier_name]['default']) { $mod_modifier_default =  $mods_repo['contrib'][$sub_match]['modifier'][$modifier_name]['default']; }
+
+              $tile_data['contrib'][$sub_match]['modifier'][$modifier_name]['value'] = $smartly_data['tiles'][$tile['id']]['contrib'][$sub_match]['modifier'][$modifier_name]['value'] ? $smartly_data['tiles'][$tile['id']]['contrib'][$sub_match]['modifier'][$modifier_name]['value'] : $mod_modifier_default; //null;
+            }
+          }
+        }
+      }
 
       // DYNAMIC 3RD PARTY ATTRIBUTE MODS
 
 /*
       $templateExtra_vendor = explode('-', $tile_data['templateExtra']);
 
-      if (in_array($templateExtra_vendor[0], $mods['3rdparty'])) {
-        foreach ($mods['3rdparty'][$templateExtra_vendor] as $mod) {
+      if (in_array($templateExtra_vendor[0], $mods['contrib'])) {
+        foreach ($mods['contrib'][$templateExtra_vendor] as $mod) {
 
-$tile_data['mods']['3rdparty'][$templateExtra_vendor][$mod]['value'] = $smartly_data['tiles'][$tile['id']]['mods']['3rdparty'][$templateExtra_vendor][$mod]['value'] ? $smartly_data['tiles'][$tile['id']]['mods']['3rdparty'][$templateExtra_vendor][$mod]['value'] : null;
+$tile_data['mods']['contrib'][$templateExtra_vendor][$mod]['value'] = $smartly_data['tiles'][$tile['id']]['mods']['contrib'][$templateExtra_vendor][$mod]['value'] ? $smartly_data['tiles'][$tile['id']]['mods']['contrib'][$templateExtra_vendor][$mod]['value'] : null;
         }
       }
 */
@@ -669,7 +715,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
 
 //print_r($smartly_data);
   foreach ($smartly_data['dashboard']['mods'] as $mod => $mod_data) {
-print_r($mod_data, "MOD DATA");
+//print_r($mod_data, "MOD DATA");
 
     if (!(is_null($mod_data['value'])) && $mods_repo['dashboard'][$mod]) {
 
@@ -756,40 +802,130 @@ EOF;
     // if attribute tile, it could potentially be a 3rd party tile
     if ($smart_data['template'] == 'attribute') {
       if ($smart_data['templateExtra']) {
-        if (strpos($smart_data['templateExtra'], '-') === FALSE) {
-          // may have has explicit match 3rd party patch
-          if (array_key_exists($smart_data['templateExtra'], $mods_repo['3rdparty'])) {
 
-            $token_replacements = array(
+        if (array_key_exists($smart_data['templateExtra'],$mods_repo['contrib'])) {
+          // we have an explicit match of contrib CSS
+
+          $mod = $smart_data['templateExtra'];
+          $mod_value = $smart_data['contrib'][$mod]['value'];
+
+          $token_replacements = array(
               '[tile_id]' => $smart_id,
+              '[value]' => $mod_value,
               '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
               '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
               '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
-            );
+          );
 
-            $css = $mods_repo['3rdparty'][$smart_data['templateExtra']]['css'];
-            $smartly_css['3rdparty'][$smart_data['templateExtra']][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+          $css = $mods_repo['contrib'][$mod]['css'][$mod_value] ? $mods_repo['contrib'][$mod]['css'][$mod_value] : $mods_repo['contrib'][$mod]['css']['default'];
 
+          $smartly_css['contrib'][$mod][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+
+          // iterate through modifiers that have values and add their css
+          foreach ($smart_data['contrib'][$mod]['modifier'] as $mod_modifier => $modifier_data) {
+            if ($smart_data['contrib'][$mod]['modifier'][$mod_modifier]['value']) {
+
+              $mod_modifier_value = $smart_data['contrib'][$mod]['modifier'][$mod_modifier]['value'];
+              $mod_modifier_type = $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['type'];
+
+              $token_replacements = array(
+                  '[tile_id]' => $smart_id,
+                  '[value]' => $mod_modifier_value,
+                  '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
+                  '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
+                  '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
+              );
+
+              switch ($mod_modifier_type) {
+                case 'checkbox':
+                  //print_r($mod_modifier_value);
+                  if ($mod_modifier_value > 0) {
+                    $css = $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css'];
+                  }
+                  break;
+
+                case 'select':
+                  $css = $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css'][$mod_modifier_value] ? $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css'][$mod_modifier_value] : $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css']['default'];
+
+                  break;
+
+                default:
+                  $css = $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css'][$mod_modifier_value] ? $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css'][$mod_modifier_value] : $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css']['default'];
+
+                  break;
+              }
+
+              $smartly_css['mods'][$mod . "__" . $mod_modifier][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+
+            }
           }
 
-        } else {
+
+        } elseif (strpos($smart_data['templateExtra'], '-') === TRUE) {
+
           // check for fuzzy 3rd party patch
           $sub_match_array = explode("-", $smart_data['templateExtra']);
           $sub_match = $sub_match_array[0];
 
-          if (array_key_exists($sub_match,$mods_repo['3rdparty'])) {
+          $mod_value = $smart_data['contrib'][$sub_match]['value'];
+
+          // may have has explicit match 3rd party patch
+          if (array_key_exists($sub_match, $mods_repo['contrib'])) {
 
             $token_replacements = array(
               '[tile_id]' => $smart_id,
+              '[value]' => $mod_value,
               '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
               '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
               '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
             );
 
-            $css = $mods_repo['3rdparty'][$sub_match]['css'];
-            $smartly_css['3rdparty'][$sub_match][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+            $css = $mods_repo['contrib'][$sub_match]['css'][$smart_data['contrib'][$sub_match]['value']] ? $mods_repo['contrib'][$sub_match]['css'][$smart_data['contrib'][$sub_match]['value']] : $mods_repo['contrib'][$sub_match]['css']['default'];
+
+            $smartly_css['contrib'][$sub_match][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+            $smartly_css['contrib'][$smart_data['templateExtra']][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+
+            // iterate through modifiers that have values and add their css
+            foreach ($smart_data['contrib'][$sub_match]['modifier'] as $mod_modifier => $modifier_data) {
+              if ($smart_data['contrib'][$sub_match]['modifier'][$mod_modifier]['value']) {
+
+                $mod_modifier_value = $smart_data['contrib'][$sub_match]['modifier'][$mod_modifier]['value'];
+                $mod_modifier_type = $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['type'];
+
+                $token_replacements = array(
+                    '[tile_id]' => $smart_id,
+                    '[value]' => $mod_modifier_value,
+                    '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
+                    '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
+                    '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
+                );
+
+                switch ($mod_modifier_type) {
+                  case 'checkbox':
+                    //print_r($mod_modifier_value);
+                    if ($mod_modifier_value > 0) {
+                      $css = $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css'];
+                    }
+                    break;
+
+                  case 'select':
+                    $css = $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css'][$mod_modifier_value] ? $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css'][$mod_modifier_value] : $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css']['default'];
+
+                    break;
+
+                  default:
+                    $css = $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css'][$mod_modifier_value] ? $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css'][$mod_modifier_value] : $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css']['default'];
+
+                    break;
+                }
+
+                $smartly_css['contrib'][$sub_match . "__" . $mod_modifier][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+
+              }
+            }
 
           }
+
         }
       }
     }
@@ -892,7 +1028,7 @@ EOF;
   }
 
   // iterate through individual mods css, optimize 
-  foreach ($smartly_css['3rdparty'] as $mod_name => $mod_css) {
+  foreach ($smartly_css['contrib'] as $mod_name => $mod_css) {
     foreach ($mod_css as $css) {
       $smartly_mods_css[] = $css;
     }
