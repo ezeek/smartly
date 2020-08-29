@@ -25,6 +25,7 @@ $mods_repo['layout'] = [
       'bpt',
       'tm',
       'Graph',
+      'bpt',
       'bpt-history'
     ],
     'color' => [
@@ -843,10 +844,15 @@ EOF;
 // 3rd party CSS patching
 
 // BPT General
-
+$mods_repo['contrib']['bpt']['section-title'] = "BPT General";
+$mods_repo['contrib']['bpt']['label'] = "Enable";
+$mods_repo['contrib']['bpt']['type'] = 'checkbox';
+$mods_repo['contrib']['bpt']['default'] = true;
+$mods_repo['contrib']['bpt']['text']['default'] = "Enable General BPT CSS Patching";
 $mods_repo['contrib']['bpt']['css'] = <<<EOF
 #tile-[tile_id] .tile-contents {
    height: calc(90%);
+   border: 2px solid red;
 }
 
 #tile-[tile_id] .tile-primary {
@@ -877,6 +883,7 @@ EOF;
 
 
 // BPT Life360
+$mods_repo['contrib']['bpt-history']['section-title'] = "BPT Life360 History";
 $mods_repo['contrib']['bpt-history']['label'] = "Enable";
 $mods_repo['contrib']['bpt-history']['type'] = 'checkbox';
 $mods_repo['contrib']['bpt-history']['default'] = true;
@@ -965,7 +972,7 @@ position: absolute;
 }
 EOF;
 
-$mods_repo['contrib']['bpt-history']['modifier']['theme']['label'] = "BPT Life360 - Theme";
+$mods_repo['contrib']['bpt-history']['modifier']['theme']['label'] = "Theme";
 $mods_repo['contrib']['bpt-history']['modifier']['theme']['type'] = 'select';
 $mods_repo['contrib']['bpt-history']['modifier']['theme']['options'] = [
     "default" => "Default",
@@ -993,10 +1000,10 @@ $mods_repo['contrib']['bpt-history']['modifier']['theme']['css']['dark'] = <<<EO
 }
 EOF;
 
-$mods_repo['contrib']['bpt-history']['modifier']['logo']['label'] = "BPT Life360 - Logo";
+$mods_repo['contrib']['bpt-history']['modifier']['logo']['label'] = "Remove Logo";
 $mods_repo['contrib']['bpt-history']['modifier']['logo']['type'] = 'checkbox';
-$mods_repo['contrib']['bpt-history']['modifier']['logo']['default'] = true;
-$mods_repo['contrib']['bpt-history']['modifier']['logo']['text']['default'] = 'Check to add the Life360 logo.';
+//$mods_repo['contrib']['bpt-history']['modifier']['logo']['default'] = true;
+$mods_repo['contrib']['bpt-history']['modifier']['logo']['text']['default'] = 'Check to remove the Life360 logo.';
 $mods_repo['contrib']['bpt-history']['modifier']['logo']['css']['default'] = <<<EOF
 #tile-[tile_id] .tile-primary tbody tr:nth-child(1) td p:nth-child(2):after {
     display: none;

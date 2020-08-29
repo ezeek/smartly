@@ -704,7 +704,7 @@ Add your custom CSS in the space below.. */
  *  A string containing the entire customCSS for addition to Layout JSON.
  */
 
-function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css = null, $skin_css = null, $user_css = null, $settings = array()) {
+function smartly_ß($smartly_tiles = null, $delimiters = null, $base_css = null, $skin_css = null, $user_css = null, $settings = array()) {
 
   $smartly_data = $GLOBALS['smartly_data'];
   $mods_repo = $GLOBALS['mods_repo'];
@@ -713,14 +713,8 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
   $fontsize_calc = strval($settings['fontSize'] * 1.5) . "px";
   $fontsize_calc_lg = strval($settings['fontSize'] * 1.75) . "px";
 
-//print_r($smartly_data);
   foreach ($smartly_data['dashboard']['mods'] as $mod => $mod_data) {
-//print_r($mod_data, "MOD DATA");
-
     if (!(is_null($mod_data['value'])) && $mods_repo['dashboard'][$mod]) {
-
-      //print_r($mods_repo['dashboard'][$mod]['type']);
-
 
       switch ($mods_repo['dashboard'][$mod]['type']) {
         case 'select':
@@ -743,14 +737,12 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
 
       }
 
-
       // check if the mod has tiletype specific css and if not, use default css.  do token replacements as needed.
       $smartly_css['mods'][$mod][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
 
     } 
   }
 
-	
   foreach ($smartly_tiles as $smart_id => $smart_data) {
 
     foreach ($mods_enabled['tiletype'] as $mod => $tiletype) {
@@ -787,17 +779,11 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
 
           }
         }
+
       }
-    } 
+    }
 
-$templateExtra = $smart_data['templateExtra'];
-
-            $smartly_css['mods']['test'][] = <<<EOF
-#tile-000-init {
-   content: "$smart_id $templateExtra";
-}
-
-EOF;
+    // @TODO: All of this shit needs to be a re-usable function, dear god.
 
     // if attribute tile, it could potentially be a 3rd party tile
     if ($smart_data['template'] == 'attribute') {
@@ -822,44 +808,46 @@ EOF;
           $smartly_css['contrib'][$mod][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
 
           // iterate through modifiers that have values and add their css
-          foreach ($smart_data['contrib'][$mod]['modifier'] as $mod_modifier => $modifier_data) {
-            if ($smart_data['contrib'][$mod]['modifier'][$mod_modifier]['value']) {
+          if ($mod_value == '1' && $mods_repo['contrib'][$mod]['type'] == 'checkbox') {
+            // only add modifier values if base modifier checkbox is checked (contrib mod on/off)
+            foreach ($smart_data['contrib'][$mod]['modifier'] as $mod_modifier => $modifier_data) {
+              if ($smart_data['contrib'][$mod]['modifier'][$mod_modifier]['value']) {
 
-              $mod_modifier_value = $smart_data['contrib'][$mod]['modifier'][$mod_modifier]['value'];
-              $mod_modifier_type = $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['type'];
+                $mod_modifier_value = $smart_data['contrib'][$mod]['modifier'][$mod_modifier]['value'];
+                $mod_modifier_type = $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['type'];
 
-              $token_replacements = array(
-                  '[tile_id]' => $smart_id,
-                  '[value]' => $mod_modifier_value,
-                  '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
-                  '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
-                  '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
-              );
+                $token_replacements = array(
+                    '[tile_id]' => $smart_id,
+                    '[value]' => $mod_modifier_value,
+                    '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
+                    '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
+                    '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
+                );
 
-              switch ($mod_modifier_type) {
-                case 'checkbox':
-                  //print_r($mod_modifier_value);
-                  if ($mod_modifier_value > 0) {
-                    $css = $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css'];
-                  }
-                  break;
+                switch ($mod_modifier_type) {
+                  case 'checkbox':
+                    //print_r($mod_modifier_value);
+                    if ($mod_modifier_value > 0) {
+                      $css = $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css'];
+                    }
+                    break;
 
-                case 'select':
-                  $css = $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css'][$mod_modifier_value] ? $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css'][$mod_modifier_value] : $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css']['default'];
+                  case 'select':
+                    $css = $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css'][$mod_modifier_value] ? $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css'][$mod_modifier_value] : $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css']['default'];
 
-                  break;
+                    break;
 
-                default:
-                  $css = $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css'][$mod_modifier_value] ? $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css'][$mod_modifier_value] : $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css']['default'];
+                  default:
+                    $css = $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css'][$mod_modifier_value] ? $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css'][$mod_modifier_value] : $mods_repo['contrib'][$mod]['modifier'][$mod_modifier]['css']['default'];
 
-                  break;
+                    break;
+                }
+
+                $smartly_css['mods'][$mod . "__" . $mod_modifier][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+
               }
-
-              $smartly_css['mods'][$mod . "__" . $mod_modifier][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
-
             }
           }
-
 
         } elseif (strpos($smart_data['templateExtra'], '-') === TRUE) {
 
@@ -886,51 +874,50 @@ EOF;
             $smartly_css['contrib'][$smart_data['templateExtra']][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
 
             // iterate through modifiers that have values and add their css
-            foreach ($smart_data['contrib'][$sub_match]['modifier'] as $mod_modifier => $modifier_data) {
-              if ($smart_data['contrib'][$sub_match]['modifier'][$mod_modifier]['value']) {
+            if ($mod_value == '1' && $mods_repo['contrib'][$sub_match]['type'] == 'checkbox') {
+              // only add modifier values if base modifier checkbox is checked (contrib mod on/off)
+              foreach ($smart_data['contrib'][$sub_match]['modifier'] as $mod_modifier => $modifier_data) {
+                if ($smart_data['contrib'][$sub_match]['modifier'][$mod_modifier]['value']) {
 
-                $mod_modifier_value = $smart_data['contrib'][$sub_match]['modifier'][$mod_modifier]['value'];
-                $mod_modifier_type = $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['type'];
+                  $mod_modifier_value = $smart_data['contrib'][$sub_match]['modifier'][$mod_modifier]['value'];
+                  $mod_modifier_type = $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['type'];
 
-                $token_replacements = array(
-                    '[tile_id]' => $smart_id,
-                    '[value]' => $mod_modifier_value,
-                    '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
-                    '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
-                    '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
-                );
+                  $token_replacements = array(
+                      '[tile_id]' => $smart_id,
+                      '[value]' => $mod_modifier_value,
+                      '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
+                      '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
+                      '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
+                  );
 
-                switch ($mod_modifier_type) {
-                  case 'checkbox':
-                    //print_r($mod_modifier_value);
-                    if ($mod_modifier_value > 0) {
-                      $css = $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css'];
-                    }
-                    break;
+                  switch ($mod_modifier_type) {
+                    case 'checkbox':
+                      //print_r($mod_modifier_value);
+                      if ($mod_modifier_value > 0) {
+                        $css = $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css'];
+                      }
+                      break;
 
-                  case 'select':
-                    $css = $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css'][$mod_modifier_value] ? $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css'][$mod_modifier_value] : $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css']['default'];
+                    case 'select':
+                      $css = $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css'][$mod_modifier_value] ? $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css'][$mod_modifier_value] : $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css']['default'];
 
-                    break;
+                      break;
 
-                  default:
-                    $css = $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css'][$mod_modifier_value] ? $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css'][$mod_modifier_value] : $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css']['default'];
+                    default:
+                      $css = $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css'][$mod_modifier_value] ? $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css'][$mod_modifier_value] : $mods_repo['contrib'][$sub_match]['modifier'][$mod_modifier]['css']['default'];
 
-                    break;
+                      break;
+                  }
+
+                  $smartly_css['contrib'][$sub_match . "__" . $mod_modifier][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+
                 }
-
-                $smartly_css['contrib'][$sub_match . "__" . $mod_modifier][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
-
               }
             }
-
           }
-
         }
       }
     }
-
-
 
     // check if tile has icon functionality (by checking if it has states)
     if ($smart_data['states']) {

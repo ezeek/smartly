@@ -3,7 +3,7 @@ var smartlyDATA = '';
 var hubitatJSON = '';
 var smartlyMODS = [];
 
-var debug = true;
+var debug = false;
 
 $(document).ready(function() {
 
@@ -158,34 +158,15 @@ $(document).ready(function() {
 
 function update_calibrations(smartlyDATA) {
 
-  // legacy conversion
-/*
-  if (smartlyDATA['settings']['calibration']['devices'][0].length > 0 || smartlyDATA['settings']['calibration']['devices_2col'][0].length > 0) {
-console.log("LEGACY CAL?IBTATION DEVICES");
-    smartlyDATA['dashboard'] = {};
-    smartlyDATA['dashboard']['mods'] = {};
-    smartlyDATA['dashboard']['mods']['cal_devices'] = smartlyDATA['settings']['calibration']['devices'] ? smartlyDATA['settings']['calibration']['devices'] : null;
-    smartlyDATA['dashboard']['mods']['cal_devices_2col'] = smartlyDATA['settings']['calibration']['devices_2col'] ? smartlyDATA['settings']['calibration']['devices_2col'] : null;
-
-//delete smartlyDATA['settings']['calibration'].devices;
-//delete smartlyDATA['settings']['calibration'].devices_2col;
-//    delete smartlyDATA['settings']['calibration'].devices;
-//    delete smartlyDATA['settings']['calibration'].devices_2col;
-
-  }
-*/
-
   // if empty, prepopulate structure
   if (debug) {  console.log(smartlyDATA, "prepopulate");  }
 
-    if (typeof smartlyDATA['dashboard'] === 'undefined') {
-      smartlyDATA['dashboard'] = {};      
-      if (typeof smartlyDATA['dashboard']['mods'] === 'undefined') {
-        smartlyDATA['dashboard']['mods'] = {};
-      }
+  if (typeof smartlyDATA['dashboard'] === 'undefined') {
+    smartlyDATA['dashboard'] = {};
+    if (typeof smartlyDATA['dashboard']['mods'] === 'undefined') {
+      smartlyDATA['dashboard']['mods'] = {};
     }
-
-
+  }
 
   if (smartlyDATA['dashboard']['mods']['cal_devices'] || smartlyDATA['dashboard']['mods']['cal_devices_2col']) {
 
@@ -312,103 +293,99 @@ function smartly_editor(tile_id) {
     for (let [section, mods] of Object.entries(smartlyMODS.layout.tiles)) {
       var section_html = [];
 
-      mods.forEach(function(mod){ 
+      mods.forEach(function(mod){
 
-        if (typeof data.mods[mod] !== 'undefined') {
+        var formHtml = '';
+        var modWrap = false;
 
-          if (debug) {  console.log(mod + " enabled within " + section, "MOD ACTIVE");}
+        if (section == 'contrib') { // is contrib
+          if (typeof data.contrib !== 'undefined') {
+            if (typeof data.contrib[mod] !== 'undefined') {
+              if (typeof data.contrib[mod]['value'] !== 'undefined') {
 
-          // retrieve and process value for specific input type
+                if (debug) { console.log(mod + " enabled within " + section, "CONTRIB MOD ACTIVE");}
+                if (debug) { console.log(mod, "mod");}
 
-          var formHtml = '';
-          var modWrap = false;
-          if (debug) {  console.log(mod, "mod");}
-          if (typeof smartlyMODS.tiletype[mod].modifier !== 'undefined') {
-            modWrap = true;
-            formHtml += '<fieldset class="form-group"><legend>' + mod  + '</legend>';
-          }
+                console.log(mod, "FIRST NAME");
 
-          // build the form
+                if (smartlyMODS.contrib[mod]['section-title']) { section_title = smartlyMODS.contrib[mod]['section-title']; } else { section_title = mod; }
 
-          formHtml += build_form(tile_id, data, data.mods[mod], smartlyMODS.tiletype[mod], mod);
-//console.log(smartlyDATA, "SDATA post root add");
-
-          // add to the form for all modifiers
-
-          if (typeof smartlyMODS.tiletype[mod].modifier !== 'undefined') {
-            for (let [modifier_mod, modifier_construct] of Object.entries(smartlyMODS.tiletype[mod].modifier)) {
-            formHtml += build_form(tile_id, data, data.mods[mod]['modifier'][modifier_mod], modifier_construct, mod + '__' + modifier_mod);
-            }
-          }
-//console.log(smartlyDATA, "SDATA post moidifier add");
-          if (modWrap) {
-            formHtml +='</fieldset>';
-          }
-
-          section_html.push(formHtml);
-
-//          editor.append(formHtml);
-
-        }
-
-
-        else if (typeof data.contrib !== 'undefined') {
-          if (typeof data.contrib[mod] !== 'undefined') {
-            if (typeof data.contrib[mod]['value'] !== 'undefined') {
-              if (debug) {
-                console.log(mod + " enabled within " + section, "CONTRIB MOD ACTIVE");
-
-                var formHtml = '';
-                var modWrap = false;
-                if (debug) {
-                  console.log(mod, "mod");
-                }
+                // if mod has a modifier, add fieldset init
                 if (typeof smartlyMODS.contrib[mod].modifier !== 'undefined') {
                   modWrap = true;
-                  formHtml += '<fieldset class="form-group"><legend>' + mod + '</legend>';
+                  formHtml += '<fieldset class="form-group"><legend>' + section_title + '</legend>';
                 }
 
-                // build the form
-
+                // build the root-level mod form
                 formHtml += build_form(tile_id, data, data.contrib[mod], smartlyMODS.contrib[mod], mod);
-//console.log(smartlyDATA, "SDATA post root add");
 
-                // add to the form for all modifiers
-
+                // build form for all modifiers
                 if (typeof smartlyMODS.contrib[mod].modifier !== 'undefined') {
                   for (let [modifier_mod, modifier_construct] of Object.entries(smartlyMODS.contrib[mod].modifier)) {
                     formHtml += build_form(tile_id, data, data.contrib[mod]['modifier'][modifier_mod], modifier_construct, mod + '__' + modifier_mod);
                   }
                 }
-//console.log(smartlyDATA, "SDATA post moidifier add");
+
+                // build modifier fielset close
                 if (modWrap) {
                   formHtml += '</fieldset>';
                 }
 
+                // add form elements to section html
                 section_html.push(formHtml);
 
+              } // value
+            }  // mod
+          } // contrib
+        } else { // is a tilemod
+          if (typeof data.mods !== 'undefined') {
+            if (typeof data.mods[mod] !== 'undefined') {
 
+              if (debug) {
+                console.log(mod + " enabled within " + section, "MOD ACTIVE");
               }
-            }
-          }
+              if (debug) {
+                console.log(mod, "mod");
+              }
 
+              // if mod has a modifier, add fieldset init
+              if (typeof smartlyMODS.tiletype[mod].modifier !== 'undefined') {
+                modWrap = true;
+                formHtml += '<fieldset class="form-group"><legend>' + mod + '</legend>';
+              }
 
-//console.log(data, "DATA");
+              // build the root-level mod form
+              formHtml += build_form(tile_id, data, data.mods[mod], smartlyMODS.tiletype[mod], mod);
 
+              // build form for all modifiers
+              if (typeof smartlyMODS.tiletype[mod].modifier !== 'undefined') {
+                for (let [modifier_mod, modifier_construct] of Object.entries(smartlyMODS.tiletype[mod].modifier)) {
+                  formHtml += build_form(tile_id, data, data.mods[mod]['modifier'][modifier_mod], modifier_construct, mod + '__' + modifier_mod);
+                }
+              }
 
-          // for mods
+              // build modifier fielset close
+              if (modWrap) {
+                formHtml += '</fieldset>';
+              }
 
-          // if the section has elements, add to section_build object for building later
+              // add form elements to section html
+              section_html.push(formHtml);
+            } // mod exists
+          } // any mods populated
+        } // it tilemod
 
-          // trim empty array elements
-          section_html = section_html.filter(Boolean);
+        // if the section has elements, add to section_build object for building later
 
-          if (section_html.length > 0) {
-            section_build[section] = section_html;
-          }
+        // trim empty array elements
+        section_html = section_html.filter(Boolean);
+
+        if (section_html.length > 0) {
+          section_build[section] = section_html;
         }
+
       });
-    };
+    }
 
     var sections_count = Object.keys(section_build);
     var sections_exist = false;
@@ -418,7 +395,6 @@ function smartly_editor(tile_id) {
     if (sections_count.length > 0) {
       sections_exist = true;
     }
-
 
     // build menu and tabs
 
@@ -872,16 +848,18 @@ function smartly_settings_update() {
 
 function parse_form(smart_id, mod_name, mod_construct, parent_mod = null, section = 'mods') {
 
-var parent_plug = '';
-if (parent_mod) { 
-  parent_plug = parent_mod + "__";
-  if (debug) {  console.log(parent_plug, "PARENT FOUND");}
-}
+  var parent_plug = '';
+  if (parent_mod) {
+    parent_plug = parent_mod + "__";
+    if (debug) {  console.log(parent_plug, "PARENT FOUND");}
+  }
 
   if (debug) {  console.log("#smart_edit_" + parent_plug + mod_name, "LOOKING FOR"); }
 
   if ($("#smart_edit_" + parent_plug + mod_name).length) {
+
     if (debug) {  console.log(mod_name, "FOUND ELEMENT");}
+
     switch(mod_construct.type) {
       case 'checkbox':
 
@@ -937,13 +915,14 @@ if (parent_mod) {
 
 function build_form(tile_id, tile_data = null, tile_mod, mod_construct, mod_name) {
   if (debug) {  console.log(tile_mod, "build_form: tile_mod");}
-         var formValue = '';
-          var formInsert = '';
+  console.log(tile_mod, "build_form: tile_mod");
+    var formValue = '';
+    var formInsert = '';
 
-          var helpText = '';
-          var labelText = '';
+    var helpText = '';
+    var labelText = '';
 
-          var formHtml = '';
+    var formHtml = '';
 
   // prep mod text if available
 
@@ -959,7 +938,7 @@ function build_form(tile_id, tile_data = null, tile_mod, mod_construct, mod_name
 
   switch (mod_construct.type) {
     case 'checkbox':
-//console.log(mod_construct, "INCOMING MOD CONSTRUCT - CHECKBOX");
+console.log(mod_construct, "INCOMING MOD CONSTRUCT - CHECKBOX");
 
       if (typeof tile_mod !== 'undefined') {
         if (tile_mod.value === true) {
@@ -1011,7 +990,6 @@ function build_form(tile_id, tile_data = null, tile_mod, mod_construct, mod_name
     case 'tagsinput':
 
       formValue = tile_mod ? tile_mod : '';
-
       formHtml += '<div class="form-group row"><div class="col-12"><label for="smart_edit_' + mod_name + '" class="col-form-label">' + mod_construct.label + '</label><input type="text" id="smart_edit_' + mod_name + '" class="bootstrap-tagsinput"/></div></div>';
 
       break
@@ -1019,17 +997,10 @@ function build_form(tile_id, tile_data = null, tile_mod, mod_construct, mod_name
     case 'color':
 
       formValue = tile_mod.value ? tile_mod.value : '';
-
       formHtml += '<div class="form-group row"><label class="col-4 col-form-label" for="title">' + mod_construct.label + '</label><div class="col-8">';
-
       formHtml += '<div id="pickr_' + mod_name + '">&nbsp;</div><input id="smart_edit_' + mod_name + '" name="smart_edit_' + mod_name + '" type="text" class="form-control" aria-describedby="' + mod_name + 'HelpBlock" value="' + formValue + '" ' + formInsert + '><span id="' + mod_name + 'HelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
-
-
       formHtml += '<script type="text/javascript">var pickr_' + mod_name + ' = new Pickr({el: "#pickr_' + mod_name + '",default: $("#smart_edit_' + mod_name + '").val(), comparison: false, defaultRepresentation: "RGBA",toRGBA: true,components: {preview: true,opacity: true,hue: true,interaction: {input: true,clear: false,save: true}},onChange(hsva, instance) { $("#smart_edit_' + mod_name + '").val(hsva.toRGBA().toString()); console.log(hsva, "object"); }});</script>';
-
       formHtml += '<script type="text/javascript">$("#smart_edit_' + mod_name + '").on("change paste",function() { if ($(this).val()) { pickr_' + mod_name + '.setColor( $(this).val() ); } else { pickr_' + mod_name + '.setColor(null); }    });</script>';
-
-
 
       break
 
