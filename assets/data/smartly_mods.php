@@ -22,7 +22,6 @@ $mods_repo['layout'] = [
       ''
     ],
     'contrib' => [
-      'bpt',
       'tm',
       'Graph',
       'bpt',
@@ -845,11 +844,11 @@ EOF;
 
 // BPT General
 $mods_repo['contrib']['bpt']['section-title'] = "BPT General";
-$mods_repo['contrib']['bpt']['label'] = "Enable";
+$mods_repo['contrib']['bpt']['label'] = "BPT Generic CSS Patching";
 $mods_repo['contrib']['bpt']['type'] = 'checkbox';
 $mods_repo['contrib']['bpt']['default'] = true;
-$mods_repo['contrib']['bpt']['text']['default'] = "Enable General BPT CSS Patching";
-$mods_repo['contrib']['bpt']['css'] = <<<EOF
+$mods_repo['contrib']['bpt']['text']['default'] = "Enable some basic CSS patches for BPT tiles to look good in smartly..";
+$mods_repo['contrib']['bpt']['css']['default'] = <<<EOF
 #tile-[tile_id] .tile-contents {
    height: calc(90%);
    border: 2px solid red;
@@ -1017,7 +1016,11 @@ EOF;
 
 
 // BPT Tilemaster
-
+$mods_repo['contrib']['tm']['section-title'] = "BPT Tile Master";
+$mods_repo['contrib']['tm']['label'] = "BPT Tile Master CSS Patching";
+$mods_repo['contrib']['tm']['type'] = 'checkbox';
+$mods_repo['contrib']['tm']['default'] = true;
+$mods_repo['contrib']['tm']['text']['default'] = "Enable some basic CSS patches for BPT Tile Master tiles to look good in smartly..";
 $mods_repo['contrib']['tm']['css'] = <<<EOF
 #tile-[tile_id] {
    border: 0px none;
@@ -1047,7 +1050,14 @@ $mods_repo['contrib']['tm']['css'] = <<<EOF
 }
 
 EOF;
-$mods_repo['contrib']['Graph']['css'] = <<<EOF
+
+// HubiGraphs General
+$mods_repo['contrib']['Graph']['section-title'] = "HubiGraph General";
+$mods_repo['contrib']['Graph']['label'] = "HubiGraph Generic CSS Patching";
+$mods_repo['contrib']['Graph']['type'] = 'checkbox';
+$mods_repo['contrib']['Graph']['default'] = true;
+$mods_repo['contrib']['Graph']['text']['default'] = "Enable some basic CSS patches for HubiGraph tiles to look good in smartly..";
+$mods_repo['contrib']['Graph']['css']['default'] = <<<EOF
 #tile-[tile_id] .tile-primary,
 #tile-[tile_id] .tile-contents {
     height: 100%;

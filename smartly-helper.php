@@ -704,7 +704,7 @@ Add your custom CSS in the space below.. */
  *  A string containing the entire customCSS for addition to Layout JSON.
  */
 
-function smartly_ß($smartly_tiles = null, $delimiters = null, $base_css = null, $skin_css = null, $user_css = null, $settings = array()) {
+function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css = null, $skin_css = null, $user_css = null, $settings = array()) {
 
   $smartly_data = $GLOBALS['smartly_data'];
   $mods_repo = $GLOBALS['mods_repo'];
@@ -712,6 +712,7 @@ function smartly_ß($smartly_tiles = null, $delimiters = null, $base_css = null,
   $inputJSON = $GLOBALS['inputJSON'];
   $fontsize_calc = strval($settings['fontSize'] * 1.5) . "px";
   $fontsize_calc_lg = strval($settings['fontSize'] * 1.75) . "px";
+  $lb = "\r\n\r\n"; // line break for future use
 
   foreach ($smartly_data['dashboard']['mods'] as $mod => $mod_data) {
     if (!(is_null($mod_data['value'])) && $mods_repo['dashboard'][$mod]) {
@@ -803,13 +804,15 @@ function smartly_ß($smartly_tiles = null, $delimiters = null, $base_css = null,
               '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
           );
 
-          $css = $mods_repo['contrib'][$mod]['css'][$mod_value] ? $mods_repo['contrib'][$mod]['css'][$mod_value] : $mods_repo['contrib'][$mod]['css']['default'];
-
-          $smartly_css['contrib'][$mod][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
-
-          // iterate through modifiers that have values and add their css
+          // assume base mod for contrib is an 'enable/disable' checkbox
           if ($mod_value == '1' && $mods_repo['contrib'][$mod]['type'] == 'checkbox') {
-            // only add modifier values if base modifier checkbox is checked (contrib mod on/off)
+            $css = $mods_repo['contrib'][$mod]['css'][$mod_value] ? $mods_repo['contrib'][$mod]['css'][$mod_value] : $mods_repo['contrib'][$mod]['css']['default'];
+
+            // only add css if base modifier checkbox is checked (contrib mod on/off)
+            $smartly_css['contrib'][$mod][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+
+            // iterate through modifiers that have values and add their css
+            // only if base mod is enabled or populated
             foreach ($smart_data['contrib'][$mod]['modifier'] as $mod_modifier => $modifier_data) {
               if ($smart_data['contrib'][$mod]['modifier'][$mod_modifier]['value']) {
 
@@ -1002,8 +1005,6 @@ function smartly_ß($smartly_tiles = null, $delimiters = null, $base_css = null,
   }  
 
   // combine and optimize CSS
-
-  $lb = "\r\n\r\n"; // line break for future use
 
   $optimize = new \CssOptimizer\Css\Optimizer;
 
