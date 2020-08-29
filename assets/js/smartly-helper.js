@@ -3,7 +3,7 @@ var smartlyDATA = '';
 var hubitatJSON = '';
 var smartlyMODS = [];
 
-var debug = false;
+var debug = true;
 
 $(document).ready(function() {
 

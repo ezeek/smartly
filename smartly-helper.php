@@ -461,7 +461,8 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
 
             $tile_data['contrib'][$thirdparty]['modifier'][$modifier_name]['value'] = $smartly_data['tiles'][$tile['id']]['contrib'][$thirdparty]['modifier'][$modifier_name]['value'] ? $smartly_data['tiles'][$tile['id']]['contrib'][$thirdparty]['modifier'][$modifier_name]['value'] : $mod_modifier_default; //null;
           }
-        } else if (strpos($tile_data['templateExtra'], '-') === TRUE) {
+        } else if (strpos($thirdparty, '-') > 0) {
+
           // check for fuzzy 3rd party patch
           $sub_match_array = explode("-", $tile_data['templateExtra']);
           $sub_match = $sub_match_array[0];
@@ -481,6 +482,7 @@ foreach ($inputJSON['tiles'] as $pos => $tile) {
             }
           }
         }
+
       }
 
       // DYNAMIC 3RD PARTY ATTRIBUTE MODS
