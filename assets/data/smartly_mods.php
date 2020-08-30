@@ -25,7 +25,8 @@ $mods_repo['layout'] = [
       'tm',
       'Graph',
       'bpt',
-      'bpt-history'
+      'bpt-history',
+      'bpt-statusTile1'
     ],
     'color' => [
       'color_bg',
@@ -851,7 +852,6 @@ $mods_repo['contrib']['bpt']['text']['default'] = "Enable some basic CSS patches
 $mods_repo['contrib']['bpt']['css']['default'] = <<<EOF
 #tile-[tile_id] .tile-contents {
    height: calc(90%);
-   border: 2px solid red;
 }
 
 #tile-[tile_id] .tile-primary {
@@ -882,12 +882,12 @@ EOF;
 
 
 // BPT Life360
-$mods_repo['contrib']['bpt-history']['section-title'] = "BPT Life360 History";
-$mods_repo['contrib']['bpt-history']['label'] = "Enable";
-$mods_repo['contrib']['bpt-history']['type'] = 'checkbox';
-$mods_repo['contrib']['bpt-history']['default'] = true;
-$mods_repo['contrib']['bpt-history']['text']['default'] = "Enable Life360 CSS Patching";
-$mods_repo['contrib']['bpt-history']['css']['default'] = <<<EOF
+$mods_repo['contrib']['bpt-statusTile1']['section-title'] = "BPT Life360 Status";
+$mods_repo['contrib']['bpt-statusTile1']['label'] = "Enable";
+$mods_repo['contrib']['bpt-statusTile1']['type'] = 'checkbox';
+$mods_repo['contrib']['bpt-statusTile1']['default'] = true;
+$mods_repo['contrib']['bpt-statusTile1']['text']['default'] = "Enable Life360 Status CSS Patching";
+$mods_repo['contrib']['bpt-statusTile1']['css']['default'] = <<<EOF
 #tile-[tile_id] table {
   border-collapse: collapse;
 }
@@ -971,15 +971,15 @@ position: absolute;
 }
 EOF;
 
-$mods_repo['contrib']['bpt-history']['modifier']['theme']['label'] = "Theme";
-$mods_repo['contrib']['bpt-history']['modifier']['theme']['type'] = 'select';
-$mods_repo['contrib']['bpt-history']['modifier']['theme']['options'] = [
+$mods_repo['contrib']['bpt-statusTile1']['modifier']['theme']['label'] = "Theme";
+$mods_repo['contrib']['bpt-statusTile1']['modifier']['theme']['type'] = 'select';
+$mods_repo['contrib']['bpt-statusTile1']['modifier']['theme']['options'] = [
     "default" => "Default",
     "light" => "Light",
     "dark" => "Dark"
 ];
-$mods_repo['contrib']['bpt-history']['modifier']['theme']['text']['default'] = 'Select a color theme.';
-$mods_repo['contrib']['bpt-history']['modifier']['theme']['css']['light'] = <<<EOF
+$mods_repo['contrib']['bpt-statusTile1']['modifier']['theme']['text']['default'] = 'Select a color theme.';
+$mods_repo['contrib']['bpt-statusTile1']['modifier']['theme']['css']['light'] = <<<EOF
 #tile-[tile_id] {
     background-color: rgba(255,255,255,.8);
 }
@@ -989,7 +989,7 @@ $mods_repo['contrib']['bpt-history']['modifier']['theme']['css']['light'] = <<<E
 }
 EOF;
 
-$mods_repo['contrib']['bpt-history']['modifier']['theme']['css']['dark'] = <<<EOF
+$mods_repo['contrib']['bpt-statusTile1']['modifier']['theme']['css']['dark'] = <<<EOF
 #tile-[tile_id] {
     background-color: rgba(0,0,0,.8);
 }
@@ -999,11 +999,11 @@ $mods_repo['contrib']['bpt-history']['modifier']['theme']['css']['dark'] = <<<EO
 }
 EOF;
 
-$mods_repo['contrib']['bpt-history']['modifier']['logo']['label'] = "Remove Logo";
-$mods_repo['contrib']['bpt-history']['modifier']['logo']['type'] = 'checkbox';
+$mods_repo['contrib']['bpt-statusTile1']['modifier']['logo']['label'] = "Remove Logo";
+$mods_repo['contrib']['bpt-statusTile1']['modifier']['logo']['type'] = 'checkbox';
 //$mods_repo['contrib']['bpt-history']['modifier']['logo']['default'] = true;
-$mods_repo['contrib']['bpt-history']['modifier']['logo']['text']['default'] = 'Check to remove the Life360 logo.';
-$mods_repo['contrib']['bpt-history']['modifier']['logo']['css']['default'] = <<<EOF
+$mods_repo['contrib']['bpt-statusTile1']['modifier']['logo']['text']['default'] = 'Check to remove the Life360 logo.';
+$mods_repo['contrib']['bpt-statusTile1']['modifier']['logo']['css']['default'] = <<<EOF
 #tile-[tile_id] .tile-primary tbody tr:nth-child(1) td p:nth-child(2):after {
     display: none;
 }
