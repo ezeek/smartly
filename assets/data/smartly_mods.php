@@ -521,8 +521,38 @@ $mods_repo['dashboard']['header']['value']['default']['css'] = <<<EOF
 EOF;
 
 $mods_repo['dashboard']['header']['value']['hidden']['css'] = <<<EOF
-.dashName:after {
-  content: " - [value]";
+.dashboard div .header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 999;
+    opacity: 1;
+}
+
+.wrapper {
+    height: 100%;
+    margin-top: 0;
+    padding-top: [grid_gap]px;
+}
+
+.dashBack,
+.dashName {
+    display: none;
+}
+
+.dashboard div .header>.flex-auto.justify-end>span {
+  display: none;
+}
+
+.dashboard div .header>.flex-auto.justify-end>span:last-child {
+    position: absolute;
+    z-index:99999;
+    right: 0;
+    top: 0;
+    visibility: hidden;
+    display: inline-block;
+    height: [grid_gap]px;
+    width: [grid_gap]px
 }
 EOF;
 $mods_repo['dashboard']['header']['value']['light_bottom']['css'] = <<<EOF
@@ -540,7 +570,7 @@ $mods_repo['dashboard']['header']['value']['light_bottom']['css'] = <<<EOF
 
 .header {
   z-index: 1;
-  background-color: rgba(255,255,255,.7);
+  background-color: rgba(255,255,255,.9);
   height: 60px;
 }
 
@@ -553,7 +583,7 @@ $mods_repo['dashboard']['header']['value']['light_bottom']['css'] = <<<EOF
 }
 
 smartly {
-    height: calc(100% + 75px);
+    height: calc(100% + [grid_gap_header]px);
 }
 EOF;
 
