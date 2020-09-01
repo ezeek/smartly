@@ -7,6 +7,7 @@ $mods_repo = array();
 $mods_repo['layout'] = [
   'tiles' => [
     'basics' => [
+      'remove_title',
       'title',
       'label',
       'unit',
@@ -19,7 +20,7 @@ $mods_repo['layout'] = [
     'mods' => [
       'zoomable',
       'buttonize',
-      ''
+      'alignment'
     ],
     'contrib' => [
       'tm',
@@ -73,6 +74,52 @@ $mods_enabled['tiletype']['numeric'] = ['attribute'];
 $mods_enabled['tiletype']['buttonize'] = ['button', 'dashboard', 'momentary', 'presence', 'water'];
 
 $mods_enabled['tiletype']['title'] = [
+  'acceleration',
+  'attribute',
+  'battery',
+  'bulb',
+  'bulb-color',
+  'buttons',
+  'carbon-monoxide',
+//'clock',
+//'clock-analog',
+//'clock-date',
+  'contact',
+//'dashboard',
+  'dimmer',
+  'door',
+  'door-control',
+  'fan',
+  'garage',
+  'garage-control',
+  'illuminance',
+  'energy',
+  'temperature',
+  'humidity',
+//'image',
+  'level-step',
+  'lock',
+  'momentary',
+  'motion',
+  'multi',
+  'music-player',
+  'outlet',
+  'presence',
+  'relay',
+  'shades',
+  'shock',
+  'smoke',
+  'switches',
+//'thermostat',
+  'valve',
+//'video',
+  'volume',
+  'water',
+  'window',
+  'scene'
+];
+
+$mods_enabled['tiletype']['remove_title'] = [
   'acceleration',
   'attribute',
   'battery',
@@ -571,6 +618,7 @@ EOF;
 // TITLE REPLACEMENT
 
 $mods_repo['tiletype']['title']['label'] = "Title replacement";
+//$mods_repo['tiletype']['title']['text']['default'] = "";
 $mods_repo['tiletype']['title']['type'] = 'textbox';
 $mods_repo['tiletype']['title']['css']['default'] = <<<EOF
 #tile-[tile_id] .tile-title {
@@ -1176,7 +1224,6 @@ $mods_repo['tiletype']['zoomable']['css']['default'] = <<<EOF
 #tile-[tile_id] .tile-contents {
     zoom: [value];
 }
-
 EOF;
 
 $mods_repo['tiletype']['zoomable']['css']['music-player'] = <<<EOF
@@ -1210,6 +1257,10 @@ $mods_repo['tiletype']['zoomable']['css']['clock'] = <<<EOF
     zoom: [value];
     line-height: 1em;
     height: calc(100%);
+}
+
+#tile-[tile_id] .tile-primary {
+    padding-bottom: calc([padding_adjust]%);
 }
 
 EOF;
@@ -1311,6 +1362,43 @@ $mods_repo['tiletype']['border']['modifier']['border_size']['css']['default'] = 
 #tile-[tile_id] {
   border-width: [value]px !important;
 }
+EOF;
+
+$mods_repo['tiletype']['compactify']['label'] = "Make Compact";
+$mods_repo['tiletype']['compactify']['type'] = 'select';
+$mods_repo['tiletype']['compactify']['default'] = 'half_height_middle';
+$mods_repo['tiletype']['compactify']['options'] = [
+    "Half Height - middle" => "half_height_middle",
+    "Half Height - bottom" => "half_height_bottom",
+    "Half Height - top" => "half_height_top",
+    "3/4 width - left" => "three_quarter_width_left",
+    "3/4 width - right" => "three_quarter_width_right",
+    "3/4 width - middle" => "three_quarter_width_middle"
+];
+$mods_repo['tiletype']['compactify']['text']['default'] = 'Warning: may not work well with Buttonize mod.';
+$mods_repo['tiletype']['compactify']['css']['default'] = <<<EOF
+#tile-[tile_id] .tile-contents {
+    zoom: [value];
+}
+
+EOF;
+
+$mods_repo['tiletype']['remove_title']['label'] = "Remove tile title";
+$mods_repo['tiletype']['remove_title']['text']['default'] = "Remove the tile title and attempt to center the contents of the tile vertically.";
+$mods_repo['tiletype']['remove_title']['type'] = 'checkbox';
+$mods_repo['tiletype']['remove_title']['css']['default'] = <<<EOF
+#tile-[tile_id] .tile-title {
+    display: none;
+}  
+
+#tile-[tile_id] .tile-contents {
+    height: 100%;
+}
+
+#tile-[tile_id] .tile-primary {
+    padding-bottom: 0px;
+}
+
 EOF;
 
 ?>

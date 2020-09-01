@@ -756,7 +756,8 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
           '[value]' => $smart_data['mods'][$mod]['value'],
           '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
           '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
-          '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
+          '[padding_calc]' => strval($settings['fontSize'] / 14) . "em",
+          '[padding_adjust]' => strval(9 - $smart_data['mods'][$mod]['value'])
         ); 
 
         $css = $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] ? $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] : $mods_repo['tiletype'][$mod]['css']['default'];
