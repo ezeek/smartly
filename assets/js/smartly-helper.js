@@ -3,7 +3,7 @@ var smartlyDATA = '';
 var hubitatJSON = '';
 var smartlyMODS = [];
 
-var debug = true;
+var debug = false;
 
 $(document).ready(function() {
 
@@ -39,7 +39,7 @@ $(document).ready(function() {
   // if anything changes, remind the user to update
 
   $(":input").change(function() { //triggers change in all input fields including text type
-    if (debug) { console.log("SOMETHING CHANGED"); }
+    console.log    if (debug) { ("SOMETHING CHANGED"); }
     if (!($(this).hasClass("stealth"))) {
       if (debug) { console.log($(this), "NOT STEALTH"); }
       smartly_update();
@@ -305,8 +305,6 @@ function smartly_editor(tile_id) {
 
                 if (debug) { console.log(mod + " enabled within " + section, "CONTRIB MOD ACTIVE");}
                 if (debug) { console.log(mod, "mod");}
-
-                console.log(mod, "FIRST NAME");
 
                 if (smartlyMODS.contrib[mod]['section-title']) { section_title = smartlyMODS.contrib[mod]['section-title']; } else { section_title = mod; }
 

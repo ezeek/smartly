@@ -1416,16 +1416,19 @@ $mods_repo['tiletype']['zoomable']['text']['attribute'] = 'Make the content of t
 $mods_repo['tiletype']['zoomable']['css']['default'] = <<<EOF
 #tile-[tile_id] .tile-contents {
     zoom: [value];
+     -moz-transform:scale([value]);
 }
 EOF;
 
 $mods_repo['tiletype']['zoomable']['css']['music-player'] = <<<EOF
 #tile-[tile_id] {
     zoom: [value];
+     -moz-transform:scale([value]);
 }
 
 #tile-[tile_id] .music-player .material-icons {
     zoom: [value];
+     -moz-transform:scale([value]);
 }
 
 #tile-[tile_id] .tile-primary>.music-player {
@@ -1437,10 +1440,12 @@ EOF;
 $mods_repo['tiletype']['zoomable']['css']['thermostat'] = <<<EOF
 #tile-[tile_id]>.absolute.bottom-0 {
     zoom: [value];
+     -moz-transform:scale([value]);
 }
 
 #tile-[tile_id]>.flex.items-stretch {
     zoom: [value];
+     -moz-transform:scale([value]);
     padding-top: [padding_calc];
 }
 
@@ -1448,6 +1453,7 @@ EOF;
 $mods_repo['tiletype']['zoomable']['css']['clock'] = <<<EOF
 #tile-[tile_id] .tile-contents {
     zoom: [value];
+     -moz-transform:scale([value]);
     line-height: 1em;
     height: calc(100%);
 }
@@ -1460,6 +1466,7 @@ EOF;
 $mods_repo['tiletype']['zoomable']['css']['attribute'] = <<<EOF
 #tile-[tile_id] .tile-primary {
     zoom: [value];
+     -moz-transform:scale([value]);
     line-height: 0;
 }
 
@@ -1572,6 +1579,7 @@ $mods_repo['tiletype']['compactify']['text']['default'] = 'Warning: may not work
 $mods_repo['tiletype']['compactify']['css']['default'] = <<<EOF
 #tile-[tile_id] .tile-contents {
     zoom: [value];
+     -moz-transform:scale([value]);
 }
 
 EOF;
