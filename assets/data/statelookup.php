@@ -96,6 +96,15 @@ $statelookup = [
         'active' => 'he-running', 
         'inactive' => 'he-motion-sensor',
     ],
+    'music-player' => [
+        'play' => 'play',
+        'pause' => 'pause',
+        'stop' => 'stop',
+        'next' => 'nextTrack',
+        'previous' => 'previousTrack',
+        'mute' => 'mute',
+        'unmute' => 'unmute'        
+    ],
     'outlet' => [
         'on' => 'he-outlet_3', 
         'off' => 'he-outlet_off',
