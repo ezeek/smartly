@@ -1393,7 +1393,6 @@ $mods_repo['tiletype']['text_alignment']['css']['default'] = <<<EOF
 #tile-[tile_id].text-tile .text-center {
     text-align: [value] !important;
     justify-content: [value];
-    display: block;
 }
 EOF;
 
