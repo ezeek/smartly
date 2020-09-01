@@ -20,7 +20,7 @@ $mods_repo['layout'] = [
     'mods' => [
       'zoomable',
       'buttonize',
-      'alignment'
+      'text_alignment'
     ],
     'contrib' => [
       'tm',
@@ -37,13 +37,14 @@ $mods_repo['layout'] = [
     ]
   ],
   'dashboard' => [
+    'mods' => [
+      'header',
+      'hide_scrollbars'
+    ],
     'calibration' => [
       'cal_devices',
       'cal_devices_2col',
       'zoomy'
-    ],
-    'mods' => [
-      'header'
     ]
 /*
 ,
@@ -71,7 +72,9 @@ $mods_enabled['dashboard']['colorcoding']['battery'] = true;
 
 $mods_enabled['tiletype']['unit'] = ['attribute'];
 $mods_enabled['tiletype']['numeric'] = ['attribute'];
+$mods_enabled['tiletype']['text_alignment'] = ['texttile'];
 $mods_enabled['tiletype']['buttonize'] = ['button', 'dashboard', 'momentary', 'presence', 'water'];
+
 
 $mods_enabled['tiletype']['title'] = [
   'acceleration',
@@ -293,6 +296,7 @@ $mods_enabled['tiletype']['zoomable'] = [
   'shock',
   'smoke',
   'switches',
+  'texttile',
   'thermostat',
   'valve',
   'video',
@@ -347,6 +351,7 @@ $mods_enabled['tiletype']['color_fg'] = [
 //  'smoke',
 //  'switches',
 //  'thermostat',
+  'texttile',
   'valve',
   'video',
   'volume',
@@ -393,6 +398,7 @@ $mods_enabled['tiletype']['color_bg'] = [
 //  'smoke',
 //  'switches',
 //  'thermostat',
+  'texttile',
 //  'valve',
   'video',
   'volume',
@@ -440,6 +446,7 @@ $mods_enabled['tiletype']['border'] = [
   'smoke',
   'switches',
   'thermostat',
+  'texttile',
   'valve',
   'video',
   'volume',
@@ -476,17 +483,35 @@ $mods_repo['dashboard']['zoomy']['label'] = '<b>Add ZOOMY</b> <small style="colo
 $mods_repo['dashboard']['zoomy']['text']['default'] = '<small>Temporarily add a calibration helper tile to generate the perfect css for alignment of columns to the edge of the screen on any device, any device display dpi setting.</small>';
 $mods_repo['dashboard']['zoomy']['type'] = 'checkbox';
 
+$mods_repo['dashboard']['hide_scrollbars']['label'] = 'Hide Scrollbars';
+$mods_repo['dashboard']['hide_scrollbars']['text']['default'] = 'Regardless of whether there is overflow, scrollbars will be enabled but hidden.';
+$mods_repo['dashboard']['hide_scrollbars']['type'] = 'checkbox';
+$mods_repo['dashboard']['hide_scrollbars']['default']['css'] = <<<EOF
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
 
-$mods_repo['dashboard']['header']['label'] = "Header Visibility";
+.wrapper {
+  -ms-overflow-style:none;
+  scrollbar-width: none;
+}
+EOF;
+
+
+$mods_repo['dashboard']['header']['label'] = "Header Theme";
 $mods_repo['dashboard']['header']['type'] = 'select';
 $mods_repo['dashboard']['header']['options'] = [
     "default" => "Default",
-    "hidden" => "Hidden (but clickable)",
-    "half_height" => "Half height", 
-    "collapsed_top_right" => "Collapsed top right",
-    "collapsed_top_right_vertical" => "Collapsed top right (vertical)", 
-    "collapsed_bottom_right" => "Collapsed bottom right",
-    "collapsed_bottom_right_vertical" => "Collapsed bottom right (vertical)"
+    "light_top" => "Light (top)",
+    "light_bottom" => "Light (bottom)",
+    "dark_top" => "Dark (top)",
+    "dark_bottom" => "Dark (bottom)",
+    "hidden" => "Hidden (touch top right)",
+    "stealth_top_right" => "Stealth (top right)",
+    "stealth_top_right_vertical" => "Stealth (top right - vertical)",
+    "stealth_bottom_right" => "Stealth (bottom right)",
+    "stealth_bottom_right_vertical" => "Stealth (bottom right - vertical)"
 ];
 $mods_repo['dashboard']['header']['text'] = "Change the size and position and visibility of the dashboard header..";
 
@@ -500,12 +525,135 @@ $mods_repo['dashboard']['header']['value']['hidden']['css'] = <<<EOF
   content: " - [value]";
 }
 EOF;
-$mods_repo['dashboard']['header']['value']['half_height']['css'] = <<<EOF
-.dashName:after {
-  content: " - [value]";
+$mods_repo['dashboard']['header']['value']['light_bottom']['css'] = <<<EOF
+.dashboard>div:first-child {
+  height: 100vh;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.wrapper {
+  position: absolute;
+  padding-top: [grid_gap]px;
+  height: 100vh;
+}
+
+.header {
+  z-index: 1;
+  background-color: rgba(255,255,255,.7);
+  height: 60px;
+}
+
+.header>.justify-end {
+  padding-top: .5em;
+}
+
+.dashboard>div>.header, .tile.text-tile {
+    color: #000;
+}
+
+smartly {
+    height: calc(100% + 75px);
 }
 EOF;
-$mods_repo['dashboard']['header']['value']['collapsed_top_right']['css'] = <<<EOF
+
+$mods_repo['dashboard']['header']['value']['dark_bottom']['css'] = <<<EOF
+.dashboard>div:first-child {
+  height: 100vh;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.wrapper {
+  position: absolute;
+  padding-top: [grid_gap]px;
+  height: 100vh;
+}
+
+.header {
+  z-index: 1;
+  background-color: rgba(0,0,0,.9);
+  height: 60px;
+}
+
+.header>.justify-end {
+  padding-top: .5em;
+}
+
+.dashboard>div>.header, .tile.text-tile {
+    color: #fff;
+}
+
+smartly {
+    height: calc(100% + [grid_gap_header]px);
+}
+EOF;
+
+$mods_repo['dashboard']['header']['value']['light_top']['css'] = <<<EOF
+.dashboard>div:first-child {
+  height: 100vh;
+}
+
+.wrapper {
+  position: absolute;
+  padding-top: [grid_gap_header]px;
+  height: 100vh;
+}
+
+.header {
+  z-index: 1;
+  background-color: rgba(255,255,255,.9);
+  height: 60px;
+  position: absolute;
+  width: 100%;
+}
+
+.header>.justify-end {
+  padding-top: .5em;
+}
+
+.dashboard>div>.header, .tile.text-tile {
+    color: #000;
+}
+
+smartly {
+    height: calc(100% + [grid_gap]px);
+}
+EOF;
+
+$mods_repo['dashboard']['header']['value']['dark_top']['css'] = <<<EOF
+.dashboard>div:first-child {
+  height: 100vh;
+}
+
+.wrapper {
+  position: absolute;
+  padding-top: [grid_gap_header]px;
+  height: 100vh;
+}
+
+.header {
+  z-index: 1;
+  background-color: rgba(0,0,0,.9);
+  height: 60px;
+  position: absolute;
+  width: 100%;
+}
+
+.header>.justify-end {
+  padding-top: .5em;
+}
+
+.dashboard>div>.header, .tile.text-tile {
+    color: #fff;
+}
+
+smartly {
+    height: calc(100% + [grid_gap]px);
+}
+EOF;
+
+$mods_repo['dashboard']['header']['value']['stealth_top_right']['css'] = <<<EOF
 .dashboard div .header {
     position: fixed;
     top: 0em;
@@ -532,7 +680,7 @@ $mods_repo['dashboard']['header']['value']['collapsed_top_right']['css'] = <<<EO
     display: inline-block;
 }
 EOF;
-$mods_repo['dashboard']['header']['value']['collapsed_top_right_vertical']['css'] = <<<EOF
+$mods_repo['dashboard']['header']['value']['stealth_top_right_vertical']['css'] = <<<EOF
 .dashboard div .header {
     position: fixed;
     top: 0em;
@@ -559,7 +707,7 @@ $mods_repo['dashboard']['header']['value']['collapsed_top_right_vertical']['css'
     display: block;
 }
 EOF;
-$mods_repo['dashboard']['header']['value']['collapsed_bottom_right']['css'] = <<<EOF
+$mods_repo['dashboard']['header']['value']['stealth_bottom_right']['css'] = <<<EOF
 .dashboard div .header {
     position: fixed;
     bottom: 0;
@@ -586,7 +734,7 @@ $mods_repo['dashboard']['header']['value']['collapsed_bottom_right']['css'] = <<
     display: inline-block;
 }
 EOF;
-$mods_repo['dashboard']['header']['value']['collapsed_bottom_right_vertical']['css'] = <<<EOF
+$mods_repo['dashboard']['header']['value']['stealth_bottom_right_vertical']['css'] = <<<EOF
 .dashboard div .header {
     position: fixed;
     bottom: 0;
@@ -1202,7 +1350,22 @@ $mods_repo['tiletype']['numeric']['css']['default'] = <<<EOF
 
 EOF;
 
-
+$mods_repo['tiletype']['text_alignment']['label'] = "Text Alignment";
+$mods_repo['tiletype']['text_alignment']['type'] = 'select';
+$mods_repo['tiletype']['text_alignment']['options'] = [
+    'left' => 'Left',
+    'center' => 'Center',
+    'right' => 'Right'
+];
+$mods_repo['tiletype']['text_alignment']['text']['default'] = "For text tiles, you might want to change the horizontal alignment.";
+$mods_repo['tiletype']['text_alignment']['css']['default'] = <<<EOF
+#tile-[tile_id].text-tile .justify-center, 
+#tile-[tile_id].text-tile .text-center {
+    text-align: [value] !important;
+    justify-content: [value];
+    display: block;
+}
+EOF;
 
 $mods_repo['tiletype']['title_color']['label'] = "Title Color";
 $mods_repo['tiletype']['title_color']['type'] = 'select';
@@ -1383,8 +1546,8 @@ $mods_repo['tiletype']['compactify']['css']['default'] = <<<EOF
 
 EOF;
 
-$mods_repo['tiletype']['remove_title']['label'] = "Remove tile title";
-$mods_repo['tiletype']['remove_title']['text']['default'] = "Remove the tile title and attempt to center the contents of the tile vertically.";
+$mods_repo['tiletype']['remove_title']['label'] = "Remove title";
+$mods_repo['tiletype']['remove_title']['text']['default'] = "Remove the title and attempt to center the contents of the tile vertically.";
 $mods_repo['tiletype']['remove_title']['type'] = 'checkbox';
 $mods_repo['tiletype']['remove_title']['css']['default'] = <<<EOF
 #tile-[tile_id] .tile-title {

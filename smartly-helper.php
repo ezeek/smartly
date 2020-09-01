@@ -572,6 +572,7 @@ if ($smartly_data['settings']) {
 $dashboard_mods['mods']['cal_devices'] = $smartly_data['dashboard']['mods']['cal_devices'] ? $smartly_data['dashboard']['mods']['cal_devices'] : null;
 $dashboard_mods['mods']['cal_devices_2col'] = $smartly_data['dashboard']['mods']['cal_devices_2col'] ? $smartly_data['dashboard']['mods']['cal_devices_2col'] : null;
 $dashboard_mods['mods']['header']['value'] = $smartly_data['dashboard']['mods']['header']['value'] ? $smartly_data['dashboard']['mods']['header']['value'] : 'default';
+$dashboard_mods['mods']['hide_scrollbars']['value'] = $smartly_data['dashboard']['mods']['hide_scrollbars']['value'] ? $smartly_data['dashboard']['mods']['hide_scrollbars']['value'] : null;
 
 
 //var_dump($smartly_settings);
@@ -723,17 +724,34 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
         case 'select':
 
           $token_replacements = array(
-            '[value]' => $mod_data['value']
+            '[value]' => $mod_data['value'],
+            '[grid_gap]' => $inputJSON['gridGap'],
+            '[grid_gap_header]' => $inputJSON['gridGap'] + 60
           );
 
           $css = $mods_repo['dashboard'][$mod]['value'][$mod_data['value']]['css'] ? $mods_repo['dashboard'][$mod]['value'][$mod_data['value']]['css'] : $mods_repo['dashboard'][$mod]['value']['default']['css'];
 
           break;
 
+        case 'checkbox':
+
+          $token_replacements = array(
+              '[grid_gap]' => $inputJSON['gridGap'],
+              '[grid_gap_header]' => $inputJSON['gridGap'] + 60
+          );
+
+        //  print_r("is checkbox");
+          if ($mod_data['value'] > 0) {
+            $css = $mods_repo['dashboard'][$mod]['default']['css'];
+          }
+          break;
+
         default:
 
           $token_replacements = array(
-            '[value]' => $mod_data['value']
+            '[value]' => $mod_data['value'],
+            '[grid_gap]' => $inputJSON['gridGap'],
+            '[grid_gap_header]' => $inputJSON['gridGap'] + 60
           ); 
 
           $css = $mods_repo['dashboard'][$mod]['css'][$mod_data['value']] ? $mods_repo['dashboard'][$mod]['css'][$mod_data['value']] : $mods_repo['dashboard'][$mod]['css']['default'];

@@ -797,6 +797,7 @@ function smartly_settings_update() {
   var cal_devices_2col_val = $("#smart_edit_cal_devices_2col").val() ? $("#smart_edit_cal_devices_2col").val() : null;
   var zoomy_val = $("#smart_edit_zoomy").is(":checked") ? true : false;
   var header_val = $("#smart_edit_header").val() ? $("#smart_edit_header").val() : null;
+  var hide_scrollbars_val = $("#smart_edit_hide_scrollbars").is(":checked") ? true : false;
 
   // if calibration values, split into array
   var cal_devices = cal_devices_val ? cal_devices_val.split(',') : null;
@@ -823,12 +824,14 @@ function smartly_settings_update() {
   smartlyDATA['dashboard'] = {};
   smartlyDATA['dashboard']['mods'] = {};
   smartlyDATA['dashboard']['mods']['header'] = {};
+  smartlyDATA['dashboard']['mods']['hide_scrollbars'] = {};
 
   // save calibration devices
   smartlyDATA['dashboard']['mods']['cal_devices'] = cal_devices;
   smartlyDATA['dashboard']['mods']['cal_devices_2col'] = cal_devices_2col;
   smartlyDATA['dashboard']['mods']['zoomy'] = zoomy_val;
   smartlyDATA['dashboard']['mods']['header']['value'] = header_val;
+  smartlyDATA['dashboard']['mods']['hide_scrollbars']['value'] = hide_scrollbars_val;
 
   // populate the hidden smartly_datablock
   var smartly_datablock = $("#smartlydata");
