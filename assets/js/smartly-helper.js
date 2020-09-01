@@ -39,7 +39,7 @@ $(document).ready(function() {
   // if anything changes, remind the user to update
 
   $(":input").change(function() { //triggers change in all input fields including text type
-    console.log    if (debug) { ("SOMETHING CHANGED"); }
+    if (debug) { ("SOMETHING CHANGED"); }
     if (!($(this).hasClass("stealth"))) {
       if (debug) { console.log($(this), "NOT STEALTH"); }
       smartly_update();
