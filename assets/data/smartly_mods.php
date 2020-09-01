@@ -525,7 +525,7 @@ $mods_repo['dashboard']['header']['value']['hidden']['css'] = <<<EOF
     position: fixed;
     top: 0;
     right: 0;
-    z-index: 999;
+    z-index: 2;
     opacity: 1;
 }
 
@@ -688,7 +688,7 @@ $mods_repo['dashboard']['header']['value']['stealth_top_right']['css'] = <<<EOF
     position: fixed;
     top: 0em;
     right: 1em;
-    z-index: 999;
+    z-index: 2;
     opacity: .2;
     zoom: .6;
     -moz-transform:scale(.6);
@@ -715,7 +715,7 @@ $mods_repo['dashboard']['header']['value']['stealth_top_right_vertical']['css'] 
     position: fixed;
     top: 0em;
     right: 1em;
-    z-index: 999;
+    z-index: 2;
     opacity: .2;
     zoom: .6;
     -moz-transform:scale(.6);
@@ -742,7 +742,7 @@ $mods_repo['dashboard']['header']['value']['stealth_bottom_right']['css'] = <<<E
     position: fixed;
     bottom: 0;
     right: 1em;
-    z-index: 999;
+    z-index: 2;
     opacity: .2;
     zoom: .6;
     -moz-transform:scale(.6);
@@ -769,7 +769,7 @@ $mods_repo['dashboard']['header']['value']['stealth_bottom_right_vertical']['css
     position: fixed;
     bottom: 0;
     right: 1em;
-    z-index: 999;
+    z-index: 2;
     opacity: .2;
     zoom: .6;
     -moz-transform:scale(.6);
