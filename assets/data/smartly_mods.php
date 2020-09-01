@@ -549,7 +549,7 @@ $mods_repo['dashboard']['header']['value']['hidden']['css'] = <<<EOF
     z-index:99999;
     right: 0;
     top: 0;
-    visibility: hidden;
+    color: transparent;
     display: inline-block;
     height: [grid_gap]px;
     width: [grid_gap]px
