@@ -565,7 +565,7 @@ $mods_repo['dashboard']['header']['value']['light_bottom']['css'] = <<<EOF
 .wrapper {
   position: absolute;
   padding-top: [grid_gap]px;
-  height: 100vh;
+  height: calc(100% + [grid_gap]px);
 }
 
 .header {
@@ -578,7 +578,7 @@ $mods_repo['dashboard']['header']['value']['light_bottom']['css'] = <<<EOF
   padding-top: .5em;
 }
 
-.dashboard>div>.header, .tile.text-tile {
+.dashboard>div>.header {
     color: #000;
 }
 
@@ -597,7 +597,7 @@ $mods_repo['dashboard']['header']['value']['dark_bottom']['css'] = <<<EOF
 .wrapper {
   position: absolute;
   padding-top: [grid_gap]px;
-  height: 100vh;
+  height: calc(100% + [grid_gap]px);
 }
 
 .header {
@@ -610,7 +610,7 @@ $mods_repo['dashboard']['header']['value']['dark_bottom']['css'] = <<<EOF
   padding-top: .5em;
 }
 
-.dashboard>div>.header, .tile.text-tile {
+.dashboard>div>.header {
     color: #fff;
 }
 
@@ -627,7 +627,7 @@ $mods_repo['dashboard']['header']['value']['light_top']['css'] = <<<EOF
 .wrapper {
   position: absolute;
   padding-top: [grid_gap_header]px;
-  height: 100vh;
+  height: calc(100% + [grid_gap]px);
 }
 
 .header {
@@ -642,7 +642,7 @@ $mods_repo['dashboard']['header']['value']['light_top']['css'] = <<<EOF
   padding-top: .5em;
 }
 
-.dashboard>div>.header, .tile.text-tile {
+.dashboard>div>.header {
     color: #000;
 }
 
@@ -659,7 +659,7 @@ $mods_repo['dashboard']['header']['value']['dark_top']['css'] = <<<EOF
 .wrapper {
   position: absolute;
   padding-top: [grid_gap_header]px;
-  height: 100vh;
+  height: calc(100% + [grid_gap]px);
 }
 
 .header {
@@ -674,7 +674,7 @@ $mods_repo['dashboard']['header']['value']['dark_top']['css'] = <<<EOF
   padding-top: .5em;
 }
 
-.dashboard>div>.header, .tile.text-tile {
+.dashboard>div>.header {
     color: #fff;
 }
 
