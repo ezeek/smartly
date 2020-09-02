@@ -768,7 +768,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
   foreach ($smartly_tiles as $smart_id => $smart_data) {
 
     foreach ($mods_enabled['tiletype'] as $mod => $tiletype) {
-      if (in_array($smart_data['template'], $tiletype) && $smart_data['mods'][$mod]['value'] && $smart_data['mods'][$mod]['value'] !== 'unchecked') {
+      if (in_array($smart_data['template'], $tiletype) && $smart_data['mods'][$mod]['value'] && $smart_data['mods'][$mod]['value'] !== 'unchecked' && $smart_data['mods'][$mod]['value'] !== 'default') {
 
         $token_replacements = array(
           '[tile_id]' => $smart_id,
@@ -786,7 +786,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
 
         // iterate through modifiers that have values and add their css
         foreach ($smart_data['mods'][$mod]['modifier'] as $mod_modifier => $modifier_data) {
-          if ($smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'] && $smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'] !== 'unchecked') {
+          if ($smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'] && $smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'] !== 'unchecked' && $smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'] !== 'default') {
 
             $token_replacements = array(
               '[tile_id]' => $smart_id,
