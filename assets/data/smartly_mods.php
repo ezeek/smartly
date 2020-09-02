@@ -1408,14 +1408,14 @@ EOF;
 
 $mods_repo['tiletype']['zoomable']['label'] = "Zoomable";
 $mods_repo['tiletype']['zoomable']['type'] = 'select';
-$mods_repo['tiletype']['zoomable']['options'] = ["default" => "1x", "1.5" => "1.5x", "2" => "2x", "2.5" => "2.5x", "3" => "3x", "3.5" => "3.5x", "4" => "4x"];
+$mods_repo['tiletype']['zoomable']['options'] = ["default" => "1x", "1.5" => "1.5x", "2.0" => "2x", "2.5" => "2.5x", "3.0" => "3x", "3.5" => "3.5x", "4.0" => "4x"];
 $mods_repo['tiletype']['zoomable']['text']['default'] = 'Make everything within the tile x times larger.';
 $mods_repo['tiletype']['zoomable']['text']['thermostat'] = 'Make everything within the thermostat tile x times larger.';
 $mods_repo['tiletype']['zoomable']['text']['attribute'] = 'Make the content of this tile x times larger while keeping the title the same size.';
 $mods_repo['tiletype']['zoomable']['css']['default'] = <<<EOF
 #tile-[tile_id] .tile-contents {
     zoom: [value];
-     -moz-transform:scale([value]);
+    -moz-transform:scale([value]);
 }
 EOF;
 
@@ -1466,7 +1466,6 @@ $mods_repo['tiletype']['zoomable']['css']['attribute'] = <<<EOF
 #tile-[tile_id] .tile-primary {
     zoom: [value];
      -moz-transform:scale([value]);
-    line-height: 0;
 }
 
 EOF;
