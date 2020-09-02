@@ -740,7 +740,8 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
               '[grid_gap_header]' => $inputJSON['gridGap'] + 60
           );
 
-        //  print_r("is checkbox");
+          //print_r($mod);
+          //print_r($mod_data['value']);
           if ($mod_data['value'] > 0) {
             $css = $mods_repo['dashboard'][$mod]['default']['css'];
           }
@@ -767,7 +768,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
   foreach ($smartly_tiles as $smart_id => $smart_data) {
 
     foreach ($mods_enabled['tiletype'] as $mod => $tiletype) {
-      if (in_array($smart_data['template'], $tiletype) && $smart_data['mods'][$mod]['value']) {  
+      if (in_array($smart_data['template'], $tiletype) && $smart_data['mods'][$mod]['value'] && $smart_data['mods'][$mod]['value'] !== 'unchecked') {
 
         $token_replacements = array(
           '[tile_id]' => $smart_id,
@@ -776,7 +777,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
           '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
           '[padding_calc]' => strval($settings['fontSize'] / 14) . "em",
           '[padding_adjust]' => strval(9 - $smart_data['mods'][$mod]['value'])
-        ); 
+        );
 
         $css = $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] ? $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] : $mods_repo['tiletype'][$mod]['css']['default'];
 
