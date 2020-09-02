@@ -1478,15 +1478,23 @@ $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['label'] = "Icon on
 $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['type'] = 'checkbox';
 $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['text']['default'] = 'Hide the text, only show the icon.';
 $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['css']['default'] = <<<EOF
+#tile-[tile_id] .tile-title, 
+#tile-[tile_id] .tile-primary>div {
+    visibility: hidden;
+}
+EOF;
+
+$mods_repo['tiletype']['buttonize']['modifier']['icon_only']['css']['dashboard'] = <<<EOF
 #tile-[tile_id] .tile-primary {
     font-size: .25em !important;
     visibility: hidden;
 }
 
-#tile-33 .tile-primary:before {
+#tile-[tile_id] .tile-primary:before {
     font-size: 60px;
 }
 EOF;
+
 $mods_repo['tiletype']['buttonize']['text']['default'] = 'Change the layout of this tile to be more button-like.';
 $mods_repo['tiletype']['buttonize']['text']['dashboard'] = 'Change the layout of this Dashboard Link to be a stacked large icon and small text.';
 $mods_repo['tiletype']['buttonize']['css']['default'] = <<<EOF
