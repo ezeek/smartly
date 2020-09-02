@@ -786,7 +786,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
 
         // iterate through modifiers that have values and add their css
         foreach ($smart_data['mods'][$mod]['modifier'] as $mod_modifier => $modifier_data) {
-          if ($smart_data['mods'][$mod]['modifier'][$mod_modifier]['value']) {
+          if ($smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'] && $smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'] !== 'unchecked') {
 
             $token_replacements = array(
               '[tile_id]' => $smart_id,
