@@ -62,7 +62,7 @@ function toRun() {
                     fn.call($(selector));
                     clearInterval(timer);
                 }
-            }, 500);
+            }, 50);
         }
     };
 
@@ -179,7 +179,7 @@ function toRun() {
 
         lJ(function (response) {
             var inputJSON = JSON.parse(response);
-
+            console.log(inputJSON.tiles, "ORIG JSON TILES");
             for (let [index, tile] of Object.entries(inputJSON.tiles)) {
                 if (
                     inputJSON.tiles[index]["template"] != "smartly" &&
@@ -293,70 +293,52 @@ function toRun() {
 
             saveGrid = function () {
 
-                getJson(function (returnedJson) {
-                    console.log("called the update tester 1");
-                    var co = JSON.parse(returnedJson);
-                    if (co["fontSize"] !== 13) {
-                        co["fontSize"] = 13;
-                    } else if (co["fontSize"] == 13) {
-                        co["fontSize"] = 16;
-                    }
-                    updateJson(JSON.stringify(co, null, 2));
-                    console.log("called the update tester 2");
-                    // console.log(JSON.stringify(co, null, 2));
-                });
-
-                outgoing_tiles = [];
                 grid.engine.nodes.forEach(function (node) {
-                    outgoing_tiles.push({
-                        col: node.x,
-                        row: node.y,
-                        colSpan: node.width,
-                        rowSpan: node.height,
-                        id: node.id,
-                        template: node.template,
-                    });
-                });
+                    index = null;
+                    index = inputJSON.tiles.findIndex(x => x.id == node.id);
 
-                console.log(inputJSON.tiles, "ORIG JSON TILES");
-                console.log(outgoing_tiles, "SAVED TILES");
+                    if (index) {
+                        inputJSON.tiles[index]["colSpan"] = node.width;
+                        inputJSON.tiles[index]["rowSpan"] = node.height;
+                        inputJSON.tiles[index]["col"] = node.x + 1;
+                        inputJSON.tiles[index]["row"] = node.y + 1;
+                    }
+               });
 
-                document.querySelector("#saved-data").value = JSON.stringify(
-                    serializedData,
-                    null,
-                    "  "
-                );
+               console.log(inputJSON.tiles, "SAVED JSON TILES");
+
+               updateJson(JSON.stringify(inputJSON, null, 2));
+
+               //console.log(outgoing_tiles, "SAVED TILES");
             };
 
             clearGrid = function () {
-                grid.removeAll();
+               grid.removeAll();
             };
 
-            loadGrid();
+        loadGrid();
+
         }); // callback for lJ()
     }
 
-    loadScript(
-        "https://cdn.jsdelivr.net/npm/gridstack@1.1.2/dist/gridstack.all.js",
-        initGridstack
-    );
+    loadScript("https://cdn.jsdelivr.net/npm/gridstack@1.1.2/dist/gridstack.all.js", initGridstack);
+
 }
 
-loadCSS(
-    "https://cdn.jsdelivr.net/npm/gridstack@1.1.2/dist/gridstack.min.css",
-    "gridstack"
-);
-loadCSS("http://localhost:8888/scratch.css", "scratch");
+        loadCSS("https://cdn.jsdelivr.net/npm/gridstack@1.1.2/dist/gridstack.min.css", "gridstack");
 
-loadScript("/ui2/js/jquery-3.4.0.min.js", function () {
-    loadScript(
-        "https://cdn.jsdelivr.net/npm/micromodal/dist/micromodal.min.js",
-        toRun
-    );
-});
+        loadCSS("http://localhost:8888/scratch.css", "scratch");
+
+        loadScript("/ui2/js/jquery-3.4.0.min.js", function () {
+            loadScript(
+            "https://cdn.jsdelivr.net/npm/micromodal/dist/micromodal.min.js",
+            toRun
+        );
+    });
 
 /* I haven't even done a once over to clean either of these up.  We'll minify them both after cleaning.
-  "customHTML": "<div id=\"open-modal-btn\"><a href=\"#\" data-micromodal-trigger=\"modal-1\">Open Modal</a></div>\r\n<div id=\"modal-1\" class=\"modal\" aria-hidden=\"true\">\r\n    <div tabindex=\"-1\" data-micromodal-close>\r\n        <div role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"modal-1-title\" >\r\n            <header>\r\n                <h2 id=\"modal-1-title\">Modal Title2</h2>\r\n                <button class=\"modal-close-btn\" aria-label=\"Close modal\" data-micromodal-close>Close Me</button><img /> <img />\r\n                <a onclick=\"saveGrid()\" class=\"btn btn-primary\" href=\"#\">Save</a>\r\n                <a onclick=\"loadGrid()\" class=\"btn btn-primary\" href=\"#\">Load</a>\r\n                <a onclick=\"clearGrid()\" class=\"btn btn-primary\" href=\"#\">Clear</a>\r\n                <div class=\"grid-stack\"></div>\r\n                <textarea id=\"saved-data\" cols=\"100\" rows=\"2\" readonly=\"readonly\"></textarea>\r\n            </header>\r\n            <div id=\"modal-1-content\">  <div class=\"grid-stack\"></div></div>\r\n        </div>\r\n    </div>\r\n</div>",
-  "customJS": "var body = document.getElementsByTagName(\"body\")[0];\r\nvar script = document.getElementById(\"inserted-body-script\");\r\nvar hasScript = script != null;\r\nif(!hasScript) {\r\n    script = document.createElement(\"script\");\r\n    script.setAttribute(\"id\", \"inserted-body-script\")\r\n}\r\n\r\nscript.type = \"text/javascript\";\r\n\r\nscript.src = \"http://localhost:8888/scratch.js\";\r\n//script.src = \"https://cdn.jsdelivr.net/npm/micromodal/dist/micromodal.min.js\";\r\nif(!hasScript) {\r\n    body.appendChild(script);\r\n//alert(6);\r\n} else {\r\n//    MicroModal.show(\"modal-1\");\r\n//alert(10);\r\n}\r\n\r\nvar div = document.getElementById(\"inserted-body-html\");\r\nvar hasDiv = div != null;\r\nif(!hasDiv) {\r\n    div = document.createElement(\"div\")\r\n    div.setAttribute(\"id\", \"inserted-body-html\")\r\n}\r\n\r\ndiv.innerHTML = \"\";\r\nif(!hasDiv) {\r\n    body.prepend(div);\r\n}\r\nscript.onload = function() {\r\n//    MicroModal.init({debugMode: true});\r\n//    MicroModal.show(\"modal-1\");\r\n//    alert(2);\r\n}",
 
- */
+"customHTML": "<div id=\"open-modal-btn\"><a href=\"#\" data-micromodal-trigger=\"modal-1\">Open Modal</a></div>\r\n<div id=\"modal-1\" class=\"modal\" aria-hidden=\"true\">\r\n    <div tabindex=\"-1\" data-micromodal-close>\r\n        <div role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"modal-1-title\" >\r\n            <header>\r\n                <h2 id=\"modal-1-title\">Modal Title2</h2>\r\n                <button class=\"modal-close-btn\" aria-label=\"Close modal\" data-micromodal-close>Close Me</button><img /> <img />\r\n                <a onclick=\"saveGrid()\" class=\"btn btn-primary\" href=\"#\">Save</a>\r\n                <a onclick=\"loadGrid()\" class=\"btn btn-primary\" href=\"#\">Load</a>\r\n                <a onclick=\"clearGrid()\" class=\"btn btn-primary\" href=\"#\">Clear</a>\r\n                <div class=\"grid-stack\"></div>\r\n                <textarea id=\"saved-data\" cols=\"100\" rows=\"2\" readonly=\"readonly\"></textarea>\r\n            </header>\r\n            <div id=\"modal-1-content\">  <div class=\"grid-stack\"></div></div>\r\n        </div>\r\n    </div>\r\n</div>",
+"customJS": "var body = document.getElementsByTagName(\"body\")[0];\r\nvar script = document.getElementById(\"inserted-body-script\");\r\nvar hasScript = script != null;\r\nif(!hasScript) {\r\n    script = document.createElement(\"script\");\r\n    script.setAttribute(\"id\", \"inserted-body-script\")\r\n}\r\n\r\nscript.type = \"text/javascript\";\r\n\r\nscript.src = \"http://localhost:8888/scratch.js\";\r\n//script.src = \"https://cdn.jsdelivr.net/npm/micromodal/dist/micromodal.min.js\";\r\nif(!hasScript) {\r\n    body.appendChild(script);\r\n//alert(6);\r\n} else {\r\n//    MicroModal.show(\"modal-1\");\r\n//alert(10);\r\n}\r\n\r\nvar div = document.getElementById(\"inserted-body-html\");\r\nvar hasDiv = div != null;\r\nif(!hasDiv) {\r\n    div = document.createElement(\"div\")\r\n    div.setAttribute(\"id\", \"inserted-body-html\")\r\n}\r\n\r\ndiv.innerHTML = \"\";\r\nif(!hasDiv) {\r\n    body.prepend(div);\r\n}\r\nscript.onload = function() {\r\n//    MicroModal.init({debugMode: true});\r\n//    MicroModal.show(\"modal-1\");\r\n//    alert(2);\r\n}",
+
+*/
