@@ -2,8 +2,25 @@
 //    border: 1px solid red;
 }
 
+.grid-stack {
+    margin-top: 21px;
+    margin-bottom: 50px;
+}
+
+.grid-stack .tile-edit {
+    display: none;
+}
+
 .grid-stack>.grid-stack-item>.grid-stack-item-content {
     overflow: hidden;
+}
+
+.grid-stack>.grid-stack-item>.ui-resizable-se {
+    cursor: se-resize;
+    width: 20px;
+    height: 20px;
+    right: 3px;
+    bottom: 2px;
 }
 
 
@@ -17,6 +34,7 @@
     padding: .375rem .75rem;
     line-height: 1.5;
     border-radius: .25rem;
+    margin-top: 7px;
 }
 
 a {
@@ -34,4 +52,46 @@ a {
     height: 100%;
     position: absolute;
     top: 0;
+}
+
+.modal {
+display: none;
+position: absolute;
+background-color: rgba(255,255,255,1);
+z-index: 9999;
+top: 0;
+left: 0px;
+width: 100%;
+height: auto;
+}
+
+
+.modal.is-open {
+    display: block;
+}
+.modal-close-btn {
+    background-color: white;
+    position: absolute;
+    top: 0;
+    left: 400px;
+    padding: 5px;
+    display: none;
+}
+
+#open-modal-btn {
+    position: absolute;
+    background-color: whitesmoke;
+    top: 10px;
+    left: 400px;
+    z-index:9;
+}
+
+#modal-1 header {
+    overflow: auto;
+    height: 100vh;
+    width: 100vw;
+}
+
+#modal-1 h2 {
+    display: none;
 }

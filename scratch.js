@@ -1,129 +1,250 @@
-loadScript("https://code.jquery.com/jquery-3.4.1.min.js", "jquery");
-//loadScript("https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js", "jquery-touchpunch");
-loadScript("https://cdn.jsdelivr.net/npm/gridstack@1.1.2/dist/gridstack.all.js", "gridstack");
-loadScript("https://cdn.jsdelivr.net/npm/micromodal/dist/micromodal.min.js", "micromodal");
-loadCSS("https://cdn.jsdelivr.net/npm/gridstack@1.1.2/dist/gridstack.min.css", "gridstack");
-//loadCSS("https://gridstackjs.com/demo/demo.css", "gridstackdemo");
-loadCSS("http://localhost:8888/scratch.css", "scratch");
 
-//loadScript("https://getbootstrap.com/docs/4.3/dist/js/bootstrap.bundle.min.js", "bootstrap");
-//loadScript("", "");
-//loadScript("", "");
-//loadScript("", "");
-
-// as gridstack was loaded via loadScript() we'll need to get access to it
-var script_jquery = document.getElementById("gridstack-script");
-script_jquery.onload = function() {
-    $( document ).ready(function() {
-
-        // this onload is assuming jquery is loaded before gridstack, but this
-        // should be improved upon to ensure everything is loaded before we start
-
-        console.log( "gridstack and jquery are loaded!" );
-
-        lJ(function(response) {
-            var inputJSON = JSON.parse(response);
-
-            for (let [index, tile] of Object.entries(inputJSON.tiles)) {
-
-                if (inputJSON.tiles[index]['template'] != 'smartly' && inputJSON.tiles[index]['templateExtra'] != 'javascript') {
-
-                    // extract innerHTML from each tile, except for our JSinject tile
-                    var tile_element = $('#tile-' + tile.id);
-
-                    // inject innerHTML for each tile
-                    // screw it, let's pull the tile html in with id and everything..  who cares if there are duplicate ids (for now).
-                    inputJSON.tiles[index]['innerHTML'] = tile_element[0].outerHTML;
-
-                    // convert to gridstack x/y/width/height format and add to the tile object.
-                    // we'll clobber the actual values before saving and delete these temporary properties
-                    inputJSON.tiles[index]['width'] = inputJSON.tiles[index]['colSpan'] ;
-                    inputJSON.tiles[index]['height'] = inputJSON.tiles[index]['rowSpan'] ;
-                    inputJSON.tiles[index]['x'] = inputJSON.tiles[index]['col'] - 1;
-                    inputJSON.tiles[index]['y'] = inputJSON.tiles[index]['row'] - 1;
-                } else {
-                    // @TODO: need a way to prevent gridstack from rendering these without actually removing them
-                    delete inputJSON.tiles[index];
+// This runs once we have jQuery available
+function toRun() {
+    // This is a helper, leave it here
+    $.fn.onAvailable = function (selector, fn) {
+        var timer;
+        if (this.length > 0) {
+            fn.call(this);
+        } else {
+            timer = setInterval(function () {
+                if ($(selector).length > 0) {
+                    fn.call($(selector));
+                    clearInterval(timer);
                 }
+            }, 50);
+        }
+    };
+
+    // DON'T call this directly, use the wrappers below!
+    function handleJson(operation, returnCallback, newJson) {
+        $("head style")
+            .last()
+            .after(
+                '<style id="popup-container" type="text/css">.popup-container {visibility: hidden;}</style>'
+            );
+        // $("i:contains(settings)").css("background-color", "red");
+        $("i:contains(settings)").one("click", function () {
+            console.log("on click 1");
+            $("div.navLink:contains(Advanced)").onAvailable(
+                "div.navLink:contains(Advanced)",
+                function () {
+                    console.log("Advanced is now available");
+                    $("div.navLink:contains(Advanced)").one("click", function () {
+                        console.log("on click 2");
+                        $("textarea.exportBox").onAvailable(
+                            "textarea.exportBox",
+                            function () {
+                                console.log("textarea.exportBox");
+                                var eb = $("textarea.exportBox");
+                                if (operation === "get") {
+                                    var r = eb.val();
+                                    $("div.navLink:contains(X)").trigger("click");
+                                    $("#popup-container").remove();
+                                    returnCallback(r);
+                                } else {
+                                    // console.log("New JSON: ", newJson);
+                                    eb.val(newJson);
+                                    // To "commit" the new JSON this event needs to fire in the DOM:
+                                    eb[0].dispatchEvent(new Event("input"));
+                                    // Now "click" the save button
+                                    $("div.inline-block:contains(Save Layout JSON)").trigger(
+                                        "click"
+                                    );
+                                    $("div.importError").onAvailable(
+                                        "div.importError",
+                                        function () {
+                                            $("div.navLink:contains(X)").trigger("click");
+                                            $("#popup-container").remove();
+                                        }
+                                    );
+                                }
+                            }
+                        );
+                    });
+                    $("div.navLink:contains(Advanced)").trigger("click");
+                }
+            );
+        });
+        $("i:contains(settings)").trigger("click");
+    }
+    // Function wrapper
+    function getJson(returnCallback) {
+        handleJson("get", returnCallback, "");
+    }
+    // Function wrapper
+    function updateJson(jsonData) {
+        handleJson("update", null, jsonData);
+    }
+
+    // EXAMPLE USAGE:
+    getJson(function (returnedJson) {
+        var co = JSON.parse(returnedJson);
+        if (co["fontSize"] !== 13) {
+            co["fontSize"] = 13;
+        } else if (co["fontSize"] == 13) {
+            co["fontSize"] = 16;
+        }
+        updateJson(JSON.stringify(co, null, 2));
+        // console.log(JSON.stringify(co, null, 2));
+    });
+    // updateJson(JSON.stringify({ myData: "hello" }, null, 2));
+
+
+
+    loadScript("https://cdn.jsdelivr.net/npm/gridstack@1.1.2/dist/gridstack.all.js", "gridstack");
+//    loadScript("https://cdn.jsdelivr.net/npm/micromodal/dist/micromodal.min.js", "initModal");
+    loadCSS("https://cdn.jsdelivr.net/npm/gridstack@1.1.2/dist/gridstack.min.css", "gridstack");
+    loadCSS("http://localhost:8888/scratch.css", "scratch");
+
+    MicroModal.init({debugMode: true});
+//        MicroModal.show("modal-1");
+
+    // this onload is assuming jquery is loaded before gridstack, but this
+    // should be improved upon to ensure everything is loaded before we start
+
+    console.log( "gridstack and jquery are loaded!" );
+
+    lJ(function(response) {
+        var inputJSON = JSON.parse(response);
+
+        for (let [index, tile] of Object.entries(inputJSON.tiles)) {
+
+            if (inputJSON.tiles[index]['template'] != 'smartly' && inputJSON.tiles[index]['templateExtra'] != 'javascript') {
+
+                // extract innerHTML from each tile, except for our JSinject tile
+                var tile_element = $('#tile-' + tile.id);
+
+                // inject innerHTML for each tile
+                // screw it, let's pull the tile html in with id and everything..  who cares if there are duplicate ids (for now).
+                inputJSON.tiles[index]['innerHTML'] = tile_element[0].outerHTML;
+
+                // convert to gridstack x/y/width/height format and add to the tile object.
+                // we'll clobber the actual values before saving and delete these temporary properties
+                inputJSON.tiles[index]['width'] = inputJSON.tiles[index]['colSpan'] ;
+                inputJSON.tiles[index]['height'] = inputJSON.tiles[index]['rowSpan'] ;
+                inputJSON.tiles[index]['x'] = inputJSON.tiles[index]['col'] - 1;
+                inputJSON.tiles[index]['y'] = inputJSON.tiles[index]['row'] - 1;
+            } else {
+                // @TODO: need a way to prevent gridstack from rendering these without actually removing them
+                delete inputJSON.tiles[index];
             }
+        }
 
 //            console.log(inputJSON.tiles, "tiles modded");
 
-            // because gridstack uses variable-width tiles based on container width, we need
-            // to calculate a rough width based on colWidth and gridGap (will need to update
-            // gridgap css to be specific on width gap, so using 20 for now
+        // because gridstack uses variable-width tiles based on container width, we need
+        // to calculate a rough width based on colWidth and gridGap (will need to update
+        // gridgap css to be specific on width gap, so using 20 for now
 
-            var stack_width = ((inputJSON.colWidth + 20) * (12));
-            $('.grid-stack').css({ 'width': stack_width + 'px' });
+        $("<style>")
+            .prop("type", "text/css")
+            .html(".grid-stack>.grid-stack-item>.grid-stack-item-content { left: " + inputJSON.gridGap + "px; right: 0; }")
+            .appendTo("head");
 
-            var grid = GridStack.init({
-                float: true,
-                cellHeight: inputJSON.rowHeight,
-             //   column: 12, //inputJSON.cols,
-                //disableResize: true,
-                disableOneColumnMode: true,
-                verticalMargin: inputJSON.gridGap,
-                resizable: true,
-                auto: true
-               // itemClass: ['grid-stack-item', 'css']
+        var stack_width = ((inputJSON.colWidth + inputJSON.gridGap) * (12));
+        $('.grid-stack').css({ 'width': stack_width + 'px' });
+
+        var grid = GridStack.init({
+            float: true,
+            cellHeight: inputJSON.rowHeight,
+            //   column: 12, //inputJSON.cols,
+            //disableResize: true,
+            disableOneColumnMode: true,
+            verticalMargin: inputJSON.gridGap,
+            resizable: true,
+            auto: true
+            // itemClass: ['grid-stack-item', 'css']
+        });
+
+        // standard gridstack utility functions and logging
+
+        grid.on('added', function(e, items) {log('added ', items)});
+        grid.on('removed', function(e, items) {log('removed ', items)});
+        grid.on('change', function(e, items) {log('change ', items)});
+        function log(type, items) {
+            var str = '';
+            items.forEach(function(item) { str += ' (x,y)=' + item.x + ',' + item.y; });
+            console.log(type + items.length + ' items.' + str );
+        }
+
+        /*  the minimum data gridstack expects
+                    var serializedData = [
+                        {x: 0, y: 0, width: 2, height: 2},
+                        {x: 3, y: 1, width: 1, height: 2},
+                        {x: 4, y: 1, width: 1, height: 1},
+                        {x: 2, y: 3, width: 3, height: 1},
+                        {x: 1, y: 3, width: 1, height: 1}
+                    ];
+         */
+
+        loadGrid = function() {
+            grid.removeAll();
+            var items = GridStack.Utils.sort(inputJSON.tiles); //serializedData);
+            grid.batchUpdate();
+            items.forEach(function (item) {
+                grid.addWidget('<div><div class="grid-stack-item-content">' + item.innerHTML + '</div></div>', item);
             });
+            grid.commit();
+        };
 
-            // standard gridstack utility functions and logging
-
-            grid.on('added', function(e, items) {log('added ', items)});
-            grid.on('removed', function(e, items) {log('removed ', items)});
-            grid.on('change', function(e, items) {log('change ', items)});
-            function log(type, items) {
-                var str = '';
-                items.forEach(function(item) { str += ' (x,y)=' + item.x + ',' + item.y; });
-                console.log(type + items.length + ' items.' + str );
-            }
-
-/*  the minimum data gridstack expects
-            var serializedData = [
-                {x: 0, y: 0, width: 2, height: 2},
-                {x: 3, y: 1, width: 1, height: 2},
-                {x: 4, y: 1, width: 1, height: 1},
-                {x: 2, y: 3, width: 3, height: 1},
-                {x: 1, y: 3, width: 1, height: 1}
-            ];
- */
-
-            loadGrid = function() {
-                grid.removeAll();
-                var items = GridStack.Utils.sort(inputJSON.tiles); //serializedData);
-                grid.batchUpdate();
-                items.forEach(function (item) {
-                    grid.addWidget('<div><div class="grid-stack-item-content">' + item.id + " " + item.template + item.innerHTML + '</div></div>', item);
+        saveGrid = function() {
+            serializedData = [];
+            grid.engine.nodes.forEach(function(node) {
+                serializedData.push({
+                    col: node.x,
+                    row: node.y,
+                    colSpan: node.width,
+                    rowSpan: node.height,
+                    id: node.id,
+                    template: node.template
                 });
-                grid.commit();
-            };
+            });
+            document.querySelector('#saved-data').value = JSON.stringify(serializedData, null, '  ');
+        };
 
-            saveGrid = function() {
-                serializedData = [];
-                grid.engine.nodes.forEach(function(node) {
-                    serializedData.push({
-                        x: node.x,
-                        y: node.y,
-                        width: node.width,
-                        height: node.height,
-                        id: node.id,
-                        template: node.template
-                    });
-                });
-                document.querySelector('#saved-data').value = JSON.stringify(serializedData, null, '  ');
-            };
+        clearGrid = function() {
+            grid.removeAll();
+        }
 
-            clearGrid = function() {
-                grid.removeAll();
-            }
+        loadGrid();
 
-            loadGrid();
+    }); // callback for lJ()
 
-        }); // callback for lJ()
-    }); // callback for ready()
-} // script_jquery.onload()
+}
 
+function loadScript(url, callback) {
+    // Adding the script tag to the head as suggested before
+    var head = document.head;
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = url;
+
+    // Then bind the event to the callback function.
+    // There are several events for cross browser compatibility.
+    script.onreadystatechange = callback;
+    script.onload = callback;
+
+    // Fire the loading
+    head.appendChild(script);
+}
+
+function loadCSS(url, id) {
+//    console.log("attempting to inject: " + id + " from " + url);
+    var head = document.getElementsByTagName('head')[0];
+    var element = document.getElementById(id + "-css");
+    var has_element = element != null;
+
+    if (!has_element) {
+//        console.log(id + " doesn't yet exist, loading now");
+        var css = document.createElement('link');
+        css.setAttribute("id", id + "-css");
+        css.setAttribute("rel", "stylesheet");
+        css.setAttribute("type", "text/css");
+        css.setAttribute("href", url);
+        head.appendChild(css);
+    }
+}
 
 function lJ(callback) {
     var urlParams = new URLSearchParams(window.location.search);
@@ -140,40 +261,18 @@ function lJ(callback) {
     xobj.send(null);
 }
 
-function loadScript(url, id)
-{
-//    console.log("attempting to inject: " + id + " from " + url);
-    var head = document.getElementsByTagName('head')[0];
-    var element = document.getElementById(id + "-script");
-    var has_element = element != null;
+loadScript("https://cdn.jsdelivr.net/npm/micromodal/dist/micromodal.min.js");
+loadScript("/ui2/js/jquery-3.4.0.min.js", toRun);
 
-    if (!has_element) {
-//        console.log(id + " doesn't yet exist, loading now");
-        var script = document.createElement('script');
-        script.setAttribute("id", id + "-script")
-        script.type = 'text/javascript';
-        script.src = url;
-        head.appendChild(script);
-    }
-}
 
-function loadCSS(url, id)
-{
-//    console.log("attempting to inject: " + id + " from " + url);
-    var head = document.getElementsByTagName('head')[0];
-    var element = document.getElementById(id + "-css");
-    var has_element = element != null;
 
-    if (!has_element) {
-//        console.log(id + " doesn't yet exist, loading now");
-        var css = document.createElement('link');
-        css.setAttribute("id", id + "-css");
-        css.setAttribute("rel", "stylesheet");
-        css.setAttribute("type", "text/css");
-        css.setAttribute("href", url);
-        head.appendChild(css);
-    }
-}
+
+
+
+
+
+
+
 
 /*
 
