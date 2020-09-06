@@ -1031,7 +1031,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
   $optimize = new \CssOptimizer\Css\Optimizer;
 
   // iterate through individual mods css, optimize 
-  foreach ($smartly_css['mods'] as $mod_name => $mod_css) {
+  foreach (array_reverse($smartly_css['mods']) as $mod_name => $mod_css) {
     foreach ($mod_css as $css) {
       $smartly_mods_css[] = $css;
     }

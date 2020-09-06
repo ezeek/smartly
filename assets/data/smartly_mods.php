@@ -1522,7 +1522,7 @@ $mods_repo['tiletype']['buttonize']['css']['dashboard'] = <<<EOF
     font-size: 18px;
     margin-left: 0px;
     line-height: 1.2em;
-     display: none; 
+    display: none; 
 }
 
 EOF;
