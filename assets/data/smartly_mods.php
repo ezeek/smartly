@@ -565,13 +565,27 @@ $mods_repo['dashboard']['header']['value']['light_bottom']['css'] = <<<EOF
 .wrapper {
   position: absolute;
   padding-top: [grid_gap]px;
-  height: calc(100% + [grid_gap]px);
+  height: calc(100vh + [grid_gap]px);
+  top: 0;
+}
+
+#grid-header {
+  height: 60px;
+  position: absolute !important;
+  width: 100%;
+  z-index: 2;
+  color: black !important;
+  background-color: rgba(255,255,255,.9);
+  bottom: 0;
 }
 
 .header {
   z-index: 1;
   background-color: rgba(255,255,255,.9);
   height: 60px;
+  position: absolute;
+  width: 100%;
+  color: black !important;
 }
 
 .header>.justify-end {
@@ -579,11 +593,21 @@ $mods_repo['dashboard']['header']['value']['light_bottom']['css'] = <<<EOF
 }
 
 .dashboard>div>.header {
-    color: #000;
+    color: black;
 }
 
 smartly {
-    height: calc(100% + [grid_gap_header]px);
+    height: calc(100% + [grid_gap_header]px + [grid_gap]px);
+}
+
+#grid-stack-scroller {
+    position: absolute !important;
+    height: 100vh !important;
+    padding-top: [grid_gap]px;
+}
+
+#modal-1 div[role=dialog] {
+    height: 100vh;
 }
 EOF;
 
@@ -597,13 +621,27 @@ $mods_repo['dashboard']['header']['value']['dark_bottom']['css'] = <<<EOF
 .wrapper {
   position: absolute;
   padding-top: [grid_gap]px;
-  height: calc(100% + [grid_gap]px);
+  height: calc(100vh + [grid_gap]px);
+  top: 0;
+}
+
+#grid-header {
+  height: 60px;
+  position: absolute !important;
+  width: 100%;
+  z-index: 2;
+  color: white !important;
+  background-color: rgba(0,0,0,.9);
+  bottom: 0;
 }
 
 .header {
   z-index: 1;
   background-color: rgba(0,0,0,.9);
   height: 60px;
+  position: absolute;
+  width: 100%;
+  color: white !important;
 }
 
 .header>.justify-end {
@@ -611,12 +649,23 @@ $mods_repo['dashboard']['header']['value']['dark_bottom']['css'] = <<<EOF
 }
 
 .dashboard>div>.header {
-    color: #fff;
+    color: white;
 }
 
 smartly {
-    height: calc(100% + [grid_gap_header]px);
+    height: calc(100% + [grid_gap_header]px + [grid_gap]px);
 }
+
+#grid-stack-scroller {
+    position: absolute !important;
+    height: 100vh !important;
+    padding-top: [grid_gap]px;
+}
+
+#modal-1 div[role=dialog] {
+    height: 100vh;
+}
+
 EOF;
 
 $mods_repo['dashboard']['header']['value']['light_top']['css'] = <<<EOF
@@ -624,10 +673,24 @@ $mods_repo['dashboard']['header']['value']['light_top']['css'] = <<<EOF
   height: 100vh;
 }
 
+#grid-stack-scroller {
+  height: 100vh !important;
+}
+
+#grid-stack-scroller,
 .wrapper {
-  position: absolute;
+  position: absolute !important;
   padding-top: [grid_gap_header]px;
-  height: calc(100% + [grid_gap]px);
+  height: calc(100vh + [grid_gap]px) !important;
+}
+
+#grid-header {
+  height: 60px;
+  position: absolute !important;
+  width: 100%;
+  z-index: 2;
+  color: black !important;
+  background-color: rgba(255,255,255,.9);
 }
 
 .header {
@@ -643,11 +706,11 @@ $mods_repo['dashboard']['header']['value']['light_top']['css'] = <<<EOF
 }
 
 .dashboard>div>.header {
-    color: #000;
+    color: black;
 }
 
 smartly {
-    height: calc(100% + [grid_gap]px);
+    height: calc(100% + [grid_gap]px + [grid_gap]px);
 }
 EOF;
 
@@ -656,10 +719,24 @@ $mods_repo['dashboard']['header']['value']['dark_top']['css'] = <<<EOF
   height: 100vh;
 }
 
+#grid-stack-scroller {
+  height: 100vh !important;
+}
+
+#grid-stack-scroller,
 .wrapper {
-  position: absolute;
+  position: absolute !important;
   padding-top: [grid_gap_header]px;
-  height: calc(100% + [grid_gap]px);
+  height: calc(100vh + [grid_gap]px) !important;
+}
+
+#grid-header {
+  height: 60px;
+  position: absolute !important;
+  width: 100%;
+  z-index: 2;
+  color: white !important;
+  background-color: rgba(0,0,0,.9);
 }
 
 .header {
@@ -675,11 +752,15 @@ $mods_repo['dashboard']['header']['value']['dark_top']['css'] = <<<EOF
 }
 
 .dashboard>div>.header {
-    color: #fff;
+    color: white;
 }
 
 smartly {
-    height: calc(100% + [grid_gap]px);
+    height: calc(100% + [grid_gap]px + [grid_gap]px);
+}
+
+#close-modal-btn {
+  color: #28a745;
 }
 EOF;
 
