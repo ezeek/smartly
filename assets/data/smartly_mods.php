@@ -788,7 +788,7 @@ $mods_repo['dashboard']['header']['value']['stealth_top_right']['css'] = <<<EOF
 
 .dashboard div .header>.flex-auto.justify-end,
 .dashboard div .header>.flex-auto.justify-end>.flex {
-    display: inline-block;
+    display: flex;
 }
 EOF;
 $mods_repo['dashboard']['header']['value']['stealth_top_right_vertical']['css'] = <<<EOF
@@ -817,6 +817,10 @@ $mods_repo['dashboard']['header']['value']['stealth_top_right_vertical']['css'] 
 .dashboard div .header>.flex-auto.justify-end>.flex {
     display: block;
 }
+
+#open-modal-btn {
+    margin: .25em !important;
+}
 EOF;
 $mods_repo['dashboard']['header']['value']['stealth_bottom_right']['css'] = <<<EOF
 .dashboard div .header {
@@ -842,7 +846,7 @@ $mods_repo['dashboard']['header']['value']['stealth_bottom_right']['css'] = <<<E
 
 .dashboard div .header>.flex-auto.justify-end,
 .dashboard div .header>.flex-auto.justify-end>.flex {
-    display: inline-block;
+    display: flex;
 }
 EOF;
 $mods_repo['dashboard']['header']['value']['stealth_bottom_right_vertical']['css'] = <<<EOF
@@ -870,6 +874,10 @@ $mods_repo['dashboard']['header']['value']['stealth_bottom_right_vertical']['css
 .dashboard div .header>.flex-auto.justify-end,
 .dashboard div .header>.flex-auto.justify-end>.flex {
     display: block;
+}
+
+#open-modal-btn {
+    margin: .25em !important;
 }
 EOF;
 
