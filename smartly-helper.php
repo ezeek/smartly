@@ -182,13 +182,17 @@ if ($repo_skin) {
 }
 
 
+
+// get updated JSON from repo
+$repo_base_json = file_get_contents($repo_base['json_sandbox']); //json_dev
+$repo_base_json = json_decode($repo_base_json, true);
+
+// update with most recent smartly-inject bootstrap
+$inputJSON['customJS'] = $repo_base_json['customJS'];
+$inputJSON['customHTML'] = $repo_base_json['customHTML'];
+
 // retrieve smartly customColors[] and other settings if instructed
-
 if ($update_options['color'] || $update_options['settings']) {
-  // get updated JSON from repo
-  $repo_base_json = file_get_contents($repo_base['json_sandbox']); //json_dev
-  $repo_base_json = json_decode($repo_base_json, true);
-
   if ($update_options['color']) {
     $inputJSON['customColors'] = $repo_base_json['customColors'];
   }
