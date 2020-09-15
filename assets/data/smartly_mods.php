@@ -11,7 +11,9 @@ $mods_repo['layout'] = [
       'title',
       'label',
       'unit',
-      'numeric'
+      'numeric',
+      'height_alignment',
+      'text_alignment'
     ],
     'icons' => [
       'nudge',
@@ -19,8 +21,7 @@ $mods_repo['layout'] = [
     ],
     'mods' => [
       'zoomable',
-      'buttonize',
-      'text_alignment'
+      'buttonize'
     ],
     'contrib' => [
       'tm',
@@ -72,7 +73,7 @@ $mods_enabled['dashboard']['colorcoding']['battery'] = true;
 
 $mods_enabled['tiletype']['unit'] = ['attribute'];
 $mods_enabled['tiletype']['numeric'] = ['attribute'];
-$mods_enabled['tiletype']['text_alignment'] = ['texttile'];
+$mods_enabled['tiletype']['height_alignment'] = ['dashboard', 'texttile'];
 $mods_enabled['tiletype']['buttonize'] = ['button', 'dashboard', 'momentary', 'presence', 'water'];
 
 
@@ -99,9 +100,13 @@ $mods_enabled['tiletype']['title'] = [
   'energy',
   'temperature',
   'humidity',
+  'hsm',
 //'image',
   'level-step',
+  'level-vertical',
+//  'links',
   'lock',
+  'mode',
   'momentary',
   'motion',
   'multi',
@@ -145,9 +150,13 @@ $mods_enabled['tiletype']['remove_title'] = [
   'energy',
   'temperature',
   'humidity',
+  'hsm',
 //'image',
   'level-step',
+  'level-vertical',
+//  'links',
   'lock',
+  'mode',
   'momentary',
   'motion',
   'multi',
@@ -190,9 +199,13 @@ $mods_enabled['tiletype']['nudge'] = [
   'energy',
   'temperature',
   'humidity',
+//  'hsm',
   'image',
   'level-step',
+//  'level-vertical',
+//  'links',
   'lock',
+//  'mode',
   'momentary',
   'motion',
   'multi',
@@ -236,9 +249,13 @@ $mods_enabled['tiletype']['icon'] = [
   'energy',
   'temperature',
   'humidity',
+//  'hsm',
 //'image',
   'level-step',
+  'level-vertical',
+  'links',
   'lock',
+//  'mode',
   'momentary',
   'motion',
   'multi',
@@ -282,9 +299,13 @@ $mods_enabled['tiletype']['zoomable'] = [
   'energy',
   'temperature',
   'humidity',
+  'hsm',
   'image',
   'level-step',
+  'level-vertical',
+  'links',
   'lock',
+  'mode',
   'momentary',
   'motion',
   'multi',
@@ -336,9 +357,13 @@ $mods_enabled['tiletype']['color_fg'] = [
   'energy',
   'temperature',
   'humidity',
+//  'hsm',
 //'image',
   'level-step',
+  'level-vertical',
+  'links',
 //  'lock',
+  'mode',
   'momentary',
 //  'motion',
 //  'multi',
@@ -383,9 +408,13 @@ $mods_enabled['tiletype']['color_bg'] = [
   'energy',
   'temperature',
   'humidity',
+//  'hsm',
   'image',
   'level-step',
+  'level-vertical',
+  'links',
 //  'lock',
+  'mode',
   'momentary',
 //  'motion',
 //  'multi',
@@ -431,9 +460,13 @@ $mods_enabled['tiletype']['border'] = [
   'energy',
   'temperature',
   'humidity',
+  'hsm',
   'image',
   'level-step',
+  'level-vertical',
+  'links',
   'lock',
+  'mode',
   'momentary',
   'motion',
   'multi',
@@ -963,7 +996,24 @@ $mods_repo['tiletype']['label']['css']['thermostat'] = <<<EOF
 
 EOF;
 
+$mods_repo['tiletype']['label']['css']['dashboard'] = <<<EOF
+#tile-[tile_id] .tile-primary {
+        font-size: 0 !important;
+        color: transparent;
+}
 
+#tile-[tile_id] .tile-primary:after {
+        color: black;
+        content: "[value]";
+        margin-left: 5px;
+        font-size: [fontsize_calc];
+}
+
+#tile-[tile_id] .tile-primary:before {
+        color: black;
+        font-size: [fontsize_calc];
+}
+EOF;
 
 // NUDGE
 
@@ -1015,7 +1065,7 @@ $mods_repo['tiletype']['icon']['css']['default'] = <<<EOF
 }
 
 #tile-[tile_id] .tile-primary.[state] i.material-icons:after {
-    content: "\\$[value]";
+    content: "\\[value]";
     font-family: "Material Design Icons" !important;
     visibility: hidden;
 }
@@ -1472,18 +1522,69 @@ EOF;
 $mods_repo['tiletype']['text_alignment']['label'] = "Text Alignment";
 $mods_repo['tiletype']['text_alignment']['type'] = 'select';
 $mods_repo['tiletype']['text_alignment']['options'] = [
+    'default' => 'Center',
     'left' => 'Left',
-    'center' => 'Center',
     'right' => 'Right'
 ];
-$mods_repo['tiletype']['text_alignment']['text']['default'] = "For text tiles, you might want to change the horizontal alignment.";
+$mods_repo['tiletype']['text_alignment']['text']['default'] = "Set the alignment of the title.";
+$mods_repo['tiletype']['text_alignment']['text']['texttile'] = "Set the horizontal alignment of the text.";
+
 $mods_repo['tiletype']['text_alignment']['css']['default'] = <<<EOF
-#tile-[tile_id].text-tile .justify-center, 
-#tile-[tile_id].text-tile .text-center {
+#tile-[tile_id] .tile-title {
+    text-align: [value] !important;
+    justify-content: [value];
+    padding-left: .75em;
+    padding-right: .75em;
+}
+EOF;
+
+$mods_repo['tiletype']['text_alignment']['css']['texttile'] = <<<EOF
+#tile-[tile_id] .justify-center, 
+#tile-[tile_id] .text-center {
     text-align: [value] !important;
     justify-content: [value];
 }
 EOF;
+
+
+$mods_repo['tiletype']['height_alignment']['label'] = "Height Alignment";
+$mods_repo['tiletype']['height_alignment']['type'] = 'select';
+$mods_repo['tiletype']['height_alignment']['options'] = [
+    'half' => 'Half Height (centered)',
+    'full' => 'Full Height',
+    'half_height_top' => 'Half Height (top)',
+    'half_height_bottom' => 'Half Height (bottom)'
+];
+$mods_repo['tiletype']['height_alignment']['text']['default'] = "Adjust the height and vertical alignment of the tile.";
+
+$mods_repo['tiletype']['height_alignment']['css']['value']['default']['half'] = <<<EOF
+#tile-[tile_id] {
+  height: 50%;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+EOF;
+
+$mods_repo['tiletype']['height_alignment']['css']['value']['default']['full'] = <<<EOF
+#tile-[tile_id] {
+  height: 100%;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+EOF;
+
+$mods_repo['tiletype']['height_alignment']['css']['value']['default']['half_height_top'] = <<<EOF
+#tile-[tile_id] {
+  margin-top: 0;
+}
+EOF;
+
+$mods_repo['tiletype']['height_alignment']['css']['value']['default']['half_height_bottom'] = <<<EOF
+#tile-[tile_id] {
+  margin-bottom: 0;
+}
+EOF;
+
 
 $mods_repo['tiletype']['title_color']['label'] = "Title Color";
 $mods_repo['tiletype']['title_color']['type'] = 'select';
@@ -1497,7 +1598,7 @@ EOF;
 
 $mods_repo['tiletype']['zoomable']['label'] = "Zoomable";
 $mods_repo['tiletype']['zoomable']['type'] = 'select';
-$mods_repo['tiletype']['zoomable']['options'] = ["default" => "1x", "1.5" => "1.5x", "2.0" => "2x", "2.5" => "2.5x", "3.0" => "3x", "3.5" => "3.5x", "4.0" => "4x"];
+$mods_repo['tiletype']['zoomable']['options'] = ["default" => "1x", ".5" => ".5x", ".75" => ".75x", "1.5" => "1.5x", "2.0" => "2x", "2.5" => "2.5x", "3.0" => "3x", "3.5" => "3.5x", "4.0" => "4x"];
 $mods_repo['tiletype']['zoomable']['text']['default'] = 'Make everything within the tile x times larger.';
 $mods_repo['tiletype']['zoomable']['text']['thermostat'] = 'Make everything within the thermostat tile x times larger.';
 $mods_repo['tiletype']['zoomable']['text']['attribute'] = 'Make the content of this tile x times larger while keeping the title the same size.';
@@ -1611,7 +1712,6 @@ $mods_repo['tiletype']['buttonize']['css']['dashboard'] = <<<EOF
     font-size: 18px;
     margin-left: 0px;
     line-height: 1.2em;
-    display: none; 
 }
 
 EOF;
