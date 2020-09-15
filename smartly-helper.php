@@ -8,7 +8,7 @@ include 'assets/data/statelookup.php'; // contains array of each template type a
 include 'assets/data/smartly_mods.php';
 
 $repo_base = array(
-  'css_sandbox' => '/var/www/html/smartly-base/smartly.css',
+  'css_sandbox' => '/var/www/html/smartly-base/smartly.min.css',
   'json_sandbox' => '/var/www/html/smartly-base/smartly.json',
   'head_sandbox' => '/var/www/html/smartly-base/head.json',
   'css_dev' => '/var/www/html/smartly-base/smartly.css',
