@@ -5263,7 +5263,31 @@
 'humidifier-2-on': 'e9da',
 'humidifier-2-water': 'e9db',
 'humidifier-2-off': 'e9dc',
-'sense': 'e9dd'
+'sense': 'e9dd',
+'desk-lamp-alt-on': 'e9de',
+'desk-lamp-alt-off': 'e9df',
+'attic': 'e9e0',
+'basement': 'e9e1',
+'toggle-switch-on': 'e9e2',
+'toggle-switch-off': 'e9e3',
+'restroom': 'e9e4',
+'couch': 'e9e5',
+'mirror-off': 'e9e6',
+'mirror-on': 'e9e7',
+'shower-off': 'e9e8',
+'shower-on': 'e9e9',
+'towel-rack-off': 'e9ea',
+'towel-rack-on': 'e9eb',
+'smoke-no-alert': 'e9ec',
+'smoke-alert-1': 'e9ed',
+'smoke-alert-2': 'e9ef',
+'smoke-alert-3': 'e9f0',
+'smoke-alert-4': 'e9f1',
+'keys': 'e9f2',
+'recycle-alt': 'e9f3',
+'login-alt': 'e9f4',
+'logout-alt': 'e9f5',
+'desk-lamp-on': 'e9f6'
                 }
             }
         ]
