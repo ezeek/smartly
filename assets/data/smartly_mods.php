@@ -11,7 +11,9 @@ $mods_repo['layout'] = [
       'title',
       'label',
       'unit',
-      'numeric'
+      'numeric',
+      'height_alignment',
+      'text_alignment'
     ],
     'icons' => [
       'nudge',
@@ -19,8 +21,7 @@ $mods_repo['layout'] = [
     ],
     'mods' => [
       'zoomable',
-      'buttonize',
-      'text_alignment'
+      'buttonize'
     ],
     'contrib' => [
       'tm',
@@ -72,7 +73,7 @@ $mods_enabled['dashboard']['colorcoding']['battery'] = true;
 
 $mods_enabled['tiletype']['unit'] = ['attribute'];
 $mods_enabled['tiletype']['numeric'] = ['attribute'];
-$mods_enabled['tiletype']['text_alignment'] = ['texttile'];
+$mods_enabled['tiletype']['height_alignment'] = ['dashboard'];
 $mods_enabled['tiletype']['buttonize'] = ['button', 'dashboard', 'momentary', 'presence', 'water'];
 
 
@@ -99,9 +100,13 @@ $mods_enabled['tiletype']['title'] = [
   'energy',
   'temperature',
   'humidity',
+  'hsm',
 //'image',
   'level-step',
+  'level-vertical',
+//  'links',
   'lock',
+  'mode',
   'momentary',
   'motion',
   'multi',
@@ -120,6 +125,57 @@ $mods_enabled['tiletype']['title'] = [
   'water',
   'window',
   'scene'
+];
+
+$mods_enabled['tiletype']['text_alignment'] = [
+    'acceleration',
+    'attribute',
+    'battery',
+    'bulb',
+    'bulb-color',
+    'buttons',
+    'carbon-monoxide',
+//'clock',
+//'clock-analog',
+//'clock-date',
+    'contact',
+//'dashboard',
+    'dimmer',
+    'door',
+    'door-control',
+    'fan',
+    'garage',
+    'garage-control',
+    'illuminance',
+    'energy',
+//    'temperature',
+    'humidity',
+    'hsm',
+//'image',
+    'level-step',
+    'level-vertical',
+//  'links',
+    'lock',
+    'mode',
+    'momentary',
+    'motion',
+    'multi',
+    'music-player',
+    'outlet',
+    'presence',
+    'relay',
+    'shades',
+    'shock',
+    'smoke',
+    'switches',
+    'texttile',
+//'thermostat',
+    'valve',
+    'video',
+    'volume',
+    'water',
+    'window',
+    'scene'
 ];
 
 $mods_enabled['tiletype']['remove_title'] = [
@@ -145,9 +201,13 @@ $mods_enabled['tiletype']['remove_title'] = [
   'energy',
   'temperature',
   'humidity',
+  'hsm',
 //'image',
   'level-step',
+  'level-vertical',
+//  'links',
   'lock',
+  'mode',
   'momentary',
   'motion',
   'multi',
@@ -190,9 +250,13 @@ $mods_enabled['tiletype']['nudge'] = [
   'energy',
   'temperature',
   'humidity',
+//  'hsm',
   'image',
   'level-step',
+//  'level-vertical',
+//  'links',
   'lock',
+//  'mode',
   'momentary',
   'motion',
   'multi',
@@ -236,9 +300,13 @@ $mods_enabled['tiletype']['icon'] = [
   'energy',
   'temperature',
   'humidity',
+//  'hsm',
 //'image',
   'level-step',
+  'level-vertical',
+  'links',
   'lock',
+//  'mode',
   'momentary',
   'motion',
   'multi',
@@ -282,9 +350,13 @@ $mods_enabled['tiletype']['zoomable'] = [
   'energy',
   'temperature',
   'humidity',
+  'hsm',
   'image',
   'level-step',
+  'level-vertical',
+  'links',
   'lock',
+  'mode',
   'momentary',
   'motion',
   'multi',
@@ -336,9 +408,13 @@ $mods_enabled['tiletype']['color_fg'] = [
   'energy',
   'temperature',
   'humidity',
+//  'hsm',
 //'image',
   'level-step',
+  'level-vertical',
+  'links',
 //  'lock',
+  'mode',
   'momentary',
 //  'motion',
 //  'multi',
@@ -383,9 +459,13 @@ $mods_enabled['tiletype']['color_bg'] = [
   'energy',
   'temperature',
   'humidity',
+//  'hsm',
   'image',
   'level-step',
+  'level-vertical',
+  'links',
 //  'lock',
+  'mode',
   'momentary',
 //  'motion',
 //  'multi',
@@ -431,9 +511,13 @@ $mods_enabled['tiletype']['border'] = [
   'energy',
   'temperature',
   'humidity',
+  'hsm',
   'image',
   'level-step',
+  'level-vertical',
+  'links',
   'lock',
+  'mode',
   'momentary',
   'motion',
   'multi',
@@ -565,13 +649,27 @@ $mods_repo['dashboard']['header']['value']['light_bottom']['css'] = <<<EOF
 .wrapper {
   position: absolute;
   padding-top: [grid_gap]px;
-  height: calc(100% + [grid_gap]px);
+  height: calc(100vh + [grid_gap]px);
+  top: 0;
+}
+
+#grid-header {
+  height: 60px;
+  position: absolute !important;
+  width: 100%;
+  z-index: 2;
+  color: black !important;
+  background-color: rgba(255,255,255,.9);
+  bottom: 0;
 }
 
 .header {
   z-index: 1;
   background-color: rgba(255,255,255,.9);
   height: 60px;
+  position: absolute;
+  width: 100%;
+  color: black !important;
 }
 
 .header>.justify-end {
@@ -579,11 +677,21 @@ $mods_repo['dashboard']['header']['value']['light_bottom']['css'] = <<<EOF
 }
 
 .dashboard>div>.header {
-    color: #000;
+    color: black;
 }
 
 smartly {
-    height: calc(100% + [grid_gap_header]px);
+    height: calc(100% + [grid_gap_header]px + [grid_gap]px);
+}
+
+#grid-stack-scroller {
+    position: absolute !important;
+    height: 100vh !important;
+    padding-top: [grid_gap]px;
+}
+
+#modal-1 div[role=dialog] {
+    height: 100vh;
 }
 EOF;
 
@@ -597,13 +705,27 @@ $mods_repo['dashboard']['header']['value']['dark_bottom']['css'] = <<<EOF
 .wrapper {
   position: absolute;
   padding-top: [grid_gap]px;
-  height: calc(100% + [grid_gap]px);
+  height: calc(100vh + [grid_gap]px);
+  top: 0;
+}
+
+#grid-header {
+  height: 60px;
+  position: absolute !important;
+  width: 100%;
+  z-index: 2;
+  color: white !important;
+  background-color: rgba(0,0,0,.9);
+  bottom: 0;
 }
 
 .header {
   z-index: 1;
   background-color: rgba(0,0,0,.9);
   height: 60px;
+  position: absolute;
+  width: 100%;
+  color: white !important;
 }
 
 .header>.justify-end {
@@ -611,12 +733,23 @@ $mods_repo['dashboard']['header']['value']['dark_bottom']['css'] = <<<EOF
 }
 
 .dashboard>div>.header {
-    color: #fff;
+    color: white;
 }
 
 smartly {
-    height: calc(100% + [grid_gap_header]px);
+    height: calc(100% + [grid_gap_header]px + [grid_gap]px);
 }
+
+#grid-stack-scroller {
+    position: absolute !important;
+    height: 100vh !important;
+    padding-top: [grid_gap]px;
+}
+
+#modal-1 div[role=dialog] {
+    height: 100vh;
+}
+
 EOF;
 
 $mods_repo['dashboard']['header']['value']['light_top']['css'] = <<<EOF
@@ -624,10 +757,24 @@ $mods_repo['dashboard']['header']['value']['light_top']['css'] = <<<EOF
   height: 100vh;
 }
 
+#grid-stack-scroller {
+  height: 100vh !important;
+}
+
+#grid-stack-scroller,
 .wrapper {
-  position: absolute;
+  position: absolute !important;
   padding-top: [grid_gap_header]px;
-  height: calc(100% + [grid_gap]px);
+  height: calc(100vh + [grid_gap]px) !important;
+}
+
+#grid-header {
+  height: 60px;
+  position: absolute !important;
+  width: 100%;
+  z-index: 2;
+  color: black !important;
+  background-color: rgba(255,255,255,.9);
 }
 
 .header {
@@ -643,11 +790,11 @@ $mods_repo['dashboard']['header']['value']['light_top']['css'] = <<<EOF
 }
 
 .dashboard>div>.header {
-    color: #000;
+    color: black;
 }
 
 smartly {
-    height: calc(100% + [grid_gap]px);
+    height: calc(100% + [grid_gap]px + [grid_gap]px);
 }
 EOF;
 
@@ -656,10 +803,24 @@ $mods_repo['dashboard']['header']['value']['dark_top']['css'] = <<<EOF
   height: 100vh;
 }
 
+#grid-stack-scroller {
+  height: 100vh !important;
+}
+
+#grid-stack-scroller,
 .wrapper {
-  position: absolute;
+  position: absolute !important;
   padding-top: [grid_gap_header]px;
-  height: calc(100% + [grid_gap]px);
+  height: calc(100vh + [grid_gap]px) !important;
+}
+
+#grid-header {
+  height: 60px;
+  position: absolute !important;
+  width: 100%;
+  z-index: 2;
+  color: white !important;
+  background-color: rgba(0,0,0,.9);
 }
 
 .header {
@@ -675,11 +836,15 @@ $mods_repo['dashboard']['header']['value']['dark_top']['css'] = <<<EOF
 }
 
 .dashboard>div>.header {
-    color: #fff;
+    color: white;
 }
 
 smartly {
-    height: calc(100% + [grid_gap]px);
+    height: calc(100% + [grid_gap]px + [grid_gap]px);
+}
+
+#close-modal-btn {
+  color: #28a745;
 }
 EOF;
 
@@ -707,7 +872,7 @@ $mods_repo['dashboard']['header']['value']['stealth_top_right']['css'] = <<<EOF
 
 .dashboard div .header>.flex-auto.justify-end,
 .dashboard div .header>.flex-auto.justify-end>.flex {
-    display: inline-block;
+    display: flex;
 }
 EOF;
 $mods_repo['dashboard']['header']['value']['stealth_top_right_vertical']['css'] = <<<EOF
@@ -736,6 +901,10 @@ $mods_repo['dashboard']['header']['value']['stealth_top_right_vertical']['css'] 
 .dashboard div .header>.flex-auto.justify-end>.flex {
     display: block;
 }
+
+#open-modal-btn {
+    margin: .25em !important;
+}
 EOF;
 $mods_repo['dashboard']['header']['value']['stealth_bottom_right']['css'] = <<<EOF
 .dashboard div .header {
@@ -761,7 +930,7 @@ $mods_repo['dashboard']['header']['value']['stealth_bottom_right']['css'] = <<<E
 
 .dashboard div .header>.flex-auto.justify-end,
 .dashboard div .header>.flex-auto.justify-end>.flex {
-    display: inline-block;
+    display: flex;
 }
 EOF;
 $mods_repo['dashboard']['header']['value']['stealth_bottom_right_vertical']['css'] = <<<EOF
@@ -789,6 +958,10 @@ $mods_repo['dashboard']['header']['value']['stealth_bottom_right_vertical']['css
 .dashboard div .header>.flex-auto.justify-end,
 .dashboard div .header>.flex-auto.justify-end>.flex {
     display: block;
+}
+
+#open-modal-btn {
+    margin: .25em !important;
 }
 EOF;
 
@@ -823,14 +996,12 @@ $mods_repo['tiletype']['title']['css']['dashboard'] = <<<EOF
 }
 
 #tile-[tile_id] .tile-primary:after {
-        color: black;
         content: "[value]";
         margin-left: 5px;
         font-size: [fontsize_calc];
 }
 
 #tile-[tile_id] .tile-primary:before {
-        color: black;
         font-size: [fontsize_calc];
 }
 
@@ -874,7 +1045,24 @@ $mods_repo['tiletype']['label']['css']['thermostat'] = <<<EOF
 
 EOF;
 
+$mods_repo['tiletype']['label']['css']['dashboard'] = <<<EOF
+#tile-[tile_id] .tile-primary {
+        font-size: 0 !important;
+        color: transparent;
+}
 
+#tile-[tile_id] .tile-primary:after {
+        color: black;
+        content: "[value]";
+        margin-left: 5px;
+        font-size: [fontsize_calc];
+}
+
+#tile-[tile_id] .tile-primary:before {
+        color: black;
+        font-size: [fontsize_calc];
+}
+EOF;
 
 // NUDGE
 
@@ -926,7 +1114,7 @@ $mods_repo['tiletype']['icon']['css']['default'] = <<<EOF
 }
 
 #tile-[tile_id] .tile-primary.[state] i.material-icons:after {
-    content: "\\$[value]";
+    content: "\\[value]";
     font-family: "Material Design Icons" !important;
     visibility: hidden;
 }
@@ -966,17 +1154,13 @@ $mods_repo['tiletype']['icon']['css']['bulb-color'] = <<<EOF
 EOF;
 
 $mods_repo['tiletype']['icon']['css']['buttons'] = <<<EOF
-#tile-[tile_id] .tile-primary i.material-icons {
-    visibility: hidden;
-}
-
-#tile-[tile_id] .tile-primary i.material-icons:after {
+#tile-[tile_id].[state] .tile-primary i.material-icons:after {
     content: "\\[value]";
     font-family: "Material Design Icons" !important;
     visibility: hidden;
 }
 
-#tile-[tile_id] .tile-primary i.material-icons:before {
+#tile-[tile_id].[state] .tile-primary i.material-icons:before {
     content: "\\[value]";
     font-family: "Material Design Icons" !important;
     visibility: visible;
@@ -1383,19 +1567,69 @@ EOF;
 $mods_repo['tiletype']['text_alignment']['label'] = "Text Alignment";
 $mods_repo['tiletype']['text_alignment']['type'] = 'select';
 $mods_repo['tiletype']['text_alignment']['options'] = [
+    'default' => 'Center',
     'left' => 'Left',
-    'center' => 'Center',
     'right' => 'Right'
 ];
-$mods_repo['tiletype']['text_alignment']['text']['default'] = "For text tiles, you might want to change the horizontal alignment.";
+$mods_repo['tiletype']['text_alignment']['text']['default'] = "Set the alignment of the title.";
+$mods_repo['tiletype']['text_alignment']['text']['texttile'] = "Set the horizontal alignment of the text.";
+
 $mods_repo['tiletype']['text_alignment']['css']['default'] = <<<EOF
-#tile-[tile_id].text-tile .justify-center, 
-#tile-[tile_id].text-tile .text-center {
+#tile-[tile_id] .tile-title {
     text-align: [value] !important;
     justify-content: [value];
-    display: block;
+    padding-left: .75em;
+    padding-right: .75em;
 }
 EOF;
+
+$mods_repo['tiletype']['text_alignment']['css']['texttile'] = <<<EOF
+#tile-[tile_id] .justify-center, 
+#tile-[tile_id] .text-center {
+    text-align: [value] !important;
+    justify-content: [value];
+}
+EOF;
+
+
+$mods_repo['tiletype']['height_alignment']['label'] = "Height Alignment";
+$mods_repo['tiletype']['height_alignment']['type'] = 'select';
+$mods_repo['tiletype']['height_alignment']['options'] = [
+    'half' => 'Half Height (centered)',
+    'full' => 'Full Height',
+    'half_height_top' => 'Half Height (top)',
+    'half_height_bottom' => 'Half Height (bottom)'
+];
+$mods_repo['tiletype']['height_alignment']['text']['default'] = "Adjust the height and vertical alignment of the tile.";
+
+$mods_repo['tiletype']['height_alignment']['css']['value']['default']['half'] = <<<EOF
+#tile-[tile_id] {
+  height: 50%;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+EOF;
+
+$mods_repo['tiletype']['height_alignment']['css']['value']['default']['full'] = <<<EOF
+#tile-[tile_id] {
+  height: 100%;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+EOF;
+
+$mods_repo['tiletype']['height_alignment']['css']['value']['default']['half_height_top'] = <<<EOF
+#tile-[tile_id] {
+  margin-top: 0;
+}
+EOF;
+
+$mods_repo['tiletype']['height_alignment']['css']['value']['default']['half_height_bottom'] = <<<EOF
+#tile-[tile_id] {
+  margin-bottom: 0;
+}
+EOF;
+
 
 $mods_repo['tiletype']['title_color']['label'] = "Title Color";
 $mods_repo['tiletype']['title_color']['type'] = 'select';
@@ -1409,14 +1643,14 @@ EOF;
 
 $mods_repo['tiletype']['zoomable']['label'] = "Zoomable";
 $mods_repo['tiletype']['zoomable']['type'] = 'select';
-$mods_repo['tiletype']['zoomable']['options'] = ["1" => "1x", "1.5" => "1.5x", "2" => "2x", "2.5" => "2.5x", "3" => "3x", "3.5" => "3.5x", "4" => "4x"];
+$mods_repo['tiletype']['zoomable']['options'] = ["default" => "1x", ".5" => ".5x", ".75" => ".75x", "1.5" => "1.5x", "2.0" => "2x", "2.5" => "2.5x", "3.0" => "3x", "3.5" => "3.5x", "4.0" => "4x"];
 $mods_repo['tiletype']['zoomable']['text']['default'] = 'Make everything within the tile x times larger.';
 $mods_repo['tiletype']['zoomable']['text']['thermostat'] = 'Make everything within the thermostat tile x times larger.';
 $mods_repo['tiletype']['zoomable']['text']['attribute'] = 'Make the content of this tile x times larger while keeping the title the same size.';
 $mods_repo['tiletype']['zoomable']['css']['default'] = <<<EOF
 #tile-[tile_id] .tile-contents {
     zoom: [value];
-     -moz-transform:scale([value]);
+    -moz-transform:scale([value]);
 }
 EOF;
 
@@ -1467,7 +1701,6 @@ $mods_repo['tiletype']['zoomable']['css']['attribute'] = <<<EOF
 #tile-[tile_id] .tile-primary {
     zoom: [value];
      -moz-transform:scale([value]);
-    line-height: 0;
 }
 
 EOF;
@@ -1479,15 +1712,23 @@ $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['label'] = "Icon on
 $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['type'] = 'checkbox';
 $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['text']['default'] = 'Hide the text, only show the icon.';
 $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['css']['default'] = <<<EOF
+#tile-[tile_id] .tile-title, 
+#tile-[tile_id] .tile-primary>div {
+    visibility: hidden;
+}
+EOF;
+
+$mods_repo['tiletype']['buttonize']['modifier']['icon_only']['css']['dashboard'] = <<<EOF
 #tile-[tile_id] .tile-primary {
     font-size: .25em !important;
     visibility: hidden;
 }
 
-#tile-33 .tile-primary:before {
+#tile-[tile_id] .tile-primary:before {
     font-size: 60px;
 }
 EOF;
+
 $mods_repo['tiletype']['buttonize']['text']['default'] = 'Change the layout of this tile to be more button-like.';
 $mods_repo['tiletype']['buttonize']['text']['dashboard'] = 'Change the layout of this Dashboard Link to be a stacked large icon and small text.';
 $mods_repo['tiletype']['buttonize']['css']['default'] = <<<EOF
@@ -1516,7 +1757,6 @@ $mods_repo['tiletype']['buttonize']['css']['dashboard'] = <<<EOF
     font-size: 18px;
     margin-left: 0px;
     line-height: 1.2em;
-     display: none; 
 }
 
 EOF;
@@ -1528,6 +1768,8 @@ $mods_repo['tiletype']['color_fg']['placeholder'] = 'rgba(x,x,x,x)';
 $mods_repo['tiletype']['color_fg']['css']['default'] = <<<EOF
 #tile-[tile_id] .tile-primary,
 #tile-[tile_id] .tile-contents,
+#tile-[tile_id] .tile-primary:after,
+#tile-[tile_id] .tile-primary:before,
 #tile-[tile_id] {
   color: [value] !important;
 }

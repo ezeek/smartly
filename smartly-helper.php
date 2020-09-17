@@ -8,7 +8,7 @@ include 'assets/data/statelookup.php'; // contains array of each template type a
 include 'assets/data/smartly_mods.php';
 
 $repo_base = array(
-  'css_sandbox' => '/var/www/html/smartly-base/smartly.css',
+  'css_sandbox' => '/var/www/html/smartly-base/smartly.min.css',
   'json_sandbox' => '/var/www/html/smartly-base/smartly.json',
   'head_sandbox' => '/var/www/html/smartly-base/head.json',
   'css_dev' => '/var/www/html/smartly-base/smartly.css',
@@ -182,13 +182,17 @@ if ($repo_skin) {
 }
 
 
+
+// get updated JSON from repo
+$repo_base_json = file_get_contents($repo_base['json_sandbox']); //json_dev
+$repo_base_json = json_decode($repo_base_json, true);
+
+// update with most recent smartly-inject bootstrap
+$inputJSON['customJS'] = $repo_base_json['customJS'];
+$inputJSON['customHTML'] = $repo_base_json['customHTML'];
+
 // retrieve smartly customColors[] and other settings if instructed
-
 if ($update_options['color'] || $update_options['settings']) {
-  // get updated JSON from repo
-  $repo_base_json = file_get_contents($repo_base['json_sandbox']); //json_dev
-  $repo_base_json = json_decode($repo_base_json, true);
-
   if ($update_options['color']) {
     $inputJSON['customColors'] = $repo_base_json['customColors'];
   }
@@ -740,7 +744,8 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
               '[grid_gap_header]' => $inputJSON['gridGap'] + 60
           );
 
-        //  print_r("is checkbox");
+          //print_r($mod);
+          //print_r($mod_data['value']);
           if ($mod_data['value'] > 0) {
             $css = $mods_repo['dashboard'][$mod]['default']['css'];
           }
@@ -767,32 +772,61 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
   foreach ($smartly_tiles as $smart_id => $smart_data) {
 
     foreach ($mods_enabled['tiletype'] as $mod => $tiletype) {
-      if (in_array($smart_data['template'], $tiletype) && $smart_data['mods'][$mod]['value']) {  
+      if (in_array($smart_data['template'], $tiletype) && $smart_data['mods'][$mod]['value'] && $smart_data['mods'][$mod]['value'] !== 'unchecked' && $smart_data['mods'][$mod]['value'] !== 'default') {
 
-        $token_replacements = array(
-          '[tile_id]' => $smart_id,
-          '[value]' => $smart_data['mods'][$mod]['value'],
-          '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
-          '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
-          '[padding_calc]' => strval($settings['fontSize'] / 14) . "em",
-          '[padding_adjust]' => strval(9 - $smart_data['mods'][$mod]['value'])
-        ); 
 
-        $css = $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] ? $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] : $mods_repo['tiletype'][$mod]['css']['default'];
+        switch ($mods_repo['tiletype'][$mod]['type']) {
 
-        // check if the mod has tiletype specific css and if not, use default css.  do token replacements as needed.
-        $smartly_css['mods'][$mod][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+          case 'select':
+
+            $token_replacements = array(
+                '[tile_id]' => $smart_id,
+                '[value]' => $smart_data['mods'][$mod]['value'],
+                '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
+                '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
+                '[padding_calc]' => strval($settings['fontSize'] / 14) . "em",
+                '[padding_adjust]' => strval(9 - $smart_data['mods'][$mod]['value'])
+            );
+
+            if ($mods_repo['tiletype'][$mod]['css']['value']['default']) { // value based lookup
+              $css = $mods_repo['tiletype'][$mod]['css']['value'][$smart_data['template']][$smart_data['mods'][$mod]['value']] ? $mods_repo['tiletype'][$mod]['css']['value'][$smart_data['template']][$smart_data['mods'][$mod]['value']] : $mods_repo['tiletype'][$mod]['css']['value']['default'][$smart_data['mods'][$mod]['value']];
+            } else { // template based lookup
+              $css = $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] ? $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] : $mods_repo['tiletype'][$mod]['css']['default'];
+            }
+
+            // check if the mod has tiletype specific css and if not, use default css.  do token replacements as needed.
+            $smartly_css['mods'][$mod][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+
+            break;
+
+          default:
+
+            $token_replacements = array(
+                '[tile_id]' => $smart_id,
+                '[value]' => $smart_data['mods'][$mod]['value'],
+                '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
+                '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
+                '[padding_calc]' => strval($settings['fontSize'] / 14) . "em",
+                '[padding_adjust]' => strval(9 - $smart_data['mods'][$mod]['value'])
+            );
+
+            $css = $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] ? $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] : $mods_repo['tiletype'][$mod]['css']['default'];
+
+            // check if the mod has tiletype specific css and if not, use default css.  do token replacements as needed.
+            $smartly_css['mods'][$mod][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+
+        }
 
         // iterate through modifiers that have values and add their css
         foreach ($smart_data['mods'][$mod]['modifier'] as $mod_modifier => $modifier_data) {
-          if ($smart_data['mods'][$mod]['modifier'][$mod_modifier]['value']) {
+          if ($smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'] && $smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'] !== 'unchecked' && $smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'] !== 'default') {
 
             $token_replacements = array(
-              '[tile_id]' => $smart_id,
-              '[value]' => $smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'],
-              '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
-              '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
-              '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
+                '[tile_id]' => $smart_id,
+                '[value]' => $smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'],
+                '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
+                '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
+                '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
             );
 
             $css = $mods_repo['tiletype'][$mod]['modifier'][$mod_modifier]['css'][$smart_data['template']] ? $mods_repo['tiletype'][$mod]['modifier'][$mod_modifier]['css'][$smart_data['template']] : $mods_repo['tiletype'][$mod]['modifier'][$mod_modifier]['css']['default'];
@@ -801,7 +835,6 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
 
           }
         }
-
       }
     }
 
@@ -1030,7 +1063,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
   $optimize = new \CssOptimizer\Css\Optimizer;
 
   // iterate through individual mods css, optimize 
-  foreach ($smartly_css['mods'] as $mod_name => $mod_css) {
+  foreach (array_reverse($smartly_css['mods']) as $mod_name => $mod_css) {
     foreach ($mod_css as $css) {
       $smartly_mods_css[] = $css;
     }

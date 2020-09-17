@@ -3,7 +3,7 @@ var smartlyDATA = '';
 var hubitatJSON = '';
 var smartlyMODS = [];
 
-var debug = false;
+var debug = true;
 
 $(document).ready(function() {
 
@@ -882,6 +882,30 @@ function parse_form(smart_id, mod_name, mod_construct, parent_mod = null, sectio
 
         break;
 
+      case 'select':
+console.log($("#smart_edit_" + parent_plug + mod_name).val());
+        if ($("#smart_edit_" + parent_plug + mod_name).val() && $("#smart_edit_" + parent_plug + mod_name).val() !== 'default') {
+          if (debug) { console.log("#smart_edit_" + parent_plug + mod_name, "SMART_EDIT_TITLE PRESENT"); }
+
+          if (parent_mod) {
+            smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = $("#smart_edit_" + parent_plug + mod_name).val();
+          } else {
+            smartlyDATA['tiles'][smart_id][section][mod_name]['value'] = $("#smart_edit_" + mod_name).val();
+          }
+
+        } else {
+          if ($("#smart_edit_" + mod_name).length) {
+
+            if (parent_mod) {
+              smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = null;
+            } else {
+              smartlyDATA['tiles'][smart_id][section][mod_name]['value'] = null;
+            }
+
+          }
+        }
+        break
+
       default:
 
         if ($("#smart_edit_" + parent_plug + mod_name).val()) {
@@ -974,7 +998,7 @@ console.log(mod_construct, "INCOMING MOD CONSTRUCT - CHECKBOX");
         }
 
         formHtml += '<option value="' + value + '" ' + formValue + '>' + name + '</option>';
-      };
+      }
 
       formHtml += '</select><span id="selectHelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
 
