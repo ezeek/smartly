@@ -73,7 +73,7 @@ $mods_enabled['dashboard']['colorcoding']['battery'] = true;
 
 $mods_enabled['tiletype']['unit'] = ['attribute'];
 $mods_enabled['tiletype']['numeric'] = ['attribute'];
-$mods_enabled['tiletype']['height_alignment'] = ['dashboard', 'texttile'];
+$mods_enabled['tiletype']['height_alignment'] = ['dashboard'];
 $mods_enabled['tiletype']['buttonize'] = ['button', 'dashboard', 'momentary', 'presence', 'water'];
 
 
@@ -125,6 +125,57 @@ $mods_enabled['tiletype']['title'] = [
   'water',
   'window',
   'scene'
+];
+
+$mods_enabled['tiletype']['text_alignment'] = [
+    'acceleration',
+    'attribute',
+    'battery',
+    'bulb',
+    'bulb-color',
+    'buttons',
+    'carbon-monoxide',
+//'clock',
+//'clock-analog',
+//'clock-date',
+    'contact',
+//'dashboard',
+    'dimmer',
+    'door',
+    'door-control',
+    'fan',
+    'garage',
+    'garage-control',
+    'illuminance',
+    'energy',
+//    'temperature',
+    'humidity',
+    'hsm',
+//'image',
+    'level-step',
+    'level-vertical',
+//  'links',
+    'lock',
+    'mode',
+    'momentary',
+    'motion',
+    'multi',
+    'music-player',
+    'outlet',
+    'presence',
+    'relay',
+    'shades',
+    'shock',
+    'smoke',
+    'switches',
+    'texttile',
+//'thermostat',
+    'valve',
+    'video',
+    'volume',
+    'water',
+    'window',
+    'scene'
 ];
 
 $mods_enabled['tiletype']['remove_title'] = [
@@ -945,14 +996,12 @@ $mods_repo['tiletype']['title']['css']['dashboard'] = <<<EOF
 }
 
 #tile-[tile_id] .tile-primary:after {
-        color: black;
         content: "[value]";
         margin-left: 5px;
         font-size: [fontsize_calc];
 }
 
 #tile-[tile_id] .tile-primary:before {
-        color: black;
         font-size: [fontsize_calc];
 }
 
@@ -1105,17 +1154,13 @@ $mods_repo['tiletype']['icon']['css']['bulb-color'] = <<<EOF
 EOF;
 
 $mods_repo['tiletype']['icon']['css']['buttons'] = <<<EOF
-#tile-[tile_id] .tile-primary i.material-icons {
-    visibility: hidden;
-}
-
-#tile-[tile_id] .tile-primary i.material-icons:after {
+#tile-[tile_id].[state] .tile-primary i.material-icons:after {
     content: "\\[value]";
     font-family: "Material Design Icons" !important;
     visibility: hidden;
 }
 
-#tile-[tile_id] .tile-primary i.material-icons:before {
+#tile-[tile_id].[state] .tile-primary i.material-icons:before {
     content: "\\[value]";
     font-family: "Material Design Icons" !important;
     visibility: visible;
@@ -1723,6 +1768,8 @@ $mods_repo['tiletype']['color_fg']['placeholder'] = 'rgba(x,x,x,x)';
 $mods_repo['tiletype']['color_fg']['css']['default'] = <<<EOF
 #tile-[tile_id] .tile-primary,
 #tile-[tile_id] .tile-contents,
+#tile-[tile_id] .tile-primary:after,
+#tile-[tile_id] .tile-primary:before,
 #tile-[tile_id] {
   color: [value] !important;
 }
