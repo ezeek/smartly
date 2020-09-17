@@ -17,7 +17,8 @@ $statelookup = [
         'on' => 'he-bulb_on',
     ],
     'buttons' => [
-        'default' => 'he-tap'
+        'default' => 'he-tap',
+        'pressed' => 'pressed'
     ],
     'momentary' => [
         'default' => 'he-tap'
