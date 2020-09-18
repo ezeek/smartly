@@ -1052,14 +1052,12 @@ $mods_repo['tiletype']['label']['css']['dashboard'] = <<<EOF
 }
 
 #tile-[tile_id] .tile-primary:after {
-        color: black;
         content: "[value]";
         margin-left: 5px;
         font-size: [fontsize_calc];
 }
 
 #tile-[tile_id] .tile-primary:before {
-        color: black;
         font-size: [fontsize_calc];
 }
 EOF;
