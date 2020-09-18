@@ -1113,13 +1113,13 @@ $mods_repo['tiletype']['icon']['css']['default'] = <<<EOF
     visibility: hidden;
 }
 
-#tile-[tile_id] .tile-primary.[state] i.material-icons:after {
+#tile-[tile_id] .tile-primary[state] i.material-icons:after {
     content: "\\[value]";
     font-family: "Material Design Icons" !important;
     visibility: hidden;
 }
 
-#tile-[tile_id] .tile-primary.[state] i.material-icons:before {
+#tile-[tile_id] .tile-primary[state] i.material-icons:before {
     content: "\\[value]";
     font-family: "Material Design Icons" !important;
     visibility: visible;
@@ -1154,13 +1154,13 @@ $mods_repo['tiletype']['icon']['css']['bulb-color'] = <<<EOF
 EOF;
 
 $mods_repo['tiletype']['icon']['css']['buttons'] = <<<EOF
-#tile-[tile_id].[state] .tile-primary i.material-icons:after {
+#tile-[tile_id][state] .tile-primary i.material-icons:after {
     content: "\\[value]";
     font-family: "Material Design Icons" !important;
     visibility: hidden;
 }
 
-#tile-[tile_id].[state] .tile-primary i.material-icons:before {
+#tile-[tile_id][state] .tile-primary i.material-icons:before {
     content: "\\[value]";
     font-family: "Material Design Icons" !important;
     visibility: visible;

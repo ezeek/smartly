@@ -990,7 +990,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
           '[value]' => $icon_code,
           '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
           '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
-          '[state]' => $state_name,
+          '[state]' => $state_name !== 'default' ? "." . $state_name : '',
           '[class_stock]' => $icon_class_stock,
           '[class]' => $icon_class
         );
