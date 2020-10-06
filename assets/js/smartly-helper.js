@@ -1,11 +1,16 @@
 // allow access within functions
+var version = "2.0"
+var patch = "experimental"
 var smartlyDATA = '';
 var hubitatJSON = '';
 var smartlyMODS = [];
 
-var debug = true;
+var debug = false;
 
 $(document).ready(function() {
+
+  $('#version').html(version);
+  $('#patch').html(patch);
 
   // retrieve smartly_mods from json
   $.getJSON("assets/data/smartly_mods.json", function(data) {
@@ -601,10 +606,10 @@ function smartly_settings_editor() {
 
   for (let [section, section_html] of Object.entries(section_build)) {
     if (section_counter < 1) { active_class = 'active'; }
-    section_menu += '<li class="nav-item"><a class="nav-link ' + active_class + '" data-toggle="pill" href="#' + section + '">' + section + '</a></li>';
+    section_menu += '<li class="nav-item"><a class="nav-link ' + active_class + '" data-toggle="pill" href="#dashboard_' + section + '">' + section + '</a></li>';
 
     if (section_counter < 1) { active_class = 'active'; } else { active_class = 'fade'; }
-    section_tab_html += '<div class="tab-pane container ' + active_class + '" id="' + section + '">' + section_html.join('')   + '</div>';
+    section_tab_html += '<div class="tab-pane container ' + active_class + '" id="dashboard_' + section + '">' + section_html.join('')   + '</div>';
     section_counter++;
     active_class = '';
   }
@@ -650,7 +655,7 @@ function smartly_grid(smartly_data, hubitat_json) {
   $grid = $("#grid");
   $gridheader.empty();
   $grid.empty();
-  $gridheader.html("'" + hubitat_json.name + "' tile editor" + "<br><span style='font-size: 70%;'>Click on a tile below to change title, label and/or icons. <i class='fa fa-cog' onclick='smartly_settings_editor();'></i>");
+  $gridheader.html("'" + hubitat_json.name + "' tile editor" + "<br><span style='font-size: 70%;'>Click on a tile below to change title, label, icons, colors, etc. <i class='fa fa-cog' onclick='smartly_settings_editor();'></i>");
   $grid.css({
     width: $gridwidth,
     height: $gridheight,
@@ -796,6 +801,11 @@ function smartly_settings_update() {
   var zoomy_val = $("#smart_edit_zoomy").is(":checked") ? true : false;
   var header_val = $("#smart_edit_header").val() ? $("#smart_edit_header").val() : null;
   var hide_scrollbars_val = $("#smart_edit_hide_scrollbars").is(":checked") ? true : false;
+  var parallax_val = $("#smart_edit_parallax").is(":checked") ? true : false;
+
+  var chroma_battery_val = $("#smart_edit_chroma_battery").val() ? $("#smart_edit_chroma_battery").val() : null;
+  var chroma_temperature_val = $("#smart_edit_chroma_temperature").val() ? $("#smart_edit_chroma_temperature").val() : null;
+  var chroma_humidity_val = $("#smart_edit_chroma_humidity").val() ? $("#smart_edit_chroma_humidity").val() : null;
 
   // if calibration values, split into array
   var cal_devices = cal_devices_val ? cal_devices_val.split(',') : null;
@@ -823,6 +833,10 @@ function smartly_settings_update() {
   smartlyDATA['dashboard']['mods'] = {};
   smartlyDATA['dashboard']['mods']['header'] = {};
   smartlyDATA['dashboard']['mods']['hide_scrollbars'] = {};
+  smartlyDATA['dashboard']['mods']['parallax'] = {};
+  smartlyDATA['dashboard']['mods']['chroma_battery'] = {};
+  smartlyDATA['dashboard']['mods']['chroma_temperature'] = {};
+  smartlyDATA['dashboard']['mods']['chroma_humidity'] = {};
 
   // save calibration devices
   smartlyDATA['dashboard']['mods']['cal_devices'] = cal_devices;
@@ -830,6 +844,12 @@ function smartly_settings_update() {
   smartlyDATA['dashboard']['mods']['zoomy'] = zoomy_val;
   smartlyDATA['dashboard']['mods']['header']['value'] = header_val;
   smartlyDATA['dashboard']['mods']['hide_scrollbars']['value'] = hide_scrollbars_val;
+  smartlyDATA['dashboard']['mods']['parallax']['value'] = parallax_val;
+
+  smartlyDATA['dashboard']['mods']['chroma_battery']['value'] = chroma_battery_val;
+  smartlyDATA['dashboard']['mods']['chroma_temperature']['value'] = chroma_temperature_val;
+  smartlyDATA['dashboard']['mods']['chroma_humidity']['value'] = chroma_humidity_val;
+
 
   // populate the hidden smartly_datablock
   var smartly_datablock = $("#smartlydata");
@@ -914,6 +934,7 @@ console.log($("#smart_edit_" + parent_plug + mod_name).val());
           if (parent_mod) {
             smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = $("#smart_edit_" + parent_plug + mod_name).val();
           } else {
+            console.log(smartlyDATA['tiles'][smart_id], "setting defaults")
             smartlyDATA['tiles'][smart_id][section][mod_name]['value'] = $("#smart_edit_" + mod_name).val();
           }
 

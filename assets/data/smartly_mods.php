@@ -1,5 +1,8 @@
 <?php
 
+//$mods_repo['dashboard']['color_humidity']['label'] = "Enable value-based humidity tile color";
+//$mods_repo['dashboard']['color_humidity']['text']['default'] = "Change the color of this tile based on the humidity value.";
+
 // TODO: pull from a separate 'mods' repo 
 
 $mods_repo = array();
@@ -21,7 +24,8 @@ $mods_repo['layout'] = [
     ],
     'mods' => [
       'zoomable',
-      'buttonize'
+      'buttonize',
+      'touch_slider'
     ],
     'contrib' => [
       'tm',
@@ -34,13 +38,22 @@ $mods_repo['layout'] = [
       'color_bg',
       'color_fg',
       'border_size',
-      'border'
+      'border',
+      'chroma_battery',
+      'chroma_temperature',
+      'chroma_humidity'
     ]
   ],
   'dashboard' => [
     'mods' => [
       'header',
-      'hide_scrollbars'
+      'hide_scrollbars',
+      'parallax'
+    ],
+    'color' => [
+      'chroma_battery',
+      'chroma_temperature',
+      'chroma_humidity'
     ],
     'calibration' => [
       'cal_devices',
@@ -70,12 +83,15 @@ $mods_enabled['dashboard']['colorcoding']['humidity'] = true;
 $mods_enabled['dashboard']['colorcoding']['battery'] = true;
 */
 
+$mods_enabled['tiletype']['chroma_humidity'] = ['humidity'];
+$mods_enabled['tiletype']['chroma_temperature'] = ['temperature'];
+$mods_enabled['tiletype']['chroma_battery'] = ['battery'];
 
 $mods_enabled['tiletype']['unit'] = ['attribute'];
 $mods_enabled['tiletype']['numeric'] = ['attribute'];
 $mods_enabled['tiletype']['height_alignment'] = ['dashboard'];
 $mods_enabled['tiletype']['buttonize'] = ['button', 'dashboard', 'momentary', 'presence', 'water'];
-
+$mods_enabled['tiletype']['touch_slider'] = ['dimmer', 'level-vertical'];
 
 $mods_enabled['tiletype']['title'] = [
   'acceleration',
@@ -551,24 +567,13 @@ $mods_repo['dashboard']['cal_devices_2col']['label'] = "<b>FORCE DISPLAY 2 COLUM
 $mods_repo['dashboard']['cal_devices_2col']['text'] = "some additional help text";
 $mods_repo['dashboard']['cal_devices_2col']['type'] = 'tagsinput';
 
-$mods_repo['dashboard']['color_temperature']['label'] = "Enable value-based temperature tile color";
-$mods_repo['dashboard']['color_temperature']['text']['default'] = "Change the color of this tile based on the temperature value.";
-$mods_repo['dashboard']['color_temperature']['type'] = 'checkbox';
-$mods_repo['dashboard']['color_temperature']['json']['path'] = '/somepath.json';
-$mods_repo['dashboard']['color_temperature']['json']['method'] = 'overwrite';
-
-$mods_repo['dashboard']['color_humidity']['label'] = "Enable value-based humidity tile color";
-$mods_repo['dashboard']['color_humidity']['text']['default'] = "Change the color of this tile based on the humidity value.";
-$mods_repo['dashboard']['color_humidity']['type'] = 'checkbox';
-$mods_repo['dashboard']['color_humidity']['json']['path'] = '/somepath.json';
-$mods_repo['dashboard']['color_humidity']['json']['method'] = 'overwrite';
 
 $mods_repo['dashboard']['zoomy']['label'] = '<b>Add ZOOMY</b> <small style="color: #da4800;">(This checkbox will uncheck itself after update)</small>';
 $mods_repo['dashboard']['zoomy']['text']['default'] = '<small>Temporarily add a calibration helper tile to generate the perfect css for alignment of columns to the edge of the screen on any device, any device display dpi setting.</small>';
 $mods_repo['dashboard']['zoomy']['type'] = 'checkbox';
 
 $mods_repo['dashboard']['hide_scrollbars']['label'] = 'Hide Scrollbars';
-$mods_repo['dashboard']['hide_scrollbars']['text']['default'] = 'Regardless of whether there is overflow, scrollbars will be enabled but hidden.';
+$mods_repo['dashboard']['hide_scrollbars']['text']['default'] = 'Regardless of whether there is overflow, scrollbars will be enabled but hidden. <i>Recommended when using header mods.</i>';
 $mods_repo['dashboard']['hide_scrollbars']['type'] = 'checkbox';
 $mods_repo['dashboard']['hide_scrollbars']['default']['css'] = <<<EOF
 ::-webkit-scrollbar {
@@ -582,11 +587,11 @@ $mods_repo['dashboard']['hide_scrollbars']['default']['css'] = <<<EOF
 }
 EOF;
 
-
 $mods_repo['dashboard']['header']['label'] = "Header Theme";
 $mods_repo['dashboard']['header']['type'] = 'select';
 $mods_repo['dashboard']['header']['options'] = [
     "default" => "Default",
+    "stock_plus" => "Stock (with scroll fade)",
     "light_top" => "Light (top)",
     "light_bottom" => "Light (bottom)",
     "dark_top" => "Dark (top)",
@@ -965,6 +970,32 @@ $mods_repo['dashboard']['header']['value']['stealth_bottom_right_vertical']['css
 }
 EOF;
 
+$mods_repo['dashboard']['header']['value']['stock_plus']['css'] = <<<EOF
+.dashboard>div:first-child {
+  height: 100vh;
+}
+
+.wrapper {
+  position: absolute !important;
+  padding-top: 60px;
+  height: calc(100vh + [grid_gap]px) !important;
+}
+
+.header {
+  z-index: 1;
+  height: 60px;
+  position: absolute;
+  width: 100%;
+}
+
+.header>.justify-end {
+  padding-top: .5em;
+}
+
+smartly {
+    height: calc(100% + [grid_gap]px + [grid_gap]px);
+}
+EOF;
 
 // TITLE REPLACEMENT
 
@@ -1703,6 +1734,355 @@ $mods_repo['tiletype']['zoomable']['css']['attribute'] = <<<EOF
 
 EOF;
 
+$mods_repo['tiletype']['touch_slider']['label'] = "Enable Touch Slider";
+$mods_repo['tiletype']['touch_slider']['type'] = 'checkbox';
+$mods_repo['tiletype']['touch_slider']['text']['default'] = 'Make the entire tile a touch slider.';
+$mods_repo['tiletype']['touch_slider']['css']['default'] = <<<EOF
+#tile-[tile_id] {
+    margin: 0;
+}
+
+#tile-[tile_id]  .tile-title {
+    z-index: 2;
+    pointer-events: none;
+}
+
+#tile-[tile_id]  * {
+    -webkit-transition: none;
+    transition: none;
+}
+
+#tile-[tile_id]  .tile-primary .dimmer {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    top: 0;
+}
+
+#tile-[tile_id] .tile-contents {
+    padding: 0;
+    position: absolute;
+    top: 0;
+    height: 100%;
+}
+
+#tile-[tile_id] .tile-primary {
+    padding: 0;
+}
+
+#tile-[tile_id] .vue-slider {
+    margin: 0 !important;
+    height: 100% !important;
+}
+
+#tile-[tile_id] .vue-slider-process {
+    border-radius: 0;
+    background-color: rgba(0,0,0,.3) !important;
+    top: auto;
+    bottom: 0;
+    height: 100% !important;
+}
+
+#tile-[tile_id] .vue-slider-dot-handle {
+    border-radius: 0;
+    background-color: transparent;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+#tile-[tile_id] .vue-slider-dot {
+    height: 101% !important;
+}
+
+#tile-[tile_id] .vue-slider-rail {
+    background-color: transparent !important;
+    width: 101%;
+}
+
+#tile-[tile_id] .vue-slider-dot-tooltip {
+    visibility: visible;
+    top: auto;
+    padding-left: 5px;
+}
+
+#tile-[tile_id] .vue-slider-dot-tooltip-inner {
+    background-color: unset;
+    border-color: unset;
+    font-size: 30px;
+    padding: 0;
+    margin: 0;
+    color: rgba(0,0,0,.3);
+    bottom: 0;
+    position: absolute;
+    line-height: 30px;
+}
+
+#tile-[tile_id] .tile-edit {
+    z-index: 6;
+}
+
+#tile-[tile_id] .tile-primary>div:nth-child(1) {
+    z-index: 6;
+    position: absolute;
+    margin: 0;
+    bottom: 0;
+    left: .75em;
+}
+
+#tile-[tile_id] .tile-primary>div:nth-child(3) {
+    z-index: 5;
+    position: absolute;
+    bottom: .75em;
+    left: 1em;
+}
+
+#tile-[tile_id] .tile-primary>div:nth-child(3) {
+   visibility: hidden;
+}
+
+#tile-[tile_id].lev10-90 .vue-slider-dot-tooltip {
+    right: -55px;
+    color: red;
+}
+#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip {
+    right: -120px;
+}
+
+#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip-inner-top:after {
+    left: auto;
+    top: 7px;
+    transform: rotate(-90deg);
+    right: -15px;
+    visibility: hidden;
+}
+
+EOF;
+
+$mods_repo['tiletype']['touch_slider']['css']['level-vertical'] = <<<EOF
+#tile-[tile_id] {
+    margin: 0;
+}
+
+#tile-[tile_id]  .tile-title {
+    z-index: 2;
+    pointer-events: none;
+}
+
+#tile-[tile_id]  * {
+    -webkit-transition: none;
+    transition: none;
+}
+
+#tile-[tile_id]  .tile-primary .dimmer {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    top: 0;
+}
+
+#tile-[tile_id] .tile-contents {
+    padding: 0;
+    position: absolute;
+    top: 0;
+    height: 100%;
+}
+
+#tile-[tile_id] .tile-primary {
+    padding: 0;
+}
+
+
+#tile-[tile_id] .dimmer {
+    left: 0;
+}
+
+
+#tile-[tile_id] .vue-slider {
+    margin: 0 !important;
+    width: 100% !important;
+height: 100% !important;
+}
+
+#tile-[tile_id] .vue-slider-process {
+    border-radius: 0;
+    background-color: rgba(0,0,0,.3) !important;
+    top: auto;
+    bottom: 0;
+    width: 100% !important;
+}
+
+#tile-[tile_id] .vue-slider-dot-handle {
+    border-radius: 0;
+    background-color: transparent;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+#tile-[tile_id] .vue-slider-dot {
+    width: 101% !important;
+}
+
+#tile-[tile_id] .vue-slider-rail {
+    background-color: transparent !important;
+    height: 101%;
+}
+
+#tile-[tile_id] .vue-slider-dot-tooltip {
+    visibility: visible;
+    padding-left: 5px;
+}
+
+#tile-[tile_id] .vue-slider-dot-tooltip {
+    left: 5px;
+}
+
+#tile-[tile_id] .vue-slider-dot-tooltip-inner {
+    background-color: unset;
+    border-color: unset;
+    font-size: 30px;
+    padding: 0;
+    margin: 0;
+    color: rgba(0,0,0,.3);
+    bottom: 0;
+    position: absolute;
+    line-height: 30px;
+}
+
+#tile-[tile_id] .tile-edit {
+    z-index: 6;
+}
+
+#tile-[tile_id].lev10-80 .vue-slider-dot-tooltip {
+    bottom: -50px;
+}
+
+#tile-[tile_id].lev10-90 .vue-slider-dot-tooltip {
+    top: 80px;
+}
+
+#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip {
+    top: 100px;
+    bottom: auto;
+}
+
+#tile-[tile_id] .tile-primary>div:nth-child(2) {
+   display: none;
+}
+
+#tile-[tile_id] .vue-slider-dot-tooltip-inner-left:after {
+visibility: hidden;
+}
+
+
+#tile-[tile_id].lev10-90 .vue-slider-dot-tooltip-inner-left:after,
+#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip-inner-left:after{
+    visibility: visible;
+    transform: rotate(-90deg);
+    top: -10px;
+    left: 0;
+}
+
+EOF;
+
+$mods_repo['tiletype']['touch_slider']['modifier']['touch_layout']['label'] = "Alternate Layout";
+$mods_repo['tiletype']['touch_slider']['modifier']['touch_layout']['type'] = 'checkbox';
+$mods_repo['tiletype']['touch_slider']['modifier']['touch_layout']['text']['default'] = 'Make the slider value angled.';
+$mods_repo['tiletype']['touch_slider']['modifier']['touch_layout']['css']['default'] = <<<EOF
+#tile-[tile_id] .vue-slider-dot-tooltip-inner-bottom:after,
+#tile-[tile_id] .vue-slider-dot-tooltip-inner-top:after {
+    left: 15px;
+    visibility: visible;
+}
+
+#tile-[tile_id] .vue-slider-dot-tooltip {
+    transform: rotate(45deg);
+    bottom: 15px;
+    padding-left: 0 !important;
+    left: 10px;
+    bottom: 17px;
+}
+
+#tile-[tile_id] span.vue-slider-dot-tooltip-text {
+    width: 30px;
+    text-align: center;
+    display: block;
+}
+
+#tile-[tile_id] .vue-slider-dot-tooltip-inner {
+    margin-left: -5px;
+}
+
+#tile-[tile_id].lev10-80 .vue-slider-dot-tooltip,
+#tile-[tile_id].lev10-90 .vue-slider-dot-tooltip,
+#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip {
+    bottom: 2px;
+    left: -5px;
+    right: auto;
+    top: auto;
+    transform: rotate(-45deg);
+}
+
+EOF;
+
+$mods_repo['tiletype']['touch_slider']['modifier']['touch_layout']['css']['level-vertical'] = <<<EOF
+#tile-[tile_id] .vue-slider-dot-tooltip-inner-left:after {
+    transform: rotate(90deg);
+    height: 0;
+    width: 0;
+    left: 7px;
+    top: auto;
+    bottom: -10px;
+    right: auto;
+    visibility: visible;
+}
+
+#tile-[tile_id] .vue-slider-dot-tooltip-inner {
+    transform: rotate(45deg);
+}
+#tile-[tile_id] .vue-slider-dot-tooltip {
+    left: 6px;
+    bottom: 13px;
+    top: auto;
+    padding-left: 0;
+}
+
+#tile-[tile_id].lev10-80 .vue-slider-dot-tooltip-inner-left:after,
+#tile-[tile_id].lev10-90 .vue-slider-dot-tooltip-inner-left:after,
+#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip-inner-left:after {
+    bottom: auto;
+    height: 0;
+    left: -13px;
+    right: auto;
+    top: 10px;
+    transform: rotate(180deg);
+    visibility: visible;
+    width: 0;
+}
+
+#tile-[tile_id].lev10-80 .vue-slider-dot-tooltip,
+#tile-[tile_id].lev10-90 .vue-slider-dot-tooltip,
+#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip {
+    bottom: auto;
+    right: auto;
+}
+
+#tile-[tile_id].lev10-80 .vue-slider-dot-tooltip {
+    top: 42px;
+}
+
+#tile-[tile_id].lev10-90 .vue-slider-dot-tooltip {
+    top: 80px;
+}
+
+#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip {
+    top: 100px;
+}
+
+EOF;
 
 $mods_repo['tiletype']['buttonize']['label'] = "Buttonize!";
 $mods_repo['tiletype']['buttonize']['type'] = 'checkbox';
@@ -1841,5 +2221,48 @@ $mods_repo['tiletype']['remove_title']['css']['default'] = <<<EOF
 }
 
 EOF;
+
+// CHROMA TILE
+$mods_repo['tiletype']['chroma_battery']['label'] = "Enable value-based battery tile color for this tile.";
+$mods_repo['tiletype']['chroma_battery']['type'] = 'textbox';
+$mods_repo['tiletype']['chroma_battery']['text']['default'] = 'Change the color of this tile based on the battery value.';
+
+$mods_repo['tiletype']['chroma_temperature']['label'] = "Enable value-based temperature tile color for this tile.";
+$mods_repo['tiletype']['chroma_temperature']['type'] = 'textbox';
+$mods_repo['tiletype']['chroma_temperature']['text']['default'] = 'Change the color of this tile based on the temperature value.';
+
+$mods_repo['tiletype']['chroma_humidity']['label'] = "Enable value-based humidity tile color for this tile.";
+$mods_repo['tiletype']['chroma_humidity']['type'] = 'textbox';
+$mods_repo['tiletype']['chroma_humidity']['text']['default'] = 'Change the color of this tile based on the humidity value.';
+
+// CHROMA DASHBOARD
+
+$mods_repo['dashboard']['chroma_battery']['label'] = "Global value-based battery tile color.";
+$mods_repo['dashboard']['chroma_battery']['type'] = 'textbox';
+$mods_repo['dashboard']['chroma_battery']['options'] = [
+    "default" => "Disabled",
+    "20,40" => "Light (top)",
+    "light_bottom" => "Light (bottom)",
+    "dark_top" => "Dark (top)",
+    "dark_bottom" => "Dark (bottom)",
+    "hidden" => "Hidden (touch top right)",
+    "stealth_top_right" => "Stealth (top right)",
+    "stealth_top_right_vertical" => "Stealth (top right - vertical)",
+    "stealth_bottom_right" => "Stealth (bottom right)",
+    "stealth_bottom_right_vertical" => "Stealth (bottom right - vertical)"
+];
+$mods_repo['dashboard']['chroma_battery']['text']['default'] = 'Change the color of this tile based on the battery value.';
+
+$mods_repo['dashboard']['chroma_temperature']['label'] = "Global value-based temperature tile color.";
+$mods_repo['dashboard']['chroma_temperature']['type'] = 'checkbox';
+$mods_repo['dashboard']['chroma_temperature']['text']['default'] = 'Change the color of this tile based on the temperature value.';
+
+$mods_repo['dashboard']['chroma_humidity']['label'] = 'Enable value-based humidity tile color globally.';
+$mods_repo['dashboard']['chroma_humidity']['type'] = 'checkbox';
+$mods_repo['dashboard']['chroma_humidity']['text']['default'] = 'Change the color of this tile based on the humidity value.';
+
+$mods_repo['dashboard']['parallax']['label'] = 'Enable Parallax Background';
+$mods_repo['dashboard']['parallax']['text']['default'] = 'Add parallax vertical scroll effect for dashboard background.';
+$mods_repo['dashboard']['parallax']['type'] = 'checkbox';
 
 ?>

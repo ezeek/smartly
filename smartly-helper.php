@@ -221,12 +221,12 @@ if ($update_options['color'] || $update_options['settings']) {
   if ($update_options['settings']) {
     $inputJSON['roundedCorners'] = $repo_base_json['roundedCorners'];
     $inputJSON['hideLabels'] =  $repo_base_json['hideLabels'];
-    $inputJSON['colWidth'] = $repo_base_json['colWidth'];
+//    $inputJSON['colWidth'] = $repo_base_json['colWidth'];
     $inputJSON['hide3dot'] = $repo_base_json['hide3dot'];
     $inputJSON['gridGap'] = $repo_base_json['gridGap'];
     $inputJSON['bgColor'] = $repo_base_json['bgColor'];
     $inputJSON['iconSize'] = $repo_base_json['iconSize'];
-    $inputJSON['rowHeight'] = $repo_base_json['rowHeight'];
+//    $inputJSON['rowHeight'] = $repo_base_json['rowHeight'];
     $inputJSON['hideIconText'] = $repo_base_json['hideIconText'];
     $inputJSON['background'] = $repo_base_json['background'];
     $inputJSON['fontSize'] = $repo_base_json['fontSize'];
@@ -577,6 +577,11 @@ $dashboard_mods['mods']['cal_devices'] = $smartly_data['dashboard']['mods']['cal
 $dashboard_mods['mods']['cal_devices_2col'] = $smartly_data['dashboard']['mods']['cal_devices_2col'] ? $smartly_data['dashboard']['mods']['cal_devices_2col'] : null;
 $dashboard_mods['mods']['header']['value'] = $smartly_data['dashboard']['mods']['header']['value'] ? $smartly_data['dashboard']['mods']['header']['value'] : 'default';
 $dashboard_mods['mods']['hide_scrollbars']['value'] = $smartly_data['dashboard']['mods']['hide_scrollbars']['value'] ? $smartly_data['dashboard']['mods']['hide_scrollbars']['value'] : null;
+$dashboard_mods['mods']['parallax']['value'] = $smartly_data['dashboard']['mods']['parallax']['value'] ? $smartly_data['dashboard']['mods']['parallax']['value'] : null;
+
+$dashboard_mods['mods']['chroma_battery']['value'] = $smartly_data['dashboard']['mods']['chroma_battery']['value'] ? $smartly_data['dashboard']['mods']['chroma_battery']['value'] : null;
+$dashboard_mods['mods']['chroma_temperature']['value'] = $smartly_data['dashboard']['mods']['chroma_temperature']['value'] ? $smartly_data['dashboard']['mods']['chroma_temperature']['value'] : null;
+$dashboard_mods['mods']['chroma_humidity']['value'] = $smartly_data['dashboard']['mods']['chroma_humidity']['value'] ? $smartly_data['dashboard']['mods']['chroma_humidity']['value'] : null;
 
 
 //var_dump($smartly_settings);
@@ -1063,7 +1068,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
   $optimize = new \CssOptimizer\Css\Optimizer;
 
   // iterate through individual mods css, optimize 
-  foreach (array_reverse($smartly_css['mods']) as $mod_name => $mod_css) {
+  foreach ($smartly_css['mods'] as $mod_name => $mod_css) {
     foreach ($mod_css as $css) {
       $smartly_mods_css[] = $css;
     }
