@@ -1989,8 +1989,12 @@ visibility: hidden;
 EOF;
 
 $mods_repo['tiletype']['touch_slider']['modifier']['touch_layout']['label'] = "Alternate Layout";
-$mods_repo['tiletype']['touch_slider']['modifier']['touch_layout']['type'] = 'checkbox';
+$mods_repo['tiletype']['touch_slider']['modifier']['touch_layout']['select-lookup'] = 'checkbox';
 $mods_repo['tiletype']['touch_slider']['modifier']['touch_layout']['text']['default'] = 'Make the slider value angled.';
+
+$mods_repo['tiletype']['touch_slider']['thevaluehere']['css'];
+$mods_repo['tiletype']['touch_slider']['value']['default']['css'];
+
 $mods_repo['tiletype']['touch_slider']['modifier']['touch_layout']['css']['default'] = <<<EOF
 #tile-[tile_id] .vue-slider-dot-tooltip-inner-bottom:after,
 #tile-[tile_id] .vue-slider-dot-tooltip-inner-top:after {

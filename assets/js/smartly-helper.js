@@ -903,6 +903,7 @@ function parse_form(smart_id, mod_name, mod_construct, parent_mod = null, sectio
         break;
 
       case 'select':
+      case 'select-lookup':
 console.log($("#smart_edit_" + parent_plug + mod_name).val());
         if ($("#smart_edit_" + parent_plug + mod_name).val() && $("#smart_edit_" + parent_plug + mod_name).val() !== 'default') {
           if (debug) { console.log("#smart_edit_" + parent_plug + mod_name, "SMART_EDIT_TITLE PRESENT"); }
@@ -1001,6 +1002,7 @@ console.log(mod_construct, "INCOMING MOD CONSTRUCT - CHECKBOX");
       break;
 
     case 'select':
+    case 'select-template':
 
       formHtml += '<div class="form-group row"><label for="select" class="col-4 col-form-label">' + mod_construct.label + '</label><div class="col-8"><select id="smart_edit_' + mod_name + '" name="smart_edit_' + mod_name + '" class="custom-select">';
 

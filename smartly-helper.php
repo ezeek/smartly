@@ -344,6 +344,20 @@ if ($inputJSON['tiles'][0]['template'] != "smartly") {  // first time running
 }
 
 
+if ($inputJSON['colWidth'] == 135 && $inputJSON['rowHeight'] == 60 ) { // legacy conversion
+
+ foreach ($inputJSON['tiles'] as $tile_id => $tile_data) {
+   $inputJSON['tiles'][$tile_id]['col'] = ($inputJSON['tiles'][$tile_id]['col'] * 2) - 1;
+   $inputJSON['tiles'][$tile_id]['row'] = ($inputJSON['tiles'][$tile_id]['row'] * 2) - 1;
+   $inputJSON['tiles'][$tile_id]['colSpan'] = $inputJSON['tiles'][$tile_id]['colSpan'] * 2;
+   $inputJSON['tiles'][$tile_id]['rowSpan'] = $inputJSON['tiles'][$tile_id]['rowSpan'] * 2;
+ }
+
+  $inputJSON['rowHeight'] = 22;
+  $inputJSON['colWidth'] = 60;
+}
+
+
 /*
  * TODO: split into smartly_regen() function 
  *
@@ -798,6 +812,24 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
             } else { // template based lookup
               $css = $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] ? $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] : $mods_repo['tiletype'][$mod]['css']['default'];
             }
+
+            // check if the mod has tiletype specific css and if not, use default css.  do token replacements as needed.
+            $smartly_css['mods'][$mod][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+
+            break;
+
+          case 'select-lookup':
+
+            $token_replacements = array(
+                '[tile_id]' => $smart_id,
+                '[value]' => $smart_data['mods'][$mod]['value'],
+                '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
+                '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
+                '[padding_calc]' => strval($settings['fontSize'] / 14) . "em",
+                '[padding_adjust]' => strval(9 - $smart_data['mods'][$mod]['value'])
+            );
+
+            $css = $mods_repo['tiletype'][$mod]['value'][$smart_data['mods'][$mod]['value']]['css'] ? $mods_repo['tiletype'][$mod]['value'][$smart_data['mods'][$mod]['value']]['css'] : $mods_repo['dashboard'][$mod]['value']['default']['css'];
 
             // check if the mod has tiletype specific css and if not, use default css.  do token replacements as needed.
             $smartly_css['mods'][$mod][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
