@@ -1020,24 +1020,6 @@ $mods_repo['tiletype']['title']['css']['default'] = <<<EOF
 
 EOF;
 
-$mods_repo['tiletype']['title']['css']['dashboard'] = <<<EOF
-#tile-[tile_id] .tile-primary {
-        font-size: 0 !important;
-        color: transparent;
-}
-
-#tile-[tile_id] .tile-primary:after {
-        content: "[value]";
-        margin-left: 5px;
-        font-size: [fontsize_calc];
-}
-
-#tile-[tile_id] .tile-primary:before {
-        font-size: [fontsize_calc];
-}
-
-EOF;
-
 
 // LABEL ADDITION
 
@@ -1089,7 +1071,7 @@ $mods_repo['tiletype']['label']['css']['dashboard'] = <<<EOF
 }
 
 #tile-[tile_id] .tile-primary:before {
-        font-size: [fontsize_calc];
+        xxfont-size: [fontsize_calc];
 }
 EOF;
 
@@ -1734,10 +1716,21 @@ $mods_repo['tiletype']['zoomable']['css']['attribute'] = <<<EOF
 
 EOF;
 
-$mods_repo['tiletype']['touch_slider']['label'] = "Enable Touch Slider";
-$mods_repo['tiletype']['touch_slider']['type'] = 'checkbox';
+$mods_repo['tiletype']['touch_slider']['label'] = "Touch Slider";
+$mods_repo['tiletype']['touch_slider']['type'] = 'select-advanced';
+$mods_repo['tiletype']['touch_slider']['options'] = [
+    "default" => "Stock",
+    "basic" => "Basic Touch",
+    "angled" => "Angled Touch",
+    "stock_percentage" => "Stock Percentage"
+];
+
 $mods_repo['tiletype']['touch_slider']['text']['default'] = 'Make the entire tile a touch slider.';
-$mods_repo['tiletype']['touch_slider']['css']['default'] = <<<EOF
+$mods_repo['tiletype']['touch_slider']['css']['default']['default'] = <<<EOF
+.null {}
+EOF;
+
+$mods_repo['tiletype']['touch_slider']['css']['basic']['default'] = <<<EOF
 #tile-[tile_id] {
     margin: 0;
 }
@@ -1844,7 +1837,6 @@ $mods_repo['tiletype']['touch_slider']['css']['default'] = <<<EOF
 
 #tile-[tile_id].lev10-90 .vue-slider-dot-tooltip {
     right: -55px;
-    color: red;
 }
 #tile-[tile_id].lev10-100 .vue-slider-dot-tooltip {
     right: -120px;
@@ -1860,21 +1852,18 @@ $mods_repo['tiletype']['touch_slider']['css']['default'] = <<<EOF
 
 EOF;
 
-$mods_repo['tiletype']['touch_slider']['css']['level-vertical'] = <<<EOF
+$mods_repo['tiletype']['touch_slider']['css']['basic']['level-vertical'] = <<<EOF
 #tile-[tile_id] {
     margin: 0;
 }
-
 #tile-[tile_id]  .tile-title {
     z-index: 2;
     pointer-events: none;
 }
-
 #tile-[tile_id]  * {
     -webkit-transition: none;
     transition: none;
 }
-
 #tile-[tile_id]  .tile-primary .dimmer {
     margin: 0;
     padding: 0;
@@ -1883,30 +1872,23 @@ $mods_repo['tiletype']['touch_slider']['css']['level-vertical'] = <<<EOF
     width: 100%;
     top: 0;
 }
-
 #tile-[tile_id] .tile-contents {
     padding: 0;
     position: absolute;
     top: 0;
     height: 100%;
 }
-
 #tile-[tile_id] .tile-primary {
     padding: 0;
 }
-
-
 #tile-[tile_id] .dimmer {
     left: 0;
 }
-
-
 #tile-[tile_id] .vue-slider {
     margin: 0 !important;
     width: 100% !important;
 height: 100% !important;
 }
-
 #tile-[tile_id] .vue-slider-process {
     border-radius: 0;
     background-color: rgba(0,0,0,.3) !important;
@@ -1914,32 +1896,26 @@ height: 100% !important;
     bottom: 0;
     width: 100% !important;
 }
-
 #tile-[tile_id] .vue-slider-dot-handle {
     border-radius: 0;
     background-color: transparent;
     -webkit-box-shadow: none;
     box-shadow: none;
 }
-
 #tile-[tile_id] .vue-slider-dot {
     width: 101% !important;
 }
-
 #tile-[tile_id] .vue-slider-rail {
     background-color: transparent !important;
     height: 101%;
 }
-
 #tile-[tile_id] .vue-slider-dot-tooltip {
     visibility: visible;
     padding-left: 5px;
 }
-
 #tile-[tile_id] .vue-slider-dot-tooltip {
     left: 5px;
 }
-
 #tile-[tile_id] .vue-slider-dot-tooltip-inner {
     background-color: unset;
     border-color: unset;
@@ -1951,33 +1927,25 @@ height: 100% !important;
     position: absolute;
     line-height: 30px;
 }
-
 #tile-[tile_id] .tile-edit {
     z-index: 6;
 }
-
 #tile-[tile_id].lev10-80 .vue-slider-dot-tooltip {
     bottom: -50px;
 }
-
 #tile-[tile_id].lev10-90 .vue-slider-dot-tooltip {
     top: 80px;
 }
-
 #tile-[tile_id].lev10-100 .vue-slider-dot-tooltip {
     top: 100px;
     bottom: auto;
 }
-
 #tile-[tile_id] .tile-primary>div:nth-child(2) {
    display: none;
 }
-
 #tile-[tile_id] .vue-slider-dot-tooltip-inner-left:after {
 visibility: hidden;
 }
-
-
 #tile-[tile_id].lev10-90 .vue-slider-dot-tooltip-inner-left:after,
 #tile-[tile_id].lev10-100 .vue-slider-dot-tooltip-inner-left:after{
     visibility: visible;
@@ -1985,111 +1953,44 @@ visibility: hidden;
     top: -10px;
     left: 0;
 }
-
 EOF;
 
-$mods_repo['tiletype']['touch_slider']['modifier']['touch_layout']['label'] = "Alternate Layout";
-$mods_repo['tiletype']['touch_slider']['modifier']['touch_layout']['select-lookup'] = 'checkbox';
-$mods_repo['tiletype']['touch_slider']['modifier']['touch_layout']['text']['default'] = 'Make the slider value angled.';
 
-$mods_repo['tiletype']['touch_slider']['thevaluehere']['css'];
-$mods_repo['tiletype']['touch_slider']['value']['default']['css'];
 
-$mods_repo['tiletype']['touch_slider']['modifier']['touch_layout']['css']['default'] = <<<EOF
-#tile-[tile_id] .vue-slider-dot-tooltip-inner-bottom:after,
-#tile-[tile_id] .vue-slider-dot-tooltip-inner-top:after {
-    left: 15px;
-    visibility: visible;
-}
-
-#tile-[tile_id] .vue-slider-dot-tooltip {
-    transform: rotate(45deg);
-    bottom: 15px;
-    padding-left: 0 !important;
-    left: 10px;
-    bottom: 17px;
-}
-
-#tile-[tile_id] span.vue-slider-dot-tooltip-text {
-    width: 30px;
-    text-align: center;
-    display: block;
-}
-
-#tile-[tile_id] .vue-slider-dot-tooltip-inner {
-    margin-left: -5px;
-}
-
-#tile-[tile_id].lev10-80 .vue-slider-dot-tooltip,
-#tile-[tile_id].lev10-90 .vue-slider-dot-tooltip,
-#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip {
-    bottom: 2px;
-    left: -5px;
-    right: auto;
-    top: auto;
-    transform: rotate(-45deg);
-}
-
-EOF;
-
-$mods_repo['tiletype']['touch_slider']['modifier']['touch_layout']['css']['level-vertical'] = <<<EOF
-#tile-[tile_id] .vue-slider-dot-tooltip-inner-left:after {
-    transform: rotate(90deg);
-    height: 0;
-    width: 0;
-    left: 7px;
-    top: auto;
-    bottom: -10px;
-    right: auto;
-    visibility: visible;
-}
-
-#tile-[tile_id] .vue-slider-dot-tooltip-inner {
-    transform: rotate(45deg);
-}
-#tile-[tile_id] .vue-slider-dot-tooltip {
-    left: 6px;
-    bottom: 13px;
-    top: auto;
-    padding-left: 0;
-}
-
-#tile-[tile_id].lev10-80 .vue-slider-dot-tooltip-inner-left:after,
-#tile-[tile_id].lev10-90 .vue-slider-dot-tooltip-inner-left:after,
-#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip-inner-left:after {
-    bottom: auto;
-    height: 0;
-    left: -13px;
-    right: auto;
-    top: 10px;
-    transform: rotate(180deg);
-    visibility: visible;
-    width: 0;
-}
-
-#tile-[tile_id].lev10-80 .vue-slider-dot-tooltip,
-#tile-[tile_id].lev10-90 .vue-slider-dot-tooltip,
-#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip {
-    bottom: auto;
-    right: auto;
-}
-
-#tile-[tile_id].lev10-80 .vue-slider-dot-tooltip {
-    top: 42px;
-}
-
-#tile-[tile_id].lev10-90 .vue-slider-dot-tooltip {
-    top: 80px;
-}
-
-#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip {
-    top: 100px;
-}
-
-EOF;
 
 $mods_repo['tiletype']['buttonize']['label'] = "Buttonize!";
 $mods_repo['tiletype']['buttonize']['type'] = 'checkbox';
+$mods_repo['tiletype']['buttonize']['text']['default'] = 'Change the layout of this tile to be more button-like.';
+$mods_repo['tiletype']['buttonize']['text']['dashboard'] = 'Change the layout of this Dashboard Link to be a stacked large icon and small text.';
+$mods_repo['tiletype']['buttonize']['css']['default'] = <<<EOF
+#tile-[tile_id] .material-icons::before,
+#tile-[tile_id] .material-icons::after {
+  font-size: 250%;
+}
+EOF;
+$mods_repo['tiletype']['buttonize']['css']['dashboard'] = <<<EOF
+#tile-[tile_id] {
+    height: 100%;
+}
+
+#tile-[tile_id] .tile-primary {
+    line-height: 1.2em;
+}
+
+#tile-[tile_id] .tile-primary:before {
+    display: block !important;
+    line-height: 1.2em;
+    font-size: 40px;
+    visibility: visible;
+}
+
+#tile-[tile_id] .tile-primary:after {
+    font-size: 18px;
+    margin-left: 0px;
+    line-height: 1.2em;
+}
+
+EOF;
 $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['label'] = "Icon only";
 $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['type'] = 'checkbox';
 $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['text']['default'] = 'Hide the text, only show the icon.';
@@ -2109,38 +2010,6 @@ $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['css']['dashboard']
 #tile-[tile_id] .tile-primary:before {
     font-size: 60px;
 }
-EOF;
-
-$mods_repo['tiletype']['buttonize']['text']['default'] = 'Change the layout of this tile to be more button-like.';
-$mods_repo['tiletype']['buttonize']['text']['dashboard'] = 'Change the layout of this Dashboard Link to be a stacked large icon and small text.';
-$mods_repo['tiletype']['buttonize']['css']['default'] = <<<EOF
-#tile-[tile_id] .material-icons::before,
-#tile-[tile_id] .material-icons::after {
-  font-size: 250%;
-}
-EOF;
-$mods_repo['tiletype']['buttonize']['css']['dashboard'] = <<<EOF
-#tile-[tile_id] {
-    height: 100%;
-}
-
-#tile-[tile_id] .tile-primary {
-    line-height: 1.2em;
-}
-
-#tile-[tile_id] .tile-primary:before {
-    display: block;
-    line-height: 1.2em;
-    font-size: 40px;
-    visibility: visible;
-}
-
-#tile-[tile_id] .tile-primary:after {
-    font-size: 18px;
-    margin-left: 0px;
-    line-height: 1.2em;
-}
-
 EOF;
 
 $mods_repo['tiletype']['color_fg']['label'] = "Text Color";
