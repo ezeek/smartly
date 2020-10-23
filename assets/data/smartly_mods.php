@@ -643,6 +643,10 @@ $mods_repo['dashboard']['header']['value']['hidden']['css'] = <<<EOF
     height: [grid_gap]px;
     width: [grid_gap]px
 }
+
+#open-modal-btn {
+    display: none;
+}
 EOF;
 $mods_repo['dashboard']['header']['value']['light_bottom']['css'] = <<<EOF
 .dashboard>div:first-child {
@@ -665,7 +669,7 @@ $mods_repo['dashboard']['header']['value']['light_bottom']['css'] = <<<EOF
   z-index: 2;
   color: black !important;
   background-color: rgba(255,255,255,.9);
-  bottom: 0;
+  top: 0;
 }
 
 .header {
@@ -693,6 +697,7 @@ smartly {
     position: absolute !important;
     height: 100vh !important;
     padding-top: [grid_gap]px;
+    top: 60px;
 }
 
 #modal-1 div[role=dialog] {
@@ -721,7 +726,7 @@ $mods_repo['dashboard']['header']['value']['dark_bottom']['css'] = <<<EOF
   z-index: 2;
   color: white !important;
   background-color: rgba(0,0,0,.9);
-  bottom: 0;
+  top: 0;
 }
 
 .header {
@@ -749,6 +754,7 @@ smartly {
     position: absolute !important;
     height: 100vh !important;
     padding-top: [grid_gap]px;
+    top: 60px;
 }
 
 #modal-1 div[role=dialog] {
@@ -1716,21 +1722,14 @@ $mods_repo['tiletype']['zoomable']['css']['attribute'] = <<<EOF
 
 EOF;
 
-$mods_repo['tiletype']['touch_slider']['label'] = "Touch Slider";
-$mods_repo['tiletype']['touch_slider']['type'] = 'select-advanced';
-$mods_repo['tiletype']['touch_slider']['options'] = [
-    "default" => "Stock",
-    "basic" => "Basic Touch",
-    "angled" => "Angled Touch",
-    "stock_percentage" => "Stock Percentage"
-];
 
+
+
+
+$mods_repo['tiletype']['touch_slider']['label'] = "Enable Touch Slider";
+$mods_repo['tiletype']['touch_slider']['type'] = 'checkbox';
 $mods_repo['tiletype']['touch_slider']['text']['default'] = 'Make the entire tile a touch slider.';
-$mods_repo['tiletype']['touch_slider']['css']['default']['default'] = <<<EOF
-.null {}
-EOF;
-
-$mods_repo['tiletype']['touch_slider']['css']['basic']['default'] = <<<EOF
+$mods_repo['tiletype']['touch_slider']['css']['default'] = <<<EOF
 #tile-[tile_id] {
     margin: 0;
 }
@@ -1825,10 +1824,10 @@ $mods_repo['tiletype']['touch_slider']['css']['basic']['default'] = <<<EOF
 }
 
 #tile-[tile_id] .tile-primary>div:nth-child(3) {
-    z-index: 5;
+    bottom: .5em;
+    right: 1.5em;
     position: absolute;
-    bottom: .75em;
-    left: 1em;
+    z-index: 5;
 }
 
 #tile-[tile_id] .tile-primary>div:nth-child(3) {
@@ -1852,7 +1851,7 @@ $mods_repo['tiletype']['touch_slider']['css']['basic']['default'] = <<<EOF
 
 EOF;
 
-$mods_repo['tiletype']['touch_slider']['css']['basic']['level-vertical'] = <<<EOF
+$mods_repo['tiletype']['touch_slider']['css']['level-vertical'] = <<<EOF
 #tile-[tile_id] {
     margin: 0;
 }
@@ -1941,11 +1940,18 @@ height: 100% !important;
     bottom: auto;
 }
 #tile-[tile_id] .tile-primary>div:nth-child(2) {
-   display: none;
+    bottom: .5em;
+    margin-left: auto;
+    position: absolute;
+    visibility: hidden;
+    z-index: 5;
+    margin-right: auto;
+    width: 100%;
 }
 #tile-[tile_id] .vue-slider-dot-tooltip-inner-left:after {
 visibility: hidden;
 }
+
 #tile-[tile_id].lev10-90 .vue-slider-dot-tooltip-inner-left:after,
 #tile-[tile_id].lev10-100 .vue-slider-dot-tooltip-inner-left:after{
     visibility: visible;
@@ -1955,8 +1961,47 @@ visibility: hidden;
 }
 EOF;
 
+$mods_repo['tiletype']['touch_slider']['modifier']['layout']['label'] = "Slider Layout";
+$mods_repo['tiletype']['touch_slider']['modifier']['layout']['type'] = 'select-advanced';
+$mods_repo['tiletype']['touch_slider']['modifier']['layout']['options'] = [
+    "default" => "Default",
+    "angled" => "Angled Touch",
+    "stock_percentage" => "Stock Percentage"
+];
 
+$mods_repo['tiletype']['touch_slider']['modifier']['layout']['text']['default'] = 'Adjust the layout of the touch slider.';
+$mods_repo['tiletype']['touch_slider']['modifier']['layout']['css']['default']['default'] = <<<EOF
+.null {}
+EOF;
 
+$mods_repo['tiletype']['touch_slider']['modifier']['layout']['css']['stock_percentage']['default'] = <<<EOF
+#tile-[tile_id] .tile-primary>div:nth-child(3) {
+    visibility: visible;
+    pointer-events: none;
+}
+
+#tile-[tile_id].lev10-90 .vue-slider-dot-tooltip-inner-left:after,
+#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip-inner-left:after {
+  visibility: hidden;
+}
+#tile-[tile_id] .vue-slider-dot-tooltip {
+    visibility: hidden;
+}
+EOF;
+
+$mods_repo['tiletype']['touch_slider']['modifier']['layout']['css']['stock_percentage']['level-vertical'] = <<<EOF
+#tile-[tile_id] .tile-primary>div:nth-child(2) {
+    visibility: visible;
+    pointer-events: none;
+}
+#tile-[tile_id] .vue-slider-dot-hover:hover .vue-slider-dot-tooltip, 
+#tile-[tile_id] .vue-slider-dot-hover:hover {
+    visibility: visible !important;
+}
+#tile-[tile_id] .vue-slider-dot-tooltip {
+    visibility: hidden;
+}
+EOF;
 
 $mods_repo['tiletype']['buttonize']['label'] = "Buttonize!";
 $mods_repo['tiletype']['buttonize']['type'] = 'checkbox';
@@ -2009,6 +2054,10 @@ $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['css']['dashboard']
 
 #tile-[tile_id] .tile-primary:before {
     font-size: 60px;
+}
+
+#tile-[tile_id] .tile-primary:after {
+    display: none;
 }
 EOF;
 
@@ -2097,8 +2146,35 @@ EOF;
 
 // CHROMA TILE
 $mods_repo['tiletype']['chroma_battery']['label'] = "Enable value-based battery tile color for this tile.";
-$mods_repo['tiletype']['chroma_battery']['type'] = 'textbox';
-$mods_repo['tiletype']['chroma_battery']['text']['default'] = 'Change the color of this tile based on the battery value.';
+$mods_repo['tiletype']['chroma_battery']['type'] = 'select';
+$mods_repo['tiletype']['chroma_battery']['options'] = [
+    "default" => "Use dashboard setting",
+    "10,20" => "10 > 20",
+    "10,30" => "10 > 30",
+    "10,40" => "10 > 40",
+    "20,30" => "20 > 30",
+    "20,40" => "20 > 40",
+    "20,50" => "20 > 50",
+    "20,60" => "20 > 60",
+    "30,40" => "30 > 40",
+    "30,50" => "30 > 50",
+    "30,50" => "30 > 50",
+    "30,60" => "30 > 60",
+    "30,70" => "30 > 70",
+    "40,50" => "40 > 50",
+    "40,60" => "40 > 60",
+    "40,70" => "40 > 70",
+    "40,80" => "40 > 80",
+    "50,60" => "30 > 60",
+    "50,70" => "50 > 70",
+    "50,50" => "50 > 50",
+    "50,60" => "50 > 60",
+    "50,70" => "50 > 70",
+    "50,80" => "50 > 80",
+    "60,70" => "60 > 70",
+    "60,80" => "60 > 80"
+];
+$mods_repo['tiletype']['chroma_battery']['text']['default'] = '(CRITICAL level > WARNING level) > Green for everything above.';
 
 $mods_repo['tiletype']['chroma_temperature']['label'] = "Enable value-based temperature tile color for this tile.";
 $mods_repo['tiletype']['chroma_temperature']['type'] = 'textbox';
@@ -2111,20 +2187,33 @@ $mods_repo['tiletype']['chroma_humidity']['text']['default'] = 'Change the color
 // CHROMA DASHBOARD
 
 $mods_repo['dashboard']['chroma_battery']['label'] = "Global value-based battery tile color.";
-$mods_repo['dashboard']['chroma_battery']['type'] = 'textbox';
+$mods_repo['dashboard']['chroma_battery']['type'] = 'select';
 $mods_repo['dashboard']['chroma_battery']['options'] = [
     "default" => "Disabled",
-    "20,40" => "Light (top)",
-    "light_bottom" => "Light (bottom)",
-    "dark_top" => "Dark (top)",
-    "dark_bottom" => "Dark (bottom)",
-    "hidden" => "Hidden (touch top right)",
-    "stealth_top_right" => "Stealth (top right)",
-    "stealth_top_right_vertical" => "Stealth (top right - vertical)",
-    "stealth_bottom_right" => "Stealth (bottom right)",
-    "stealth_bottom_right_vertical" => "Stealth (bottom right - vertical)"
+    "10,20" => "10 > 20",
+    "10,30" => "10 > 30",
+    "10,40" => "10 > 40",
+    "20,30" => "20 > 30",
+    "20,40" => "20 > 40",
+    "20,50" => "20 > 50",
+    "20,60" => "20 > 60",
+    "30,40" => "30 > 40",
+    "30,50" => "30 > 50",
+    "30,50" => "30 > 50",
+    "30,60" => "30 > 60",
+    "30,70" => "30 > 70",
+    "40,50" => "40 > 50",
+    "40,60" => "40 > 60",
+    "40,70" => "40 > 70",
+    "40,80" => "40 > 80",
+    "50,60" => "30 > 60",
+    "50,70" => "50 > 70",
+    "50,50" => "50 > 50",
+    "50,60" => "50 > 60",
+    "50,70" => "50 > 70",
+    "50,80" => "50 > 80"
 ];
-$mods_repo['dashboard']['chroma_battery']['text']['default'] = 'Change the color of this tile based on the battery value.';
+$mods_repo['dashboard']['chroma_battery']['text']['default'] = '(CRITICAL level > WARNING level) > Green for everything above.';
 
 $mods_repo['dashboard']['chroma_temperature']['label'] = "Global value-based temperature tile color.";
 $mods_repo['dashboard']['chroma_temperature']['type'] = 'checkbox';
