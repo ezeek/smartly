@@ -903,7 +903,7 @@ function parse_form(smart_id, mod_name, mod_construct, parent_mod = null, sectio
         break;
 
       case 'select':
-      case 'select-value':
+      case 'select-advanced':
 console.log($("#smart_edit_" + parent_plug + mod_name).val());
         if ($("#smart_edit_" + parent_plug + mod_name).val() && $("#smart_edit_" + parent_plug + mod_name).val() !== 'default') {
           if (debug) { console.log("#smart_edit_" + parent_plug + mod_name, "SMART_EDIT_TITLE PRESENT"); }

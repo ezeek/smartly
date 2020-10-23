@@ -1964,8 +1964,7 @@ EOF;
 $mods_repo['tiletype']['touch_slider']['modifier']['layout']['label'] = "Slider Layout";
 $mods_repo['tiletype']['touch_slider']['modifier']['layout']['type'] = 'select-advanced';
 $mods_repo['tiletype']['touch_slider']['modifier']['layout']['options'] = [
-    "default" => "Default",
-    "angled" => "Angled Touch",
+    "inherit" => "Default",
     "stock_percentage" => "Stock Percentage"
 ];
 
@@ -1986,6 +1985,10 @@ $mods_repo['tiletype']['touch_slider']['modifier']['layout']['css']['stock_perce
 }
 #tile-[tile_id] .vue-slider-dot-tooltip {
     visibility: hidden;
+}
+#tile-[tile_id] .vue-slider-dot-hover:hover .vue-slider-dot-tooltip, 
+#tile-[tile_id] .vue-slider-dot-hover:hover {
+    visibility: visible !important;
 }
 EOF;
 
