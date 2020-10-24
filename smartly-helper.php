@@ -804,6 +804,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
         $token_replacements = array(
             '[tile_id]' => $smart_id,
             '[value]' => $icon_code,
+            '[iconsize]' => strval($settings['iconSize']) . "px",
             '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
             '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
             '[state]' => $state_name !== 'default' ? "." . $state_name : '',
@@ -867,6 +868,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
           $token_replacements = array(
               '[tile_id]' => $smart_id,
               '[value]' => $mod_value,
+              '[iconsize]' => strval($settings['iconSize']) . "px",
               '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
               '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
               '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
@@ -890,6 +892,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
                 $token_replacements = array(
                     '[tile_id]' => $smart_id,
                     '[value]' => $mod_modifier_value,
+                    '[iconsize]' => strval($settings['iconSize']) . "px",
                     '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
                     '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
                     '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
@@ -934,6 +937,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
             $token_replacements = array(
               '[tile_id]' => $smart_id,
               '[value]' => $mod_value,
+              '[iconsize]' => strval($settings['iconSize']) . "px",
               '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
               '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
               '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
@@ -956,6 +960,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
                   $token_replacements = array(
                       '[tile_id]' => $smart_id,
                       '[value]' => $mod_modifier_value,
+                      '[iconsize]' => strval($settings['iconSize']) . "px",
                       '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
                       '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
                       '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
@@ -1122,6 +1127,7 @@ print_r($mods_data) . "\r\n";
       $token_replacements = array(
           '[tile_id]' => $id,
           '[value]' => $tile_value,
+          '[iconsize]' => strval($settings['iconSize']) . "px",
           '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
           '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
           '[padding_calc]' => strval($settings['fontSize'] / 14) . "em",
@@ -1145,6 +1151,7 @@ print_r($mods_data) . "\r\n";
       $token_replacements = array(
           '[tile_id]' => $id,
           '[value]' => $tile_value,
+          '[iconsize]' => strval($settings['iconSize']) . "px",
           '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
           '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
           '[padding_calc]' => strval($settings['fontSize'] / 14) . "em",

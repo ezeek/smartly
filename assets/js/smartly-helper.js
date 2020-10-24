@@ -5,7 +5,7 @@ var smartlyDATA = '';
 var hubitatJSON = '';
 var smartlyMODS = [];
 
-var debug = true;
+var debug = false;
 
 $(document).ready(function() {
 
@@ -889,13 +889,15 @@ function parse_form(smart_id, mod_name, mod_construct, parent_mod = null, sectio
 
           if (parent_mod) {
             smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = true;
-          } else { console.log(smartlyDATA['tiles'][smart_id], section + " " + mod_name);
+          } else {
+            if (debug) {  console.log(smartlyDATA['tiles'][smart_id], section + " " + mod_name); }
             smartlyDATA['tiles'][smart_id][section][mod_name]['value'] = true;
           }
         } else {
           if (parent_mod) {
             smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = "unchecked";
-          } else { console.log(smartlyDATA['tiles'][smart_id], section + " " + mod_name);
+          } else {
+            if (debug) {  console.log(smartlyDATA['tiles'][smart_id], section + " " + mod_name); }
             smartlyDATA['tiles'][smart_id][section][mod_name]['value'] = "unchecked";
           }
         }
@@ -904,7 +906,7 @@ function parse_form(smart_id, mod_name, mod_construct, parent_mod = null, sectio
 
       case 'select':
       case 'select-advanced':
-console.log($("#smart_edit_" + parent_plug + mod_name).val());
+        if (debug) {  console.log($("#smart_edit_" + parent_plug + mod_name).val()); }
         if ($("#smart_edit_" + parent_plug + mod_name).val() && $("#smart_edit_" + parent_plug + mod_name).val() !== 'default') {
           if (debug) { console.log("#smart_edit_" + parent_plug + mod_name, "SMART_EDIT_TITLE PRESENT"); }
 
@@ -935,7 +937,10 @@ console.log($("#smart_edit_" + parent_plug + mod_name).val());
           if (parent_mod) {
             smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = $("#smart_edit_" + parent_plug + mod_name).val();
           } else {
-            console.log(smartlyDATA['tiles'][smart_id], "setting defaults")
+            if (debug) {
+              console.log(smartlyDATA['tiles'][smart_id], "setting defaults");
+              console.log(section, "SECTION");
+            }
             smartlyDATA['tiles'][smart_id][section][mod_name]['value'] = $("#smart_edit_" + mod_name).val();
           }
 
@@ -945,7 +950,7 @@ console.log($("#smart_edit_" + parent_plug + mod_name).val());
             if (parent_mod) {
               smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = null;
             } else {
-              console.log(mod_name, "MODNAME");
+              if (debug) {  console.log(mod_name, "MODNAME"); }
               smartlyDATA['tiles'][smart_id][section][mod_name]['value'] = null;
             }
 
@@ -963,7 +968,6 @@ console.log($("#smart_edit_" + parent_plug + mod_name).val());
 
 function build_form(tile_id, tile_data = null, tile_mod, mod_construct, mod_name) {
   if (debug) {  console.log(tile_mod, "build_form: tile_mod");}
-  console.log(tile_mod, "build_form: tile_mod");
     var formValue = '';
     var formInsert = '';
 
@@ -986,15 +990,15 @@ function build_form(tile_id, tile_data = null, tile_mod, mod_construct, mod_name
 
   switch (mod_construct.type) {
     case 'checkbox':
-console.log(mod_construct, "INCOMING MOD CONSTRUCT - CHECKBOX");
+      if (debug) {  console.log(mod_construct, "INCOMING MOD CONSTRUCT - CHECKBOX"); }
 
       if (typeof tile_mod !== 'undefined') {
         if (tile_mod.value === true) {
           formValue = 'checked';
         }
-        console.log(tile_mod.value, "TILEMOD VALUE: " . name);
+        if (debug) {  (tile_mod.value, "TILEMOD VALUE: " . name); }
       } else {
-        console.log("UNDEFINED TILEMOD");
+        if (debug) {  console.log("UNDEFINED TILEMOD"); }
       }
 
 
@@ -1048,7 +1052,7 @@ console.log(mod_construct, "INCOMING MOD CONSTRUCT - CHECKBOX");
       formValue = tile_mod.value ? tile_mod.value : '';
       formHtml += '<div class="form-group row"><label class="col-4 col-form-label" for="title">' + mod_construct.label + '</label><div class="col-8">';
       formHtml += '<div id="pickr_' + mod_name + '">&nbsp;</div><input id="smart_edit_' + mod_name + '" name="smart_edit_' + mod_name + '" type="text" class="form-control" aria-describedby="' + mod_name + 'HelpBlock" value="' + formValue + '" ' + formInsert + '><span id="' + mod_name + 'HelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
-      formHtml += '<script type="text/javascript">var pickr_' + mod_name + ' = new Pickr({el: "#pickr_' + mod_name + '",default: $("#smart_edit_' + mod_name + '").val(), comparison: false, defaultRepresentation: "RGBA",toRGBA: true,components: {preview: true,opacity: true,hue: true,interaction: {input: true,clear: false,save: true}},onChange(hsva, instance) { $("#smart_edit_' + mod_name + '").val(hsva.toRGBA().toString()); console.log(hsva, "object"); }});</script>';
+      formHtml += '<script type="text/javascript">var pickr_' + mod_name + ' = new Pickr({el: "#pickr_' + mod_name + '",default: $("#smart_edit_' + mod_name + '").val(), comparison: false, defaultRepresentation: "RGBA",toRGBA: true,components: {preview: true,opacity: true,hue: true,interaction: {input: true,clear: false,save: true}},onChange(hsva, instance) { $("#smart_edit_' + mod_name + '").val(hsva.toRGBA().toString()); }});</script>';
       formHtml += '<script type="text/javascript">$("#smart_edit_' + mod_name + '").on("change paste",function() { if ($(this).val()) { pickr_' + mod_name + '.setColor( $(this).val() ); } else { pickr_' + mod_name + '.setColor(null); }    });</script>';
 
       break

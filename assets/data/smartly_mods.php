@@ -83,7 +83,7 @@ $mods_enabled['dashboard']['colorcoding']['humidity'] = true;
 $mods_enabled['dashboard']['colorcoding']['battery'] = true;
 */
 
-$mods_enabled['tiletype']['chroma_humidity'] = ['humidity'];
+//$mods_enabled['tiletype']['chroma_humidity'] = ['humidity'];
 $mods_enabled['tiletype']['chroma_temperature'] = ['temperature'];
 $mods_enabled['tiletype']['chroma_battery'] = ['battery'];
 
@@ -117,7 +117,7 @@ $mods_enabled['tiletype']['title'] = [
   'temperature',
   'humidity',
   'hsm',
-//'image',
+//'images',
   'level-step',
   'level-vertical',
 //  'links',
@@ -167,7 +167,7 @@ $mods_enabled['tiletype']['text_alignment'] = [
 //    'temperature',
     'humidity',
     'hsm',
-//'image',
+//'images',
     'level-step',
     'level-vertical',
 //  'links',
@@ -218,7 +218,7 @@ $mods_enabled['tiletype']['remove_title'] = [
   'temperature',
   'humidity',
   'hsm',
-//'image',
+//'images',
   'level-step',
   'level-vertical',
 //  'links',
@@ -267,7 +267,7 @@ $mods_enabled['tiletype']['nudge'] = [
   'temperature',
   'humidity',
 //  'hsm',
-  'image',
+ // 'images',
   'level-step',
 //  'level-vertical',
 //  'links',
@@ -317,7 +317,7 @@ $mods_enabled['tiletype']['icon'] = [
   'temperature',
   'humidity',
 //  'hsm',
-//'image',
+//'images',
   'level-step',
   'level-vertical',
   'links',
@@ -367,7 +367,7 @@ $mods_enabled['tiletype']['zoomable'] = [
   'temperature',
   'humidity',
   'hsm',
-  'image',
+//  'images',
   'level-step',
   'level-vertical',
   'links',
@@ -396,7 +396,7 @@ $mods_enabled['tiletype']['zoomable'] = [
 
 $mods_enabled['tiletype']['label'] = [
   'dashboard',
-  'image',
+  'images',
   'video',
   'thermostat'
 ];
@@ -425,7 +425,7 @@ $mods_enabled['tiletype']['color_fg'] = [
   'temperature',
   'humidity',
 //  'hsm',
-//'image',
+//'images',
   'level-step',
   'level-vertical',
   'links',
@@ -476,7 +476,7 @@ $mods_enabled['tiletype']['color_bg'] = [
   'temperature',
   'humidity',
 //  'hsm',
-  'image',
+  'images',
   'level-step',
   'level-vertical',
   'links',
@@ -528,7 +528,7 @@ $mods_enabled['tiletype']['border'] = [
   'temperature',
   'humidity',
   'hsm',
-  'image',
+  'images',
   'level-step',
   'level-vertical',
   'links',
@@ -1067,7 +1067,7 @@ EOF;
 $mods_repo['tiletype']['label']['css']['dashboard'] = <<<EOF
 #tile-[tile_id] .tile-primary {
         font-size: 0 !important;
-        color: transparent;
+        xkcd-color: transparent;
 }
 
 #tile-[tile_id] .tile-primary:after {
@@ -1077,7 +1077,7 @@ $mods_repo['tiletype']['label']['css']['dashboard'] = <<<EOF
 }
 
 #tile-[tile_id] .tile-primary:before {
-        xxfont-size: [fontsize_calc];
+        font-size: [iconsize];
 }
 EOF;
 
@@ -2004,6 +2004,10 @@ $mods_repo['tiletype']['touch_slider']['modifier']['layout']['css']['stock_perce
 #tile-[tile_id] .vue-slider-dot-tooltip {
     visibility: hidden;
 }
+#tile-[tile_id].lev10-90 .vue-slider-dot-tooltip-inner-left:after,
+#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip-inner-left:after {
+  visibility: hidden;
+}
 EOF;
 
 $mods_repo['tiletype']['buttonize']['label'] = "Buttonize!";
@@ -2148,8 +2152,8 @@ $mods_repo['tiletype']['remove_title']['css']['default'] = <<<EOF
 EOF;
 
 // CHROMA TILE
-$mods_repo['tiletype']['chroma_battery']['label'] = "Enable value-based battery tile color for this tile.";
-$mods_repo['tiletype']['chroma_battery']['type'] = 'select';
+$mods_repo['tiletype']['chroma_battery']['label'] = "Custom value-based color for this tile";
+$mods_repo['tiletype']['chroma_battery']['type'] = 'textbox';
 $mods_repo['tiletype']['chroma_battery']['options'] = [
     "default" => "Use dashboard setting",
     "10,20" => "10 > 20",
@@ -2174,11 +2178,11 @@ $mods_repo['tiletype']['chroma_battery']['options'] = [
     "60,70" => "60 > 70",
     "60,80" => "60 > 80"
 ];
-$mods_repo['tiletype']['chroma_battery']['text']['default'] = '(CRITICAL level > WARNING level) > Green for everything above.';
+$mods_repo['tiletype']['chroma_battery']['text']['default'] = 'Comma-delimited breakpoints.  Example: "20, 45" is [CRITICAL 1-20], [WARNING 21-45] then OK for everything above.<br><small>red_end, yellow_end</small>';
 
-$mods_repo['tiletype']['chroma_temperature']['label'] = "Enable value-based temperature tile color for this tile.";
+$mods_repo['tiletype']['chroma_temperature']['label'] = "Custom value-based gradient for this tile";
 $mods_repo['tiletype']['chroma_temperature']['type'] = 'textbox';
-$mods_repo['tiletype']['chroma_temperature']['text']['default'] = 'Change the color of this tile based on the temperature value.';
+$mods_repo['tiletype']['chroma_temperature']['text']['default'] = 'Comma-delimited gradient index values.  Default values:<br><b>-30,15,32,33,70,90,100,120</b> F<br><b>-30,-10,0,1,20,30,40,50</b>  C<br><small>purple,blue,blue_end,green_start,green,yellow,orange,red</small>';
 
 $mods_repo['tiletype']['chroma_humidity']['label'] = "Enable value-based humidity tile color for this tile.";
 $mods_repo['tiletype']['chroma_humidity']['type'] = 'textbox';
@@ -2187,7 +2191,7 @@ $mods_repo['tiletype']['chroma_humidity']['text']['default'] = 'Change the color
 // CHROMA DASHBOARD
 
 $mods_repo['dashboard']['chroma_battery']['label'] = "Global value-based battery tile color.";
-$mods_repo['dashboard']['chroma_battery']['type'] = 'select';
+$mods_repo['dashboard']['chroma_battery']['type'] = 'textbox';
 $mods_repo['dashboard']['chroma_battery']['options'] = [
     "default" => "Disabled",
     "10,20" => "10 > 20",
@@ -2212,15 +2216,17 @@ $mods_repo['dashboard']['chroma_battery']['options'] = [
     "60,70" => "60 > 70",
     "60,80" => "60 > 80"
 ];
-$mods_repo['dashboard']['chroma_battery']['text']['default'] = '(CRITICAL level > WARNING level) > Green for everything above.';
+$mods_repo['dashboard']['chroma_battery']['text']['default'] = "Comma-delimited breakpoints.  Example: '20, 45' is [CRITICAL 1-20], [WARNING 21-45] then OK for everything above.<br><small>red_end, yellow_end</small>";
+
+//$mods_repo['dashboard']['chroma_battery']['text']['default'] = '(CRITICAL level > WARNING level) > Green for everything above.';
 
 $mods_repo['dashboard']['chroma_temperature']['label'] = "Global value-based temperature tile color.";
 $mods_repo['dashboard']['chroma_temperature']['type'] = 'checkbox';
-$mods_repo['dashboard']['chroma_temperature']['text']['default'] = 'Change the color of this tile based on the temperature value.';
+$mods_repo['dashboard']['chroma_temperature']['text']['default'] = 'Change the color of all Temperature tiles based on the temperature value.';
 
 $mods_repo['dashboard']['chroma_humidity']['label'] = 'Enable value-based humidity tile color globally.';
 $mods_repo['dashboard']['chroma_humidity']['type'] = 'checkbox';
-$mods_repo['dashboard']['chroma_humidity']['text']['default'] = 'Change the color of this tile based on the humidity value.';
+$mods_repo['dashboard']['chroma_humidity']['text']['default'] = 'Change the color of all Humidity tiles based on the humidity value.';
 
 $mods_repo['dashboard']['parallax']['label'] = 'Enable Parallax Background';
 $mods_repo['dashboard']['parallax']['text']['default'] = 'Add parallax vertical scroll effect for dashboard background.';
