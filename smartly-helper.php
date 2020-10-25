@@ -1201,7 +1201,19 @@ function smartly_calibrate($minzoom = null, $screenwidth = null, $colwidth = nul
     'nine' => ($gap * 10) + ($colwidth * 9),
     'ten' => ($gap * 11) + ($colwidth * 10),
     'eleven' => ($gap * 12) + ($colwidth * 11),
-    'twelve' => ($gap * 13) + ($colwidth * 12)
+    'twelve' => ($gap * 13) + ($colwidth * 12),
+    'thirteen' => ($gap * 14) + ($colwidth * 13),
+    'fourteen' => ($gap * 15) + ($colwidth * 14),
+    'fifteen' => ($gap * 16) + ($colwidth * 15),
+    'sixteen' => ($gap * 17) + ($colwidth * 16),
+    'seventeen' => ($gap * 18) + ($colwidth * 17),
+    'eighteen' => ($gap * 19) + ($colwidth * 18),
+    'nineteen' => ($gap * 20) + ($colwidth * 19),
+    'twenty' => ($gap * 21) + ($colwidth * 20),
+    'twentyone' => ($gap * 22) + ($colwidth * 21),
+    'twentytwo' => ($gap * 23) + ($colwidth * 22),
+    'twentythree' => ($gap * 24) + ($colwidth * 23),
+    'twentyfour' => ($gap * 25) + ($colwidth * 24)
   ];
 
   $bestmatch = [
@@ -1219,24 +1231,50 @@ function smartly_calibrate($minzoom = null, $screenwidth = null, $colwidth = nul
     if ($zoom > $minzoom && ($abszoom < $bestmatch['abszoom'])) {
 
       // specific overrides for well-known screen widths
-      if ($screenwidth == 1280) {
+      if ($screenwidth == 1280 && $colwidth == 60) {
         $bestmatch = [
-        'name' => 'eight',
-        'width' => $columns['eight'],
-        'zoom' => ($screenwidth) / $columns['eight'],
-        'abszoom' => abs((($screenwidth) / $columns['eight']) - 1) + 1
+        'name' => 'sixteen',
+        'width' => $columns['sixteen'],
+        'zoom' => ($screenwidth) / $columns['sixteen'],
+        'abszoom' => abs((($screenwidth) / $columns['sixteen']) - 1) + 1
         ];
         break;
-      }  elseif ($screenwidth == 1920) {
+      }  elseif ($screenwidth == 1280) {
         $bestmatch = [
-        'name' => 'nine',
-        'width' => $columns['nine'],
-        'zoom' => ($screenwidth) / $columns['nine'],
-        'abszoom' => abs((($screenwidth) / $columns['nine']) - 1) + 1
+            'name' => 'eight',
+            'width' => $columns['eight'],
+            'zoom' => ($screenwidth) / $columns['eight'],
+            'abszoom' => abs((($screenwidth) / $columns['eight']) - 1) + 1
+        ];
+        break;
+      } elseif ($screenwidth == 1920 && $colwidth == 60) {
+        $bestmatch = [
+        'name' => 'eighteen',
+        'width' => $columns['eighteen'],
+        'zoom' => ($screenwidth) / $columns['eighteen'],
+        'abszoom' => abs((($screenwidth) / $columns['eighteen']) - 1) + 1
         ];
         break;
 
-      }  elseif ($screenwidth > 359 && $screenwidth < 421) {
+      } elseif ($screenwidth == 1920) {
+        $bestmatch = [
+            'name' => 'nine',
+            'width' => $columns['nine'],
+            'zoom' => ($screenwidth) / $columns['nine'],
+            'abszoom' => abs((($screenwidth) / $columns['nine']) - 1) + 1
+        ];
+        break;
+
+      } elseif ($screenwidth > 359 && $screenwidth < 421 && $colwidth == 60) {
+        $bestmatch = [
+        'name' => 'six',
+        'width' => $columns['six'],
+        'zoom' => ($screenwidth) / $columns['six'],
+        'abszoom' => abs((($screenwidth) / $columns['six']) - 1) + 1
+        ];
+        break;
+
+      } elseif ($screenwidth > 359 && $screenwidth < 421) {
         $bestmatch = [
         'name' => 'three',
         'width' => $columns['three'],
