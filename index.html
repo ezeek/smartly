@@ -1,276 +1,205 @@
 <!doctype html>
 <html lang="en">
-<head>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
 
+		<!--script src="cookies.js"></script-->
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"/>
+		<link rel="stylesheet" href="assets/css/bootstrap-iconpicker.min.css"/>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/4.9.95/css/materialdesignicons.min.css?rel=efc87f2bdc" />
+		<link rel="stylesheet" href="https://hubitat.ezeek.us/smartly-base/assets/css/mtd-public.min.css?v=1.08" />
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.css"/>
+		<link rel="stylesheet" href="https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/assets/app.css"/>
+		<link rel="stylesheet" href="assets/css/pickr.min.css">
+		<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/4.9.95/fonts/materialdesignicons-webfont.woff2" as="font" type="font/woff2" crossorigin>
+		<link rel="preload" href="https://hubitat.ezeek.us/smartly-base/assets/fonts/mtd-public.woff?v=1.08" as="font" type="font/woff" crossorigin>
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="0" />
+		<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" ></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
+		<script src="assets/js/pickr.min.js"></script>
 
-  <!--script src="cookies.js"></script-->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"/>
-  <link rel="stylesheet" href="assets/css/bootstrap-iconpicker.min.css"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/4.9.95/css/materialdesignicons.min.css?rel=efc87f2bdc" />
-  <link rel="stylesheet" href="https://hubitat.ezeek.us/smartly-base/assets/css/mtd-public.min.css?v=1.08" />
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.css"/>
-  <link rel="stylesheet" href="https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/assets/app.css"/>
-  <link rel="stylesheet" href="assets/css/pickr.min.css">
-  <link rel="stylesheet" href="assets/css/smartly-helper.css"/>
-  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/4.9.95/fonts/materialdesignicons-webfont.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="https://hubitat.ezeek.us/smartly-base/assets/fonts/mtd-public.woff?v=1.08" as="font" type="font/woff" crossorigin>
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-161632491-1"></script>
 
-  <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" ></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
-  <script src="assets/js/pickr.min.js"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', 'UA-161632491-1');
+		</script>
 
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-161632491-1"></script>
+		<script src="assets/js/smartly-helper.js?1604075252"></script>
+		<link rel="stylesheet" href="assets/css/smartly-helper.css?1604075252"/>
 
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'UA-161632491-1');
-  </script>
+	</head>
+	<body OnKeyPress="return disableEnterKey(event)">
 
+		<div id="supplemental_text"><span style="color: white;">
+			<a href="https://community.oh-lalabs.com" target="new">
+			<img src="assets/images/ohla_community.jpg" width="500"></a>
+			<br><br>
+			Hey gang, <a href="https://oh-lalabs.com/articles/we-are-sad-announce" style="color: #f6eb10;">I don't have an account on hubitat community anymore</a> but I wanted
+			<br>
+			to let you know that I fully intend to continue supporting this project.
+			<br><br>
+			Please sign up for our newsletter in the footer of <a href="https://oh-lalabs.com"  style="color: #f6eb10;">our website</a>.
+			<br><br>
 
-  <script src="assets/js/smartly-helper.js"></script>
+			<h4><b>UPDATE:</b> <a href="https://community.oh-lalabs.com" target="new" style="color: #f6eb10;">We have launched the Oh-La LABS Community!</a></h4>
+			<br><br>
+			</span>
 
-</head>
-<body OnKeyPress="return disableEnterKey(event)">
+			<a href="https://community.oh-lalabs.com/t/63" target="_new">view release thread</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="https://community.oh-lalabs.com/t/112/36" target="_new">view support thread</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="https://community.oh-lalabs.com/t/archive-smartly-sub-2-0/65/4" target="_new">donate</a></a>
+		</div>
 
-<div id="supplemental_text"><span style="color: white;">
-<a href="https://community.oh-lalabs.com" target="new">
-<img src="assets/images/ohla_community.jpg" width="500"></a><br><br>
-
-Hey gang, <a href="https://oh-lalabs.com/articles/we-are-sad-announce" style="color: #f6eb10;">I don't have an account on hubitat community anymore</a> but I wanted<br>
-to let you know that I fully intend to continue supporting this project.<br>
-<br>
-Please sign up for our newsletter in the footer of <a href="https://oh-lalabs.com"  style="color: #f6eb10;">our website</a>.<br><br>
-
-
-
-<h4><b>UPDATE:</b> <a href="https://community.oh-lalabs.com" target="new" style="color: #f6eb10;">We have launched the Oh-La LABS Community!</a></h4>
-<br><br>
-</span>
-
-<a href="https://community.oh-lalabs.com/t/release-smartly-2-0-featuring-smartly-inject/63" target="_new">view release thread</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="https://community.oh-lalabs.com/t/release-smartly-2-0-featuring-smartly-inject/63" target="_new">view support thread</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="https://community.oh-lalabs.com/t/archive-smartly-sub-2-0/65/4" target="_new">donate</a></a></div>
-
-<!-- HTML Form (wrapped in a .bootstrap-iso div) -->
-	<div class="bootstrap-iso">
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-md-10 col-sm-11 col-xs-12">
-					<div class="formden_header">
-						<div id="logo_image"><img id="logo" src="https://hubitat.ezeek.us/smartly-base/assets/images/logo_smartly_project.svg" width="150"></div>
-						<div id="logo_text"><b>hubitat dashboard skin engine</b><br>
-							<div id="version_text"><span class="version-wrap">[</span><span id="version"></span><span class="version-wrap">]</span> <span id="patch"></span></div>
+		<!-- HTML Form (wrapped in a .bootstrap-iso div) -->
+		<div class="bootstrap-iso">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-10 col-sm-11 col-xs-12">
+						<div class="formden_header">
+							<div id="logo_image"><img id="logo" src="https://hubitat.ezeek.us/smartly-base/assets/images/logo_smartly_project.svg" width="150"></div>
+							<div id="logo_text"><b>hubitat dashboard skin engine</b><br>
+								<div id="version_text"><span class="version-wrap">[</span><span id="version"></span><span class="version-wrap">]</span> <span id="patch"></span></div>
+							</div>
 						</div>
-					</div>
-					<form method="post" action="smartly-helper.php">
-						<div class="form-group " style="position:relative;">
+						<form method="post" action="smartly-helper.php">
 							<div class="form-group " style="position:relative;">
-								<label class="control-label requiredField" for="inputjson"> your layout JSON <span class="asteriskField">*</span> </label> <span style="position: relative; width: 100%; display: block;">
-                                    <textarea class="form-control stealth" cols="40" id="inputjson" name="inputjson" rows="3"></textarea>
-                                    <button type="button" id="resetclick" class="btn btn-primary"  onClick='smartly_restart();'>Start Over</button>
-                                </span> <span class="help-block text-muted" id="hint_inputjson">
-                                    copy and paste the contents of 'Options &gt; Advanced &gt; Layout' then click 'Update' below. Or <a href="#" id="smartly_restart" onClick="smartly_restart()">click here to <b>start over</b></a>.
-                                </span> </div>
-							<textarea type="hidden" class="form-control" cols="40" id="smartlydata" name="smartlydata" rows="5"></textarea>
-						</div>
-						<div class="form-group">
-							<div class="card">
-								<header class="card-header"> <span class="title">choose a skin</span> </header>
-								<div id="skin_chooser" style="">
-									<article class="card-body">
-										<select id="skinselect" name="skin" class="custom-select">
-											<option value="smartly">smartly (default)</option>
-										</select>
-									</article>
-								</div>
-							</div>
-							<!-- /skin chooser -->
-							<div id="gridwrapper" style="display: none;">
-								<div id="gridheader"></div>
-								<div id="grid"></div>
-							</div>
-							<div class="form-group" style="display: none;">
-								<div class="card">
-									<header class="card-header">
-										<a href="#" data-toggle="collapse" data-target="#update_options" aria-expanded="true" class=""> <i class="icon-action fa fa-chevron-down"></i> <span class="title">Update Options</span> </a>
-									</header>
-									<div class="collapse show" id="update_options" style="">
-										<article class="card-body">
-											<div class=" ">
-												<div class="alert alert-warning" role="alert"> Sorry, selective updating isn't allowed until skins are finalized. </div>
-												<div class="checkbox">
-													<label class="checkbox">
-														<input id="update_colors" name="options[]" type="checkbox" value="color" checked/> Tile Color Templates (customColors) </label>
-												</div>
-												<div class="checkbox">
-													<label class="checkbox">
-														<input id="update_css" name="options[]" type="checkbox" value="css" checked /> CSS (base and skin formatting and stock skin icons) </label>
-												</div>
-												<div class="checkbox">
-													<label class="checkbox">
-														<input id="update_settings" name="options[]" type="checkbox" value="settings" checked /> Recommended settings (grid, spacing, rounded corners, background etc) </label>
-												</div> <span class="help-block text-muted" id="hint_options">Instead of clobbering any customized dashboard settings or tile colors, choose what you'd like to update.</span> </div>
-										</article>
-										<!-- card-body.// -->
-									</div>
-									<!-- collapse .// -->
-								</div>
+								<div class="form-group " style="position:relative;">
+									<label class="control-label requiredField" for="inputjson"> your layout JSON <span class="asteriskField">*</span> </label> <span style="position: relative; width: 100%; display: block;">
+										<textarea class="form-control stealth" cols="40" id="inputjson" name="inputjson" rows="3"></textarea>
+										<button type="button" id="resetclick" class="btn btn-primary"  onClick='smartly_restart();'>Start Over</button>
+									</span> <span class="help-block text-muted" id="hint_inputjson">
+										copy and paste the contents of 'Options &gt; Advanced &gt; Layout' then click 'Update' below. Or <a href="#" id="smartly_restart" onClick="smartly_restart()">click here to <b>start over</b></a>.
+									</span> </div>
+								<textarea type="hidden" class="form-control" cols="40" id="smartlydata" name="smartlydata" rows="5"></textarea>
 							</div>
 							<div class="form-group">
-								<div>
-									<button type="button" id="copyclick" class="btn btn-success" data-clipboard-target="#inputjson" onClick='$("#inpustjson").prop( "readonly", false );'>Updated! Copy to Clipboard</button>
-									<button class="btn btn-warning" type="submit" id="smartly_update">update</button>
-									<div id="update_warning"></div>
-									<div id="update_success">JSON successfully updated!</div>
+								<div class="card">
+									<header class="card-header"> <span class="title">choose a skin</span> </header>
+									<div id="skin_chooser" style="">
+										<article class="card-body">
+											<select id="skinselect" name="skin" class="custom-select">
+												<option value="smartly">smartly (default)</option>
+											</select>
+										</article>
+									</div>
 								</div>
+								<!-- /skin chooser -->
+								<div id="gridwrapper" style="display: none;">
+									<div id="gridheader"></div>
+									<div id="grid"></div>
+								</div>
+								<div class="form-group" style="display: none;">
+									<div class="card">
+										<header class="card-header">
+											<a href="#" data-toggle="collapse" data-target="#update_options" aria-expanded="true" class=""> <i class="icon-action fa fa-chevron-down"></i> <span class="title">Update Options</span> </a>
+										</header>
+										<div class="collapse show" id="update_options" style="">
+											<article class="card-body">
+												<div class=" ">
+													<div class="alert alert-warning" role="alert"> Sorry, selective updating isn't allowed until skins are finalized. </div>
+													<div class="checkbox">
+														<label class="checkbox">
+															<input id="update_colors" name="options[]" type="checkbox" value="color" checked/> Tile Color Templates (customColors) </label>
+													</div>
+													<div class="checkbox">
+														<label class="checkbox">
+															<input id="update_css" name="options[]" type="checkbox" value="css" checked /> CSS (base and skin formatting and stock skin icons) </label>
+													</div>
+													<div class="checkbox">
+														<label class="checkbox">
+															<input id="update_settings" name="options[]" type="checkbox" value="settings" checked /> Recommended settings (grid, spacing, rounded corners, background etc) </label>
+													</div> <span class="help-block text-muted" id="hint_options">Instead of clobbering any customized dashboard settings or tile colors, choose what you'd like to update.</span> </div>
+											</article>
+											<!-- card-body.// -->
+										</div>
+										<!-- collapse .// -->
+									</div>
+								</div>
+								<div class="form-group">
+									<div>
+										<button type="button" id="copyclick" class="btn btn-success" data-clipboard-target="#inputjson" onClick='$("#inpustjson").prop( "readonly", false );'>Updated! Copy to Clipboard</button>
+										<button class="btn btn-warning" type="submit" id="smartly_update">update</button>
+										<div id="update_warning"></div>
+										<div id="update_success">JSON successfully updated!</div>
+									</div>
+								</div>
+						</form>
+						</div>
+					</div>
+				</div>
+				<!-- Button trigger modal -->
+				<!-- Modal -->
+				<div class="modal fade" id="smartly_settings_modal" tabindex="-1" role="dialog" aria-labelledby="settings_modalLabel" aria-hidden="true">
+					<div class="modal-dialog-centered modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="settings_modalLabel">Dash Modal title</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
 							</div>
-					</form>
-					</div>
-				</div>
-			</div>
-			<!-- Button trigger modal -->
-			<!-- Modal -->
-			<div class="modal fade" id="smartly_settings_modal" tabindex="-1" role="dialog" aria-labelledby="settings_modalLabel" aria-hidden="true">
-				<div class="modal-dialog-centered modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="settings_modalLabel">Dash Modal title</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
-						</div>
-						<div id="smartly_settings_editor" class="modal-body"> ... </div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							<button type="button" class="btn btn-primary" onClick="smartly_settings_update()">Save changes</button>
+							<div id="smartly_settings_editor" class="modal-body"> ... </div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-primary" onClick="smartly_settings_update()">Save changes</button>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
 
-			<div class="modal fade" id="smartly_modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-				<div class="modal-dialog-centered modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="modalLabel">Modal title</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
-						</div>
-						<div id="smartly_editor" class="modal-body"> ... </div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							<button type="button" class="btn btn-primary" onClick="smartly_update()">Save changes</button>
+				<div class="modal fade" id="smartly_modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+					<div class="modal-dialog-centered modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="modalLabel">Modal title</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+							</div>
+							<div id="smartly_editor" class="modal-body"> ... </div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-primary" onClick="smartly_update()">Save changes</button>
+							</div>
 						</div>
 					</div>
 				</div>
+
 			</div>
+		</div>
 
-        </div>
-    </div>
+		<!--- this needs to be in the footer to load correctly --->
+		<script>
+		var clipboard = new ClipboardJS('#copyclick');
 
-<script>
-var clipboard = new ClipboardJS('#copyclick');
+		clipboard.on('success', function(e) {
+		//    console.info('Action:', e.action);
+		//    console.info('Text:', e.text);
+		//    console.info('Trigger:', e.trigger);
+			$("#copyclick").animate({ opacity: 0 }, 250, function() {
+				$("#copyclick").text('copied!').removeClass('btn-success').addClass('btn-info').animate({  opacity: 1 }, 250, function() {
+				$("#copyclick").delay(3000).animate({ opacity: 0 }, 1000, function() {
+						$("#copyclick").text('Updated! Copy to Clipboard').removeClass('btn-info').addClass('btn-success').animate({  opacity: 1 }, 250)})})});
+		e.clearSelection();
+		$("#inputjson").prop( "readonly", true );
+		});
 
-  clipboard.on('success', function(e) {
-//    console.info('Action:', e.action);
-//    console.info('Text:', e.text);
-//    console.info('Trigger:', e.trigger);
-        $("#copyclick").animate({ opacity: 0 }, 250, function() {
-            $("#copyclick").text('copied!').removeClass('btn-success').addClass('btn-info').animate({  opacity: 1 }, 250, function() { 
-	        $("#copyclick").delay(3000).animate({ opacity: 0 }, 1000, function() {
-                    $("#copyclick").text('Updated! Copy to Clipboard').removeClass('btn-info').addClass('btn-success').animate({  opacity: 1 }, 250)})})});
-    e.clearSelection();
-    $("#inputjson").prop( "readonly", true );
-  });
+		clipboard.on('error', function(e) {
+		//    console.error('Action:', e.action);
+		//    console.error('Trigger:', e.trigger);
+		});
+		</script>
 
-  clipboard.on('error', function(e) {
-//    console.error('Action:', e.action);
-//    console.error('Trigger:', e.trigger);
-  });
-</script>
+		<script type="text/javascript" src="assets/js/bootstrap-iconpicker-iconset-material.js"></script>
+		<script type="text/javascript" src="assets/js/bootstrap-iconpicker.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 
-
-<script type="text/javascript" src="assets/js/bootstrap-iconpicker-iconset-material.js"></script>
-<script type="text/javascript" src="assets/js/bootstrap-iconpicker.js"></script>
-
-<script>
-/*
-function initialize_tagsinput() {
-
-var cal_devices = new Bloodhound({
-  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('text'),
-  queryTokenizer: Bloodhound.tokenizers.whitespace,
-//  prefetch: 'https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/assets/cities.json',
-  prefetch: {
-    url: 'assets/data/device_cals.json',
-    cache: false
-  }
-});
-
-var cal_devices_mobile = new Bloodhound({
-  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('text'),
-  queryTokenizer: Bloodhound.tokenizers.whitespace,
-//  prefetch: 'https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/assets/cities.json',
-  prefetch: {
-    url: 'assets/data/device_cals.json',
-    cache: false,
-    filter: function(devices) {
-      return $.map(devices, function(device) { 
-        if (device.force_cols != null) {
-          return device;
-        //return { value: 'one', text: 'One', width: 111, height: 222, pwidth: 2 }; });
-        }
-      });
-    }
-  }
-});
-
-
-cal_devices.initialize();
-cal_devices_mobile.initialize();
-
-var elt = $('#smart_edit_cal_devices');
-var elt2 = $('#smart_edit_cal_devices_2col');
-
-elt.tagsinput({
-  itemValue: 'value',
-  itemText: 'text',
-  typeaheadjs: {
-    name: 'cal_devices',
-    displayKey: 'text',
-    source: cal_devices.ttAdapter(),
-    limit: 100
-  }
-});
-
-elt2.tagsinput({
-  itemValue: 'value',
-  itemText: 'text',
-  typeaheadjs: {
-    name: 'cal_devices_mobile',
-    displayKey: 'text',
-    source: cal_devices_mobile,
-    limit: 100
-  }
-});
-
-elt.tagsinput('add', { "value": "google_pixel-4a" , "text": "Google Pixel 4a"   , "continent": "Something"    });
-}
-
-*/
-</script>
-
-
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
-
-    </body>
+	</body>
 </html>

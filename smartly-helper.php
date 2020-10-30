@@ -55,6 +55,7 @@ $update_options = array();
 $tiles = array();
 $smartly_data = array();
 $smartly_touched = false;
+$smartly_install = false;
 $base_css = "";
 $user_css = "";
 
@@ -252,6 +253,8 @@ $calibrate_cols = 0;
 
 if ($inputJSON['tiles'][0]['template'] != "smartly") {  // first time running
 
+  $smartly_install = true;
+
   $workingTiles = $inputJSON['tiles'];
   foreach ($inputJSON['tiles'] as $tile_id => $tile_data) {
     if ($tile_data['colSpan'] > 1) {
@@ -344,7 +347,7 @@ if ($inputJSON['tiles'][0]['template'] != "smartly") {  // first time running
 }
 
 // triggered halving and new standards
-if ($inputJSON['colWidth'] == null && $inputJSON['rowHeight'] == null ) { // legacy conversion
+if (($inputJSON['colWidth'] == null && $inputJSON['rowHeight'] == null) || ($smartly_install && $inputJSON['colWidth'] != 60 && $inputJSON['rowHeight'] != 22)) { // legacy conversion
 
   foreach ($inputJSON['tiles'] as $tile_id => $tile_data) {
     $inputJSON['tiles'][$tile_id]['col'] = ($inputJSON['tiles'][$tile_id]['col'] * 2) - 1;
@@ -355,6 +358,20 @@ if ($inputJSON['colWidth'] == null && $inputJSON['rowHeight'] == null ) { // leg
 
   $inputJSON['rowHeight'] = 22;
   $inputJSON['colWidth'] = 60;
+}
+
+// triggered revert from null halving
+if ($inputJSON['colWidth'] == 911 && $inputJSON['rowHeight'] == 911 ) { // legacy conversion
+
+  foreach ($inputJSON['tiles'] as $tile_id => $tile_data) {
+    $inputJSON['tiles'][$tile_id]['col'] = ($inputJSON['tiles'][$tile_id]['col'] + 1) / 2;
+    $inputJSON['tiles'][$tile_id]['row'] = ($inputJSON['tiles'][$tile_id]['row'] + 1) / 2;
+    $inputJSON['tiles'][$tile_id]['colSpan'] = $inputJSON['tiles'][$tile_id]['colSpan'] / 2;
+    $inputJSON['tiles'][$tile_id]['rowSpan'] = $inputJSON['tiles'][$tile_id]['rowSpan'] / 2;
+  }
+
+  $inputJSON['rowHeight'] = 60;
+  $inputJSON['colWidth'] = 135;
 }
 
 // if not on stock values, force legacy stock value as previously has been done
