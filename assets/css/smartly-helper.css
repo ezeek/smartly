@@ -69,6 +69,10 @@ body {
     text-transform: lowercase !important;
 }
 
+input {
+    text-transform: none !important;
+}
+
 #inputjson {
     text-transform: revert !important;
 }

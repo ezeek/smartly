@@ -1,6 +1,6 @@
 // allow access within functions
 var version = "2.0"
-var patch = "hp1"
+var patch = "hp2"
 var smartlyDATA = '';
 var hubitatJSON = '';
 var smartlyMODS = [];
