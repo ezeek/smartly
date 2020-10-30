@@ -5,7 +5,7 @@ var smartlyDATA = '';
 var hubitatJSON = '';
 var smartlyMODS = [];
 
-var debug = true;
+var debug = false;
 
 $(document).ready(function() {
 
