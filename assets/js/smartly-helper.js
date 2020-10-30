@@ -507,6 +507,7 @@ function smartly_settings_editor() {
 
   // open the editor modal
   $("#smartly_settings_modal").modal();
+
   var modal_label = $("#settings_modalLabel");
   modal_label.html("Dashboard Settings");
 
@@ -770,6 +771,8 @@ function smartly_update() {
     $("#inputjson").prop("readonly", true);
   }
 
+  $("#smartly_modal .modql-body").html('');
+
 }
 
 
@@ -860,6 +863,9 @@ function smartly_settings_update() {
   if ($locked) {
     $("#inputjson").prop("readonly", true);
   }
+
+  $("#smartly_settings_modal .modal-body").html('');
+
 }
 
 
@@ -931,6 +937,7 @@ function parse_form(smart_id, mod_name, mod_construct, parent_mod = null, sectio
           if (debug) { console.log("#smart_edit_" + parent_plug + mod_name, "SMART_EDIT_TITLE PRESENT"); }
 
           if (parent_mod) {
+ //           console.log(smartlyDATA, "SDATA for " + smart_id + " / " + section + " / " + parent_mod);
             smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = $("#smart_edit_" + parent_plug + mod_name).val();
           } else {
             smartlyDATA['tiles'][smart_id][section][mod_name]['value'] = $("#smart_edit_" + mod_name).val();
@@ -972,6 +979,8 @@ function parse_form(smart_id, mod_name, mod_construct, parent_mod = null, sectio
               smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = null;
             } else {
               if (debug) {  console.log(mod_name, "MODNAME"); }
+//              console.log(smartlyDATA, "SDATA for " + smart_id + " / " + section + " / " + mod_name);
+
               smartlyDATA['tiles'][smart_id][section][mod_name]['value'] = null;
             }
 
