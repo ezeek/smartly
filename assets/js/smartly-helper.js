@@ -1,11 +1,11 @@
 // allow access within functions
 var version = "2.0"
-var patch = "hp2"
+var patch = "hp3"
 var smartlyDATA = '';
 var hubitatJSON = '';
 var smartlyMODS = [];
 
-var debug = false;
+var debug = true;
 
 $(document).ready(function() {
 
@@ -875,6 +875,25 @@ function parse_form(smart_id, mod_name, mod_construct, parent_mod = null, sectio
     if (debug) {  console.log(parent_plug, "PARENT FOUND");}
   }
 
+  // pre-define hierarchy to avoid undefined form parse errors
+  if (typeof smartlyDATA['tiles'][smart_id] === 'undefined') {
+    smartlyDATA['tiles'][smart_id] = {};
+    if (typeof smartlyDATA['tiles'][smart_id][section] === 'undefined') {
+      smartlyDATA['tiles'][smart_id][section] = {};
+      if (parent_mod) {
+        if (typeof smartlyDATA['tiles'][smart_id][section][parent_mod] === 'undefined') {
+          smartlyDATA['tiles'][smart_id][section][parent_mod] = {};
+          if (typeof smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'] === 'undefined') {
+            smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'] = {};
+            if (typeof smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name] === 'undefined') {
+              smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name] = {};
+            }
+          }
+        }
+      }
+    }
+  }
+
   if (debug) {  console.log("#smart_edit_" + parent_plug + mod_name, "LOOKING FOR"); }
 
   if ($("#smart_edit_" + parent_plug + mod_name).length) {
@@ -889,6 +908,7 @@ function parse_form(smart_id, mod_name, mod_construct, parent_mod = null, sectio
 
           if (parent_mod) {
             smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = true;
+
           } else {
             if (debug) {  console.log(smartlyDATA['tiles'][smart_id], section + " " + mod_name); }
             smartlyDATA['tiles'][smart_id][section][mod_name]['value'] = true;
@@ -936,6 +956,7 @@ function parse_form(smart_id, mod_name, mod_construct, parent_mod = null, sectio
    
           if (parent_mod) {
             smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = $("#smart_edit_" + parent_plug + mod_name).val();
+
           } else {
             if (debug) {
               console.log(smartlyDATA['tiles'][smart_id], "setting defaults");
@@ -957,6 +978,7 @@ function parse_form(smart_id, mod_name, mod_construct, parent_mod = null, sectio
           }
         }
       // switch
+        if (debug) {  console.log(smartlyDATA, "SDATA"); }
     }
   }
 
