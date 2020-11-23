@@ -90,7 +90,7 @@ $mods_enabled['tiletype']['chroma_battery'] = ['battery'];
 $mods_enabled['tiletype']['unit'] = ['attribute'];
 $mods_enabled['tiletype']['numeric'] = ['attribute'];
 $mods_enabled['tiletype']['height_alignment'] = ['dashboard'];
-$mods_enabled['tiletype']['buttonize'] = ['button', 'dashboard', 'momentary', 'presence', 'water'];
+$mods_enabled['tiletype']['buttonize'] = ['button', 'dashboard', 'momentary', 'presence', 'water', 'links'];
 $mods_enabled['tiletype']['touch_slider'] = ['dimmer', 'level-vertical'];
 
 $mods_enabled['tiletype']['title'] = [
@@ -112,6 +112,7 @@ $mods_enabled['tiletype']['title'] = [
   'fan',
   'garage',
   'garage-control',
+    'generic',
   'illuminance',
   'energy',
   'temperature',
@@ -140,7 +141,13 @@ $mods_enabled['tiletype']['title'] = [
   'volume',
   'water',
   'window',
-  'scene'
+  'scene',
+  'weather',
+  'variable-bool',
+  'variable-decimal',
+  'variable-number',
+  'variable-string',
+  'variable-time'
 ];
 
 $mods_enabled['tiletype']['text_alignment'] = [
@@ -160,6 +167,7 @@ $mods_enabled['tiletype']['text_alignment'] = [
     'door',
     'door-control',
     'fan',
+    'generic',
     'garage',
     'garage-control',
     'illuminance',
@@ -191,7 +199,13 @@ $mods_enabled['tiletype']['text_alignment'] = [
     'volume',
     'water',
     'window',
-    'scene'
+    'scene',
+//    'weather',
+    'variable-bool',
+    'variable-decimal',
+    'variable-number',
+    'variable-string',
+    'variable-time'
 ];
 
 $mods_enabled['tiletype']['remove_title'] = [
@@ -211,6 +225,7 @@ $mods_enabled['tiletype']['remove_title'] = [
   'door',
   'door-control',
   'fan',
+    'generic',
   'garage',
   'garage-control',
   'illuminance',
@@ -241,7 +256,13 @@ $mods_enabled['tiletype']['remove_title'] = [
   'volume',
   'water',
   'window',
-  'scene'
+  'scene',
+    'weather',
+    'variable-bool',
+    'variable-decimal',
+    'variable-number',
+    'variable-string',
+    'variable-time'
 ];
 
 $mods_enabled['tiletype']['nudge'] = [
@@ -260,6 +281,7 @@ $mods_enabled['tiletype']['nudge'] = [
   'door',
   'door-control',
   'fan',
+    'generic',
   'garage',
   'garage-control',
   'illuminance',
@@ -270,7 +292,7 @@ $mods_enabled['tiletype']['nudge'] = [
  // 'images',
   'level-step',
 //  'level-vertical',
-//  'links',
+  'links',
   'lock',
 //  'mode',
   'momentary',
@@ -289,8 +311,14 @@ $mods_enabled['tiletype']['nudge'] = [
   'video',
 //  'volume',
   'water',
-  'window'
-//'scene'
+  'window',
+//'scene',
+//  'weather',
+  'variable-bool',
+  'variable-decimal',
+  'variable-number',
+  'variable-string',
+  'variable-time'
 ];
 
 $mods_enabled['tiletype']['icon'] = [
@@ -339,8 +367,14 @@ $mods_enabled['tiletype']['icon'] = [
 //'video',
   'volume',
   'water',
-  'window'
-//'scene'
+  'window',
+//'scene',
+  //'weather',
+  'variable-bool',
+  'variable-decimal',
+  'variable-number',
+  'variable-string',
+  'variable-time'
 ];
 
 $mods_enabled['tiletype']['zoomable'] = [
@@ -360,6 +394,7 @@ $mods_enabled['tiletype']['zoomable'] = [
   'door',
   'door-control',
   'fan',
+    'generic',
   'garage',
   'garage-control',
   'illuminance',
@@ -391,7 +426,13 @@ $mods_enabled['tiletype']['zoomable'] = [
   'volume',
   'water',
   'window',
-  'scene'
+  'scene',
+    'weather',
+    'variable-bool',
+    'variable-decimal',
+    'variable-number',
+    'variable-string',
+    'variable-time'
 ];
 
 $mods_enabled['tiletype']['label'] = [
@@ -418,6 +459,7 @@ $mods_enabled['tiletype']['color_fg'] = [
 //  'door',
 //  'door-control',
 //  'fan',
+    'generic',
 //  'garage',
 //  'garage-control',
   'illuminance',
@@ -449,7 +491,13 @@ $mods_enabled['tiletype']['color_fg'] = [
   'volume',
 //  'water',
 //  'window',
-  'scene'
+  'scene',
+    'weather',
+    'variable-bool',
+    'variable-decimal',
+    'variable-number',
+    'variable-string',
+    'variable-time'
 ];
 
 $mods_enabled['tiletype']['color_bg'] = [
@@ -469,6 +517,7 @@ $mods_enabled['tiletype']['color_bg'] = [
 //  'door',
 //  'door-control',
 //  'fan',
+    'generic',
 //  'garage',
 //  'garage-control',
   'illuminance',
@@ -500,7 +549,13 @@ $mods_enabled['tiletype']['color_bg'] = [
   'volume',
 //  'water',
 //  'window',
-  'scene'
+  'scene',
+    'weather',
+    'variable-bool',
+    'variable-decimal',
+    'variable-number',
+    'variable-string',
+    'variable-time'
 ];
 
 
@@ -521,6 +576,7 @@ $mods_enabled['tiletype']['border'] = [
   'door',
   'door-control',
   'fan',
+    'generic',
   'garage',
   'garage-control',
   'illuminance',
@@ -552,12 +608,17 @@ $mods_enabled['tiletype']['border'] = [
   'volume',
   'water',
   'window',
-  'scene'
+  'scene',
+    'weather',
+    'variable-bool',
+    'variable-decimal',
+    'variable-number',
+    'variable-string',
+    'variable-time'
 ];
 
 
-// MODS REPO, to be built in JSON, possibly using foler structure to hold CSS
-
+// MODS REPO, to be built in JSON, possibly using folder structure to hold CSS
 
 $mods_repo['dashboard']['cal_devices']['label'] = "<b>CALIBRATE MY DASHBOARD</b> for the following devices:<br><small>FOR STOCK DEVICE DISPLAY DPI SETTINGS ONLY</small>";
 $mods_repo['dashboard']['cal_devices']['text'] = "some additional help text";
@@ -1060,6 +1121,7 @@ $mods_repo['tiletype']['label']['css']['thermostat'] = <<<EOF
     white-space: nowrap;
     width: 100%;
     text-align: center;
+    top: .5em !important;
 }
 
 EOF;
@@ -1087,6 +1149,8 @@ $mods_repo['tiletype']['nudge']['label'] = "Nudge";
 $mods_repo['tiletype']['nudge']['type'] = 'checkbox';
 $mods_repo['tiletype']['nudge']['text']['default'] = 'Nudge the icon slightly to give it more space..';
 $mods_repo['tiletype']['nudge']['text']['attribute'] = 'Nudge the icon away from the value slightly to give it more space..';
+$mods_repo['tiletype']['nudge']['text']['links'] = 'Nudge the icon away from the value slightly to give it more space..';
+
 
 $mods_repo['tiletype']['nudge']['css']['fixup']['attribute']['icon'] = 'margin-right: 5px;';
 $mods_repo['tiletype']['nudge']['css']['fixup']['dashboard']['icon'] = 'margin-right: 5px;';
@@ -1120,7 +1184,41 @@ $mods_repo['tiletype']['nudge']['css']['attribute'] = <<<EOF
 }
 EOF;
 
+$mods_repo['tiletype']['nudge']['css']['links'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+        margin-right: 5px;
+}
+EOF;
 
+$mods_repo['tiletype']['nudge']['css']['variable-bool'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+        margin-right: 5px;
+}
+EOF;
+
+$mods_repo['tiletype']['nudge']['css']['variable-decimal'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+        margin-right: 5px;
+}
+EOF;
+
+$mods_repo['tiletype']['nudge']['css']['variable-number'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+        margin-right: 5px;
+}
+EOF;
+
+$mods_repo['tiletype']['nudge']['css']['variable-string'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+        margin-right: 5px;
+}
+EOF;
+
+$mods_repo['tiletype']['nudge']['css']['variable-time'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+        margin-right: 5px;
+}
+EOF;
 
 $mods_repo['tiletype']['icon']['label'] = "icon replace/add";
 $mods_repo['tiletype']['icon']['type'] = 'fieldset';
@@ -1245,6 +1343,90 @@ $mods_repo['tiletype']['icon']['css']['attribute'] = <<<EOF
     opacity: .7;
     display: inline-block;
     [fixup-nudge]
+}
+EOF;
+
+$mods_repo['tiletype']['icon']['css']['links'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+    content: "\\[value]";
+    font-family: "Material Design Icons" !important;
+    opacity: .7;
+    display: inline-block;
+    [fixup-nudge]
+}
+
+#tile-[tile_id] .tile-primary div {
+    display: inline-block;
+}
+EOF;
+
+$mods_repo['tiletype']['icon']['css']['variable-bool'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+    content: "\\[value]";
+    font-family: "Material Design Icons" !important;
+    opacity: .7;
+    display: inline-block;
+    [fixup-nudge]
+}
+
+#tile-[tile_id] .tile-primary div {
+    display: inline-block;
+}
+EOF;
+
+$mods_repo['tiletype']['icon']['css']['variable-decimal'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+    content: "\\[value]";
+    font-family: "Material Design Icons" !important;
+    opacity: .7;
+    display: inline-block;
+    [fixup-nudge]
+}
+
+#tile-[tile_id] .tile-primary div {
+    display: inline-block;
+}
+EOF;
+
+$mods_repo['tiletype']['icon']['css']['variable-number'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+    content: "\\[value]";
+    font-family: "Material Design Icons" !important;
+    opacity: .7;
+    display: inline-block;
+    [fixup-nudge]
+}
+
+#tile-[tile_id] .tile-primary div {
+    display: inline-block;
+}
+EOF;
+
+$mods_repo['tiletype']['icon']['css']['variable-string'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+    content: "\\[value]";
+    font-family: "Material Design Icons" !important;
+    opacity: .7;
+    display: inline-block;
+    [fixup-nudge]
+}
+
+#tile-[tile_id] .tile-primary div {
+    display: inline-block;
+}
+EOF;
+
+$mods_repo['tiletype']['icon']['css']['variable-time'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+    content: "\\[value]";
+    font-family: "Material Design Icons" !important;
+    opacity: .7;
+    display: inline-block;
+    [fixup-nudge]
+}
+
+#tile-[tile_id] .tile-primary div {
+    display: inline-block;
 }
 EOF;
 
@@ -1605,6 +1787,7 @@ $mods_repo['tiletype']['text_alignment']['css']['texttile'] = <<<EOF
 #tile-[tile_id] .text-center {
     text-align: [value] !important;
     justify-content: [value];
+    display: grid;
 }
 EOF;
 
@@ -2014,6 +2197,7 @@ $mods_repo['tiletype']['buttonize']['label'] = "Buttonize!";
 $mods_repo['tiletype']['buttonize']['type'] = 'checkbox';
 $mods_repo['tiletype']['buttonize']['text']['default'] = 'Change the layout of this tile to be more button-like.';
 $mods_repo['tiletype']['buttonize']['text']['dashboard'] = 'Change the layout of this Dashboard Link to be a stacked large icon and small text.';
+$mods_repo['tiletype']['buttonize']['text']['links'] = 'Change the layout of this Links tile to stack the icon above the text and make icon large.';
 $mods_repo['tiletype']['buttonize']['css']['default'] = <<<EOF
 #tile-[tile_id] .material-icons::before,
 #tile-[tile_id] .material-icons::after {
@@ -2043,6 +2227,25 @@ $mods_repo['tiletype']['buttonize']['css']['dashboard'] = <<<EOF
 }
 
 EOF;
+
+$mods_repo['tiletype']['buttonize']['css']['links'] = <<<EOF
+#tile-[tile_id] {
+    height: 100%;
+}
+
+#tile-[tile_id] .tile-primary {
+    line-height: 1.2em;
+}
+
+#tile-[tile_id] .tile-primary:before {
+    display: block !important;
+    line-height: 1.2em;
+    font-size: 40px;
+    visibility: visible;
+}
+
+EOF;
+
 $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['label'] = "Icon only";
 $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['type'] = 'checkbox';
 $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['text']['default'] = 'Hide the text, only show the icon.';
@@ -2065,6 +2268,16 @@ $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['css']['dashboard']
 
 #tile-[tile_id] .tile-primary:after {
     display: none;
+}
+EOF;
+
+$mods_repo['tiletype']['buttonize']['modifier']['icon_only']['css']['links'] = <<<EOF
+#tile-[tile_id] .tile-primary div {
+    display: none;
+}
+
+#tile-[tile_id] .tile-primary:before {
+    font-size: 60px;
 }
 EOF;
 
