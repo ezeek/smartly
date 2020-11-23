@@ -620,7 +620,6 @@ $dashboard_mods['mods']['chroma_battery']['value'] = $smartly_data['dashboard'][
 $dashboard_mods['mods']['chroma_temperature']['value'] = $smartly_data['dashboard']['mods']['chroma_temperature']['value'] ? $smartly_data['dashboard']['mods']['chroma_temperature']['value'] : null;
 $dashboard_mods['mods']['chroma_humidity']['value'] = $smartly_data['dashboard']['mods']['chroma_humidity']['value'] ? $smartly_data['dashboard']['mods']['chroma_humidity']['value'] : null;
 
-
 //var_dump($smartly_settings);
 /*a
 

@@ -1,11 +1,11 @@
 // allow access within functions
-var version = "2.0"
-var patch = "hp4"
+var version = "2.1.0"
+var patch = ""
 var smartlyDATA = '';
 var hubitatJSON = '';
 var smartlyMODS = [];
 
-var debug = false;
+var debug = true;
 
 $(document).ready(function() {
 
