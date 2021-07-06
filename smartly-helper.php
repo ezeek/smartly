@@ -55,6 +55,7 @@ $update_options = array();
 $tiles = array();
 $smartly_data = array();
 $smartly_touched = false;
+$smartly_install = false;
 $base_css = "";
 $user_css = "";
 
@@ -221,12 +222,12 @@ if ($update_options['color'] || $update_options['settings']) {
   if ($update_options['settings']) {
     $inputJSON['roundedCorners'] = $repo_base_json['roundedCorners'];
     $inputJSON['hideLabels'] =  $repo_base_json['hideLabels'];
-    $inputJSON['colWidth'] = $repo_base_json['colWidth'];
+//    $inputJSON['colWidth'] = $repo_base_json['colWidth'];
     $inputJSON['hide3dot'] = $repo_base_json['hide3dot'];
     $inputJSON['gridGap'] = $repo_base_json['gridGap'];
     $inputJSON['bgColor'] = $repo_base_json['bgColor'];
     $inputJSON['iconSize'] = $repo_base_json['iconSize'];
-    $inputJSON['rowHeight'] = $repo_base_json['rowHeight'];
+//    $inputJSON['rowHeight'] = $repo_base_json['rowHeight'];
     $inputJSON['hideIconText'] = $repo_base_json['hideIconText'];
     $inputJSON['background'] = $repo_base_json['background'];
     $inputJSON['fontSize'] = $repo_base_json['fontSize'];
@@ -251,6 +252,8 @@ $calibrate_cols = 0;
 //var_dump($inputJSON['tiles']);
 
 if ($inputJSON['tiles'][0]['template'] != "smartly") {  // first time running
+
+  $smartly_install = true;
 
   $workingTiles = $inputJSON['tiles'];
   foreach ($inputJSON['tiles'] as $tile_id => $tile_data) {
@@ -341,6 +344,40 @@ if ($inputJSON['tiles'][0]['template'] != "smartly") {  // first time running
 
   array_unshift($workingTiles, $smartly_tile);
   $inputJSON['tiles'] = array_values($workingTiles); // Hubitat Dashboard doesn't like indexed array for tiles.
+}
+
+// triggered halving and new standards
+if (($inputJSON['colWidth'] == null && $inputJSON['rowHeight'] == null) || ($smartly_install && $inputJSON['colWidth'] != 60 && $inputJSON['rowHeight'] != 22)) { // legacy conversion
+
+  foreach ($inputJSON['tiles'] as $tile_id => $tile_data) {
+    $inputJSON['tiles'][$tile_id]['col'] = ($inputJSON['tiles'][$tile_id]['col'] * 2) - 1;
+    $inputJSON['tiles'][$tile_id]['row'] = ($inputJSON['tiles'][$tile_id]['row'] * 2) - 1;
+    $inputJSON['tiles'][$tile_id]['colSpan'] = $inputJSON['tiles'][$tile_id]['colSpan'] * 2;
+    $inputJSON['tiles'][$tile_id]['rowSpan'] = $inputJSON['tiles'][$tile_id]['rowSpan'] * 2;
+  }
+
+  $inputJSON['rowHeight'] = 22;
+  $inputJSON['colWidth'] = 60;
+}
+
+// triggered revert from null halving
+if ($inputJSON['colWidth'] == 911 && $inputJSON['rowHeight'] == 911 ) { // legacy conversion
+
+  foreach ($inputJSON['tiles'] as $tile_id => $tile_data) {
+    $inputJSON['tiles'][$tile_id]['col'] = ($inputJSON['tiles'][$tile_id]['col'] + 1) / 2;
+    $inputJSON['tiles'][$tile_id]['row'] = ($inputJSON['tiles'][$tile_id]['row'] + 1) / 2;
+    $inputJSON['tiles'][$tile_id]['colSpan'] = $inputJSON['tiles'][$tile_id]['colSpan'] / 2;
+    $inputJSON['tiles'][$tile_id]['rowSpan'] = $inputJSON['tiles'][$tile_id]['rowSpan'] / 2;
+  }
+
+  $inputJSON['rowHeight'] = 60;
+  $inputJSON['colWidth'] = 135;
+}
+
+// if not on stock values, force legacy stock value as previously has been done
+if ($inputJSON['colWidth'] != 135 && $inputJSON['rowHeight'] != 60 && $inputJSON['colWidth'] != 60 && $inputJSON['rowHeight'] != 22) { // legacy conversion
+  $inputJSON['rowHeight'] = 60;
+  $inputJSON['colWidth'] = 135;
 }
 
 
@@ -577,7 +614,11 @@ $dashboard_mods['mods']['cal_devices'] = $smartly_data['dashboard']['mods']['cal
 $dashboard_mods['mods']['cal_devices_2col'] = $smartly_data['dashboard']['mods']['cal_devices_2col'] ? $smartly_data['dashboard']['mods']['cal_devices_2col'] : null;
 $dashboard_mods['mods']['header']['value'] = $smartly_data['dashboard']['mods']['header']['value'] ? $smartly_data['dashboard']['mods']['header']['value'] : 'default';
 $dashboard_mods['mods']['hide_scrollbars']['value'] = $smartly_data['dashboard']['mods']['hide_scrollbars']['value'] ? $smartly_data['dashboard']['mods']['hide_scrollbars']['value'] : null;
+$dashboard_mods['mods']['parallax']['value'] = $smartly_data['dashboard']['mods']['parallax']['value'] ? $smartly_data['dashboard']['mods']['parallax']['value'] : null;
 
+$dashboard_mods['mods']['chroma_battery']['value'] = $smartly_data['dashboard']['mods']['chroma_battery']['value'] ? $smartly_data['dashboard']['mods']['chroma_battery']['value'] : null;
+$dashboard_mods['mods']['chroma_temperature']['value'] = $smartly_data['dashboard']['mods']['chroma_temperature']['value'] ? $smartly_data['dashboard']['mods']['chroma_temperature']['value'] : null;
+$dashboard_mods['mods']['chroma_humidity']['value'] = $smartly_data['dashboard']['mods']['chroma_humidity']['value'] ? $smartly_data['dashboard']['mods']['chroma_humidity']['value'] : null;
 
 //var_dump($smartly_settings);
 /*a
@@ -769,69 +810,65 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
     } 
   }
 
+  // all tilemods
+
   foreach ($smartly_tiles as $smart_id => $smart_data) {
 
-    foreach ($mods_enabled['tiletype'] as $mod => $tiletype) {
-      if (in_array($smart_data['template'], $tiletype) && $smart_data['mods'][$mod]['value'] && $smart_data['mods'][$mod]['value'] !== 'unchecked' && $smart_data['mods'][$mod]['value'] !== 'default') {
+    // check if tile has icon functionality (by checking if it has states)
+    if ($smart_data['states']) {
 
+      foreach ($smart_data['states'] as $state_name => $state_data) { //$state_code) {
+        $icon_code = $state_data['code'];
+        $icon_class = str_replace("_", ".", $state_data['class']);
+        $icon_class_stock = $state_data['class'];
+        $state_name = str_replace("_", ".", $state_name);
 
-        switch ($mods_repo['tiletype'][$mod]['type']) {
+        $token_replacements = array(
+            '[tile_id]' => $smart_id,
+            '[value]' => $icon_code,
+            '[iconsize]' => strval($settings['iconSize']) . "px",
+            '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
+            '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
+            '[state]' => $state_name !== 'default' ? "." . $state_name : '',
+            '[class_stock]' => $icon_class_stock,
+            '[class]' => $icon_class
+        );
 
-          case 'select':
+        // icon is selected
 
-            $token_replacements = array(
-                '[tile_id]' => $smart_id,
-                '[value]' => $smart_data['mods'][$mod]['value'],
-                '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
-                '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
-                '[padding_calc]' => strval($settings['fontSize'] / 14) . "em",
-                '[padding_adjust]' => strval(9 - $smart_data['mods'][$mod]['value'])
-            );
+        if (strlen($state_data['code']) > 0) {
 
-            if ($mods_repo['tiletype'][$mod]['css']['value']['default']) { // value based lookup
-              $css = $mods_repo['tiletype'][$mod]['css']['value'][$smart_data['template']][$smart_data['mods'][$mod]['value']] ? $mods_repo['tiletype'][$mod]['css']['value'][$smart_data['template']][$smart_data['mods'][$mod]['value']] : $mods_repo['tiletype'][$mod]['css']['value']['default'][$smart_data['mods'][$mod]['value']];
-            } else { // template based lookup
-              $css = $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] ? $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] : $mods_repo['tiletype'][$mod]['css']['default'];
-            }
+          // if specific css exists for this tiletype, use it, otherwise use the default css.
+          $processed_css =  $mods_repo['tiletype']['icon']['css'][$smart_data['template']] ? $mods_repo['tiletype']['icon']['css'][$smart_data['template']] : $mods_repo['tiletype']['icon']['css']['default'];
 
-            // check if the mod has tiletype specific css and if not, use default css.  do token replacements as needed.
-            $smartly_css['mods'][$mod][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+          // look for and replace 'fixup' tokens with their specific fixup css
+          preg_match_all('/\[fixup-(.*)\]/',  $processed_css, $fixup_matches, PREG_SET_ORDER);
 
-            break;
+          // add to the token replacement array
+          foreach ($fixup_matches as $index => $match) {
+            $token_replacements[$match[0]] = $mods_repo['tiletype'][$match[1]]['css']['fixup']['icon'];
+          }
 
-          default:
-
-            $token_replacements = array(
-                '[tile_id]' => $smart_id,
-                '[value]' => $smart_data['mods'][$mod]['value'],
-                '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
-                '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
-                '[padding_calc]' => strval($settings['fontSize'] / 14) . "em",
-                '[padding_adjust]' => strval(9 - $smart_data['mods'][$mod]['value'])
-            );
-
-            $css = $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] ? $mods_repo['tiletype'][$mod]['css'][$smart_data['template']] : $mods_repo['tiletype'][$mod]['css']['default'];
-
-            // check if the mod has tiletype specific css and if not, use default css.  do token replacements as needed.
-            $smartly_css['mods'][$mod][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
-
+          // check if the mod has tiletype specific css and if not, use default css.  do token replacements as needed.
+          $smartly_css['mods']['icon'][] = str_replace(array_keys($token_replacements), $token_replacements, $processed_css);
         }
+      }
+    }
+
+    foreach ($mods_enabled['tiletype'] as $mod => $tiletype) {
+      $has_value = in_array($smart_data['template'], $tiletype) && $smart_data['mods'][$mod]['value'] && $smart_data['mods'][$mod]['value'] !== 'unchecked' && $smart_data['mods'][$mod]['value'] !== 'default';
+
+      // smartly tile data 'template' matches a mods_repo mod, has a value that isn't 'unchecked' or 'default'
+      if ($has_value) {
+    //    echo $mod . ' - ' . $tiletype . "\r\n\r\n";
+        $smartly_css['mods'][$mod][] = smartly_mod_process_css($smart_id, $mod, $smart_data, $mods_repo['tiletype'][$mod], $settings);
 
         // iterate through modifiers that have values and add their css
         foreach ($smart_data['mods'][$mod]['modifier'] as $mod_modifier => $modifier_data) {
-          if ($smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'] && $smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'] !== 'unchecked' && $smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'] !== 'default') {
-
-            $token_replacements = array(
-                '[tile_id]' => $smart_id,
-                '[value]' => $smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'],
-                '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
-                '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
-                '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
-            );
-
-            $css = $mods_repo['tiletype'][$mod]['modifier'][$mod_modifier]['css'][$smart_data['template']] ? $mods_repo['tiletype'][$mod]['modifier'][$mod_modifier]['css'][$smart_data['template']] : $mods_repo['tiletype'][$mod]['modifier'][$mod_modifier]['css']['default'];
-
-            $smartly_css['mods'][$mod . "__" . $mod_modifier][] = str_replace(array_keys($token_replacements), $token_replacements, $css);
+          $mod_has_value = $smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'] && $smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'] !== 'unchecked' && $smart_data['mods'][$mod]['modifier'][$mod_modifier]['value'] !== 'default';
+          if ($has_value && $mod_has_value) {
+            //echo "MODIFIER! : " . $mod . ' - ' . $tiletype . "\r\n\r\n";
+            $smartly_css['mods'][$mod . "__" . $mod_modifier][] = smartly_mod_process_css($smart_id, $mod_modifier, $smart_data, $mods_repo['tiletype'][$mod]['modifier'][$mod_modifier], $settings, $mod);
 
           }
         }
@@ -853,6 +890,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
           $token_replacements = array(
               '[tile_id]' => $smart_id,
               '[value]' => $mod_value,
+              '[iconsize]' => strval($settings['iconSize']) . "px",
               '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
               '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
               '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
@@ -876,6 +914,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
                 $token_replacements = array(
                     '[tile_id]' => $smart_id,
                     '[value]' => $mod_modifier_value,
+                    '[iconsize]' => strval($settings['iconSize']) . "px",
                     '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
                     '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
                     '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
@@ -920,6 +959,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
             $token_replacements = array(
               '[tile_id]' => $smart_id,
               '[value]' => $mod_value,
+              '[iconsize]' => strval($settings['iconSize']) . "px",
               '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
               '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
               '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
@@ -942,6 +982,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
                   $token_replacements = array(
                       '[tile_id]' => $smart_id,
                       '[value]' => $mod_modifier_value,
+                      '[iconsize]' => strval($settings['iconSize']) . "px",
                       '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
                       '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
                       '[padding_calc]' => strval($settings['fontSize'] / 14) . "em"
@@ -976,45 +1017,6 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
       }
     }
 
-    // check if tile has icon functionality (by checking if it has states)
-    if ($smart_data['states']) {
-
-      foreach ($smart_data['states'] as $state_name => $state_data) { //$state_code) {
-        $icon_code = $state_data['code'];
-        $icon_class = str_replace("_", ".", $state_data['class']);
-        $icon_class_stock = $state_data['class'];
-        $state_name = str_replace("_", ".", $state_name);
-
-        $token_replacements = array(
-          '[tile_id]' => $smart_id,
-          '[value]' => $icon_code,
-          '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
-          '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
-          '[state]' => $state_name !== 'default' ? "." . $state_name : '',
-          '[class_stock]' => $icon_class_stock,
-          '[class]' => $icon_class
-        );
-
-        // icon is selected
-
-        if (strlen($state_data['code']) > 0) {
-
-          // if specific css exists for this tiletype, use it, otherwise use the default css.
-          $processed_css =  $mods_repo['tiletype']['icon']['css'][$smart_data['template']] ? $mods_repo['tiletype']['icon']['css'][$smart_data['template']] : $mods_repo['tiletype']['icon']['css']['default'];
-
-          // look for and replace 'fixup' tokens with their specific fixup css
-          preg_match_all('/\[fixup-(.*)\]/',  $processed_css, $fixup_matches, PREG_SET_ORDER);
-
-          // add to the token replacement array
-          foreach ($fixup_matches as $index => $match) {
-            $token_replacements[$match[0]] = $mods_repo['tiletype'][$match[1]]['css']['fixup']['icon'];
-          }
-
-          // check if the mod has tiletype specific css and if not, use default css.  do token replacements as needed.
-          $smartly_css['mods']['icon'][] = str_replace(array_keys($token_replacements), $token_replacements, $processed_css);
-        }
-      }
-    }
   }
 
 
@@ -1063,7 +1065,7 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
   $optimize = new \CssOptimizer\Css\Optimizer;
 
   // iterate through individual mods css, optimize 
-  foreach (array_reverse($smartly_css['mods']) as $mod_name => $mod_css) {
+  foreach ($smartly_css['mods'] as $mod_name => $mod_css) {
     foreach ($mod_css as $css) {
       $smartly_mods_css[] = $css;
     }
@@ -1101,6 +1103,101 @@ function smartly_build_css($smartly_tiles = null, $delimiters = null, $base_css 
 
 /**
  *
+ * smartly_mod_process_css()
+ *
+ */
+function smartly_mod_process_css($id = null, $mod = null, $tile_data, $mods_data, $settings, $parent = false) {
+
+/*  if ($id == 107 && $mod === 'buttonize') {
+    echo $id . "\r\n";
+
+print_r($tile_data) . "\r\n";
+print_r($mods_data) . "\r\n";
+  }*/
+
+  $mods_css = $mods_data['css'];
+  $tile_value = $parent ? $tile_data['mods'][$parent]['modifier'][$mod]['value'] : $tile_data['mods'][$mod]['value'];
+  $tile_template = $tile_data['template'];
+
+  switch ($mods_data['type']) {
+
+    case 'select-advanced':
+
+      $token_replacements = array(
+          '[tile_id]' => $id
+      );
+
+      if ($mods_css['default']['default']) { // value based lookup with template lookup
+//        echo "// value based lookup with template lookup\r\n";
+        $css =  $mods_css[$tile_value][$tile_template] ?
+            $mods_css[$tile_value][$tile_template] :
+            $mods_css[$tile_value]['default'];
+      } else { // value based lookup only
+//        echo "// value based lookup only\r\n";
+        $css =  $mods_css[$tile_value] ?
+            $mods_css[$tile_value] :
+            "";
+      }
+
+      // check if the mod has tiletype specific css and if not, use default css.  do token replacements as needed.
+      return str_replace(array_keys($token_replacements), $token_replacements, $css);
+
+      break;
+
+    case 'select':
+
+      $token_replacements = array(
+          '[tile_id]' => $id,
+          '[value]' => $tile_value,
+          '[iconsize]' => strval($settings['iconSize']) . "px",
+          '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
+          '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
+          '[padding_calc]' => strval($settings['fontSize'] / 14) . "em",
+          '[padding_adjust]' => strval(9 - $tile_value)
+      );
+
+      if ($mods_css['value']['default']) { // value based replacement
+        $css = $mods_css['value'][$tile_template][$tile_value] ? $mods_data['css']['value'][$tile_template][$tile_value] : $mods_css['value']['default'][$tile_value];
+      } else { // template based lookup
+        $css = $mods_css[$tile_template] ? $mods_css[$tile_template] : $mods_css['default'];
+      }
+
+      // check if the mod has tiletype specific css and if not, use default css.  do token replacements as needed.
+      return str_replace(array_keys($token_replacements), $token_replacements, $css);
+
+      break;
+
+
+    default:
+
+      $token_replacements = array(
+          '[tile_id]' => $id,
+          '[value]' => $tile_value,
+          '[iconsize]' => strval($settings['iconSize']) . "px",
+          '[fontsize_calc]' => strval($settings['fontSize'] * 1.5) . "px",
+          '[fontsize_calc_lg]' => strval($settings['fontSize'] * 1.75) . "px",
+          '[padding_calc]' => strval($settings['fontSize'] / 14) . "em",
+          '[padding_adjust]' => strval(9 - $tile_value)
+      );
+
+      $css = $mods_css[$tile_template] ? $mods_css[$tile_template] : $mods_css['default'];
+
+      if ($id == 107  && $mod === 'buttonize') {
+//        echo "\r\nCSSO template [" . $tile_template . "]: " . $css . "\r\n";
+
+      }
+      // check if the mod has tiletype specific css and if not, use default css.  do token replacements as needed.
+      return str_replace(array_keys($token_replacements), $token_replacements, $css);
+
+  }
+
+return '';
+
+}
+
+
+/**
+ *
  * smartly_calibrate()
  *
  *
@@ -1120,7 +1217,19 @@ function smartly_calibrate($minzoom = null, $screenwidth = null, $colwidth = nul
     'nine' => ($gap * 10) + ($colwidth * 9),
     'ten' => ($gap * 11) + ($colwidth * 10),
     'eleven' => ($gap * 12) + ($colwidth * 11),
-    'twelve' => ($gap * 13) + ($colwidth * 12)
+    'twelve' => ($gap * 13) + ($colwidth * 12),
+    'thirteen' => ($gap * 14) + ($colwidth * 13),
+    'fourteen' => ($gap * 15) + ($colwidth * 14),
+    'fifteen' => ($gap * 16) + ($colwidth * 15),
+    'sixteen' => ($gap * 17) + ($colwidth * 16),
+    'seventeen' => ($gap * 18) + ($colwidth * 17),
+    'eighteen' => ($gap * 19) + ($colwidth * 18),
+    'nineteen' => ($gap * 20) + ($colwidth * 19),
+    'twenty' => ($gap * 21) + ($colwidth * 20),
+    'twentyone' => ($gap * 22) + ($colwidth * 21),
+    'twentytwo' => ($gap * 23) + ($colwidth * 22),
+    'twentythree' => ($gap * 24) + ($colwidth * 23),
+    'twentyfour' => ($gap * 25) + ($colwidth * 24)
   ];
 
   $bestmatch = [
@@ -1138,24 +1247,50 @@ function smartly_calibrate($minzoom = null, $screenwidth = null, $colwidth = nul
     if ($zoom > $minzoom && ($abszoom < $bestmatch['abszoom'])) {
 
       // specific overrides for well-known screen widths
-      if ($screenwidth == 1280) {
+      if ($screenwidth == 1280 && $colwidth == 60) {
         $bestmatch = [
-        'name' => 'eight',
-        'width' => $columns['eight'],
-        'zoom' => ($screenwidth) / $columns['eight'],
-        'abszoom' => abs((($screenwidth) / $columns['eight']) - 1) + 1
+        'name' => 'sixteen',
+        'width' => $columns['sixteen'],
+        'zoom' => ($screenwidth) / $columns['sixteen'],
+        'abszoom' => abs((($screenwidth) / $columns['sixteen']) - 1) + 1
         ];
         break;
-      }  elseif ($screenwidth == 1920) {
+      }  elseif ($screenwidth == 1280) {
         $bestmatch = [
-        'name' => 'nine',
-        'width' => $columns['nine'],
-        'zoom' => ($screenwidth) / $columns['nine'],
-        'abszoom' => abs((($screenwidth) / $columns['nine']) - 1) + 1
+            'name' => 'eight',
+            'width' => $columns['eight'],
+            'zoom' => ($screenwidth) / $columns['eight'],
+            'abszoom' => abs((($screenwidth) / $columns['eight']) - 1) + 1
+        ];
+        break;
+      } elseif ($screenwidth == 1920 && $colwidth == 60) {
+        $bestmatch = [
+        'name' => 'eighteen',
+        'width' => $columns['eighteen'],
+        'zoom' => ($screenwidth) / $columns['eighteen'],
+        'abszoom' => abs((($screenwidth) / $columns['eighteen']) - 1) + 1
         ];
         break;
 
-      }  elseif ($screenwidth > 359 && $screenwidth < 421) {
+      } elseif ($screenwidth == 1920) {
+        $bestmatch = [
+            'name' => 'nine',
+            'width' => $columns['nine'],
+            'zoom' => ($screenwidth) / $columns['nine'],
+            'abszoom' => abs((($screenwidth) / $columns['nine']) - 1) + 1
+        ];
+        break;
+
+      } elseif ($screenwidth > 359 && $screenwidth < 421 && $colwidth == 60) {
+        $bestmatch = [
+        'name' => 'six',
+        'width' => $columns['six'],
+        'zoom' => ($screenwidth) / $columns['six'],
+        'abszoom' => abs((($screenwidth) / $columns['six']) - 1) + 1
+        ];
+        break;
+
+      } elseif ($screenwidth > 359 && $screenwidth < 421) {
         $bestmatch = [
         'name' => 'three',
         'width' => $columns['three'],

@@ -1,5 +1,8 @@
 <?php
 
+//$mods_repo['dashboard']['color_humidity']['label'] = "Enable value-based humidity tile color";
+//$mods_repo['dashboard']['color_humidity']['text']['default'] = "Change the color of this tile based on the humidity value.";
+
 // TODO: pull from a separate 'mods' repo 
 
 $mods_repo = array();
@@ -21,7 +24,8 @@ $mods_repo['layout'] = [
     ],
     'mods' => [
       'zoomable',
-      'buttonize'
+      'buttonize',
+      'touch_slider'
     ],
     'contrib' => [
       'tm',
@@ -34,13 +38,22 @@ $mods_repo['layout'] = [
       'color_bg',
       'color_fg',
       'border_size',
-      'border'
+      'border',
+      'chroma_battery',
+      'chroma_temperature',
+      'chroma_humidity'
     ]
   ],
   'dashboard' => [
     'mods' => [
       'header',
-      'hide_scrollbars'
+      'hide_scrollbars',
+      'parallax'
+    ],
+    'color' => [
+      'chroma_battery',
+      'chroma_temperature',
+      'chroma_humidity'
     ],
     'calibration' => [
       'cal_devices',
@@ -70,12 +83,15 @@ $mods_enabled['dashboard']['colorcoding']['humidity'] = true;
 $mods_enabled['dashboard']['colorcoding']['battery'] = true;
 */
 
+//$mods_enabled['tiletype']['chroma_humidity'] = ['humidity'];
+$mods_enabled['tiletype']['chroma_temperature'] = ['temperature'];
+$mods_enabled['tiletype']['chroma_battery'] = ['battery'];
 
 $mods_enabled['tiletype']['unit'] = ['attribute'];
 $mods_enabled['tiletype']['numeric'] = ['attribute'];
 $mods_enabled['tiletype']['height_alignment'] = ['dashboard'];
-$mods_enabled['tiletype']['buttonize'] = ['button', 'dashboard', 'momentary', 'presence', 'water'];
-
+$mods_enabled['tiletype']['buttonize'] = ['button', 'dashboard', 'momentary', 'presence', 'water', 'links'];
+$mods_enabled['tiletype']['touch_slider'] = ['dimmer', 'level-vertical'];
 
 $mods_enabled['tiletype']['title'] = [
   'acceleration',
@@ -96,12 +112,13 @@ $mods_enabled['tiletype']['title'] = [
   'fan',
   'garage',
   'garage-control',
+    'generic',
   'illuminance',
   'energy',
   'temperature',
   'humidity',
   'hsm',
-//'image',
+//'images',
   'level-step',
   'level-vertical',
 //  'links',
@@ -124,7 +141,13 @@ $mods_enabled['tiletype']['title'] = [
   'volume',
   'water',
   'window',
-  'scene'
+  'scene',
+  'weather',
+  'variable-bool',
+  'variable-decimal',
+  'variable-number',
+  'variable-string',
+  'variable-time'
 ];
 
 $mods_enabled['tiletype']['text_alignment'] = [
@@ -144,6 +167,7 @@ $mods_enabled['tiletype']['text_alignment'] = [
     'door',
     'door-control',
     'fan',
+    'generic',
     'garage',
     'garage-control',
     'illuminance',
@@ -151,7 +175,7 @@ $mods_enabled['tiletype']['text_alignment'] = [
 //    'temperature',
     'humidity',
     'hsm',
-//'image',
+//'images',
     'level-step',
     'level-vertical',
 //  'links',
@@ -175,7 +199,13 @@ $mods_enabled['tiletype']['text_alignment'] = [
     'volume',
     'water',
     'window',
-    'scene'
+    'scene',
+//    'weather',
+    'variable-bool',
+    'variable-decimal',
+    'variable-number',
+    'variable-string',
+    'variable-time'
 ];
 
 $mods_enabled['tiletype']['remove_title'] = [
@@ -195,6 +225,7 @@ $mods_enabled['tiletype']['remove_title'] = [
   'door',
   'door-control',
   'fan',
+    'generic',
   'garage',
   'garage-control',
   'illuminance',
@@ -202,7 +233,7 @@ $mods_enabled['tiletype']['remove_title'] = [
   'temperature',
   'humidity',
   'hsm',
-//'image',
+//'images',
   'level-step',
   'level-vertical',
 //  'links',
@@ -225,7 +256,13 @@ $mods_enabled['tiletype']['remove_title'] = [
   'volume',
   'water',
   'window',
-  'scene'
+  'scene',
+    'weather',
+    'variable-bool',
+    'variable-decimal',
+    'variable-number',
+    'variable-string',
+    'variable-time'
 ];
 
 $mods_enabled['tiletype']['nudge'] = [
@@ -244,6 +281,7 @@ $mods_enabled['tiletype']['nudge'] = [
   'door',
   'door-control',
   'fan',
+    'generic',
   'garage',
   'garage-control',
   'illuminance',
@@ -251,10 +289,10 @@ $mods_enabled['tiletype']['nudge'] = [
   'temperature',
   'humidity',
 //  'hsm',
-  'image',
+ // 'images',
   'level-step',
 //  'level-vertical',
-//  'links',
+  'links',
   'lock',
 //  'mode',
   'momentary',
@@ -273,8 +311,14 @@ $mods_enabled['tiletype']['nudge'] = [
   'video',
 //  'volume',
   'water',
-  'window'
-//'scene'
+  'window',
+//'scene',
+//  'weather',
+  'variable-bool',
+  'variable-decimal',
+  'variable-number',
+  'variable-string',
+  'variable-time'
 ];
 
 $mods_enabled['tiletype']['icon'] = [
@@ -301,7 +345,7 @@ $mods_enabled['tiletype']['icon'] = [
   'temperature',
   'humidity',
 //  'hsm',
-//'image',
+//'images',
   'level-step',
   'level-vertical',
   'links',
@@ -323,8 +367,14 @@ $mods_enabled['tiletype']['icon'] = [
 //'video',
   'volume',
   'water',
-  'window'
-//'scene'
+  'window',
+//'scene',
+  //'weather',
+  'variable-bool',
+  'variable-decimal',
+  'variable-number',
+  'variable-string',
+  'variable-time'
 ];
 
 $mods_enabled['tiletype']['zoomable'] = [
@@ -344,6 +394,7 @@ $mods_enabled['tiletype']['zoomable'] = [
   'door',
   'door-control',
   'fan',
+    'generic',
   'garage',
   'garage-control',
   'illuminance',
@@ -351,7 +402,7 @@ $mods_enabled['tiletype']['zoomable'] = [
   'temperature',
   'humidity',
   'hsm',
-  'image',
+//  'images',
   'level-step',
   'level-vertical',
   'links',
@@ -375,12 +426,18 @@ $mods_enabled['tiletype']['zoomable'] = [
   'volume',
   'water',
   'window',
-  'scene'
+  'scene',
+    'weather',
+    'variable-bool',
+    'variable-decimal',
+    'variable-number',
+    'variable-string',
+    'variable-time'
 ];
 
 $mods_enabled['tiletype']['label'] = [
   'dashboard',
-  'image',
+  'images',
   'video',
   'thermostat'
 ];
@@ -402,6 +459,7 @@ $mods_enabled['tiletype']['color_fg'] = [
 //  'door',
 //  'door-control',
 //  'fan',
+    'generic',
 //  'garage',
 //  'garage-control',
   'illuminance',
@@ -409,7 +467,7 @@ $mods_enabled['tiletype']['color_fg'] = [
   'temperature',
   'humidity',
 //  'hsm',
-//'image',
+//'images',
   'level-step',
   'level-vertical',
   'links',
@@ -433,7 +491,13 @@ $mods_enabled['tiletype']['color_fg'] = [
   'volume',
 //  'water',
 //  'window',
-  'scene'
+  'scene',
+    'weather',
+    'variable-bool',
+    'variable-decimal',
+    'variable-number',
+    'variable-string',
+    'variable-time'
 ];
 
 $mods_enabled['tiletype']['color_bg'] = [
@@ -453,6 +517,7 @@ $mods_enabled['tiletype']['color_bg'] = [
 //  'door',
 //  'door-control',
 //  'fan',
+    'generic',
 //  'garage',
 //  'garage-control',
   'illuminance',
@@ -460,7 +525,7 @@ $mods_enabled['tiletype']['color_bg'] = [
   'temperature',
   'humidity',
 //  'hsm',
-  'image',
+  'images',
   'level-step',
   'level-vertical',
   'links',
@@ -484,7 +549,13 @@ $mods_enabled['tiletype']['color_bg'] = [
   'volume',
 //  'water',
 //  'window',
-  'scene'
+  'scene',
+    'weather',
+    'variable-bool',
+    'variable-decimal',
+    'variable-number',
+    'variable-string',
+    'variable-time'
 ];
 
 
@@ -505,6 +576,7 @@ $mods_enabled['tiletype']['border'] = [
   'door',
   'door-control',
   'fan',
+    'generic',
   'garage',
   'garage-control',
   'illuminance',
@@ -512,7 +584,7 @@ $mods_enabled['tiletype']['border'] = [
   'temperature',
   'humidity',
   'hsm',
-  'image',
+  'images',
   'level-step',
   'level-vertical',
   'links',
@@ -536,12 +608,17 @@ $mods_enabled['tiletype']['border'] = [
   'volume',
   'water',
   'window',
-  'scene'
+  'scene',
+    'weather',
+    'variable-bool',
+    'variable-decimal',
+    'variable-number',
+    'variable-string',
+    'variable-time'
 ];
 
 
-// MODS REPO, to be built in JSON, possibly using foler structure to hold CSS
-
+// MODS REPO, to be built in JSON, possibly using folder structure to hold CSS
 
 $mods_repo['dashboard']['cal_devices']['label'] = "<b>CALIBRATE MY DASHBOARD</b> for the following devices:<br><small>FOR STOCK DEVICE DISPLAY DPI SETTINGS ONLY</small>";
 $mods_repo['dashboard']['cal_devices']['text'] = "some additional help text";
@@ -551,24 +628,13 @@ $mods_repo['dashboard']['cal_devices_2col']['label'] = "<b>FORCE DISPLAY 2 COLUM
 $mods_repo['dashboard']['cal_devices_2col']['text'] = "some additional help text";
 $mods_repo['dashboard']['cal_devices_2col']['type'] = 'tagsinput';
 
-$mods_repo['dashboard']['color_temperature']['label'] = "Enable value-based temperature tile color";
-$mods_repo['dashboard']['color_temperature']['text']['default'] = "Change the color of this tile based on the temperature value.";
-$mods_repo['dashboard']['color_temperature']['type'] = 'checkbox';
-$mods_repo['dashboard']['color_temperature']['json']['path'] = '/somepath.json';
-$mods_repo['dashboard']['color_temperature']['json']['method'] = 'overwrite';
-
-$mods_repo['dashboard']['color_humidity']['label'] = "Enable value-based humidity tile color";
-$mods_repo['dashboard']['color_humidity']['text']['default'] = "Change the color of this tile based on the humidity value.";
-$mods_repo['dashboard']['color_humidity']['type'] = 'checkbox';
-$mods_repo['dashboard']['color_humidity']['json']['path'] = '/somepath.json';
-$mods_repo['dashboard']['color_humidity']['json']['method'] = 'overwrite';
 
 $mods_repo['dashboard']['zoomy']['label'] = '<b>Add ZOOMY</b> <small style="color: #da4800;">(This checkbox will uncheck itself after update)</small>';
 $mods_repo['dashboard']['zoomy']['text']['default'] = '<small>Temporarily add a calibration helper tile to generate the perfect css for alignment of columns to the edge of the screen on any device, any device display dpi setting.</small>';
 $mods_repo['dashboard']['zoomy']['type'] = 'checkbox';
 
 $mods_repo['dashboard']['hide_scrollbars']['label'] = 'Hide Scrollbars';
-$mods_repo['dashboard']['hide_scrollbars']['text']['default'] = 'Regardless of whether there is overflow, scrollbars will be enabled but hidden.';
+$mods_repo['dashboard']['hide_scrollbars']['text']['default'] = 'Regardless of whether there is overflow, scrollbars will be enabled but hidden. <i>Recommended when using header mods.</i>';
 $mods_repo['dashboard']['hide_scrollbars']['type'] = 'checkbox';
 $mods_repo['dashboard']['hide_scrollbars']['default']['css'] = <<<EOF
 ::-webkit-scrollbar {
@@ -582,11 +648,11 @@ $mods_repo['dashboard']['hide_scrollbars']['default']['css'] = <<<EOF
 }
 EOF;
 
-
 $mods_repo['dashboard']['header']['label'] = "Header Theme";
 $mods_repo['dashboard']['header']['type'] = 'select';
 $mods_repo['dashboard']['header']['options'] = [
     "default" => "Default",
+    "stock_plus" => "Stock (with scroll fade)",
     "light_top" => "Light (top)",
     "light_bottom" => "Light (bottom)",
     "dark_top" => "Dark (top)",
@@ -638,6 +704,10 @@ $mods_repo['dashboard']['header']['value']['hidden']['css'] = <<<EOF
     height: [grid_gap]px;
     width: [grid_gap]px
 }
+
+#open-modal-btn {
+    display: none;
+}
 EOF;
 $mods_repo['dashboard']['header']['value']['light_bottom']['css'] = <<<EOF
 .dashboard>div:first-child {
@@ -660,7 +730,7 @@ $mods_repo['dashboard']['header']['value']['light_bottom']['css'] = <<<EOF
   z-index: 2;
   color: black !important;
   background-color: rgba(255,255,255,.9);
-  bottom: 0;
+  top: 0;
 }
 
 .header {
@@ -688,6 +758,7 @@ smartly {
     position: absolute !important;
     height: 100vh !important;
     padding-top: [grid_gap]px;
+    top: 60px;
 }
 
 #modal-1 div[role=dialog] {
@@ -716,7 +787,7 @@ $mods_repo['dashboard']['header']['value']['dark_bottom']['css'] = <<<EOF
   z-index: 2;
   color: white !important;
   background-color: rgba(0,0,0,.9);
-  bottom: 0;
+  top: 0;
 }
 
 .header {
@@ -744,6 +815,7 @@ smartly {
     position: absolute !important;
     height: 100vh !important;
     padding-top: [grid_gap]px;
+    top: 60px;
 }
 
 #modal-1 div[role=dialog] {
@@ -965,6 +1037,32 @@ $mods_repo['dashboard']['header']['value']['stealth_bottom_right_vertical']['css
 }
 EOF;
 
+$mods_repo['dashboard']['header']['value']['stock_plus']['css'] = <<<EOF
+.dashboard>div:first-child {
+  height: 100vh;
+}
+
+.wrapper {
+  position: absolute !important;
+  padding-top: 60px;
+  height: calc(100vh + [grid_gap]px) !important;
+}
+
+.header {
+  z-index: 1;
+  height: 60px;
+  position: absolute;
+  width: 100%;
+}
+
+.header>.justify-end {
+  padding-top: .5em;
+}
+
+smartly {
+    height: calc(100% + [grid_gap]px + [grid_gap]px);
+}
+EOF;
 
 // TITLE REPLACEMENT
 
@@ -985,24 +1083,6 @@ $mods_repo['tiletype']['title']['css']['default'] = <<<EOF
         padding: .5em .5em 3px .5em;
         width: 100%;
         top: 0;
-}
-
-EOF;
-
-$mods_repo['tiletype']['title']['css']['dashboard'] = <<<EOF
-#tile-[tile_id] .tile-primary {
-        font-size: 0 !important;
-        color: transparent;
-}
-
-#tile-[tile_id] .tile-primary:after {
-        content: "[value]";
-        margin-left: 5px;
-        font-size: [fontsize_calc];
-}
-
-#tile-[tile_id] .tile-primary:before {
-        font-size: [fontsize_calc];
 }
 
 EOF;
@@ -1041,6 +1121,7 @@ $mods_repo['tiletype']['label']['css']['thermostat'] = <<<EOF
     white-space: nowrap;
     width: 100%;
     text-align: center;
+    top: .5em !important;
 }
 
 EOF;
@@ -1048,7 +1129,7 @@ EOF;
 $mods_repo['tiletype']['label']['css']['dashboard'] = <<<EOF
 #tile-[tile_id] .tile-primary {
         font-size: 0 !important;
-        color: transparent;
+        xkcd-color: transparent;
 }
 
 #tile-[tile_id] .tile-primary:after {
@@ -1058,7 +1139,7 @@ $mods_repo['tiletype']['label']['css']['dashboard'] = <<<EOF
 }
 
 #tile-[tile_id] .tile-primary:before {
-        font-size: [fontsize_calc];
+        font-size: [iconsize];
 }
 EOF;
 
@@ -1068,6 +1149,8 @@ $mods_repo['tiletype']['nudge']['label'] = "Nudge";
 $mods_repo['tiletype']['nudge']['type'] = 'checkbox';
 $mods_repo['tiletype']['nudge']['text']['default'] = 'Nudge the icon slightly to give it more space..';
 $mods_repo['tiletype']['nudge']['text']['attribute'] = 'Nudge the icon away from the value slightly to give it more space..';
+$mods_repo['tiletype']['nudge']['text']['links'] = 'Nudge the icon away from the value slightly to give it more space..';
+
 
 $mods_repo['tiletype']['nudge']['css']['fixup']['attribute']['icon'] = 'margin-right: 5px;';
 $mods_repo['tiletype']['nudge']['css']['fixup']['dashboard']['icon'] = 'margin-right: 5px;';
@@ -1101,7 +1184,41 @@ $mods_repo['tiletype']['nudge']['css']['attribute'] = <<<EOF
 }
 EOF;
 
+$mods_repo['tiletype']['nudge']['css']['links'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+        margin-right: 5px;
+}
+EOF;
 
+$mods_repo['tiletype']['nudge']['css']['variable-bool'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+        margin-right: 5px;
+}
+EOF;
+
+$mods_repo['tiletype']['nudge']['css']['variable-decimal'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+        margin-right: 5px;
+}
+EOF;
+
+$mods_repo['tiletype']['nudge']['css']['variable-number'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+        margin-right: 5px;
+}
+EOF;
+
+$mods_repo['tiletype']['nudge']['css']['variable-string'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+        margin-right: 5px;
+}
+EOF;
+
+$mods_repo['tiletype']['nudge']['css']['variable-time'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+        margin-right: 5px;
+}
+EOF;
 
 $mods_repo['tiletype']['icon']['label'] = "icon replace/add";
 $mods_repo['tiletype']['icon']['type'] = 'fieldset';
@@ -1226,6 +1343,90 @@ $mods_repo['tiletype']['icon']['css']['attribute'] = <<<EOF
     opacity: .7;
     display: inline-block;
     [fixup-nudge]
+}
+EOF;
+
+$mods_repo['tiletype']['icon']['css']['links'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+    content: "\\[value]";
+    font-family: "Material Design Icons" !important;
+    opacity: .7;
+    display: inline-block;
+    [fixup-nudge]
+}
+
+#tile-[tile_id] .tile-primary div {
+    display: inline-block;
+}
+EOF;
+
+$mods_repo['tiletype']['icon']['css']['variable-bool'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+    content: "\\[value]";
+    font-family: "Material Design Icons" !important;
+    opacity: .7;
+    display: inline-block;
+    [fixup-nudge]
+}
+
+#tile-[tile_id] .tile-primary div {
+    display: inline-block;
+}
+EOF;
+
+$mods_repo['tiletype']['icon']['css']['variable-decimal'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+    content: "\\[value]";
+    font-family: "Material Design Icons" !important;
+    opacity: .7;
+    display: inline-block;
+    [fixup-nudge]
+}
+
+#tile-[tile_id] .tile-primary div {
+    display: inline-block;
+}
+EOF;
+
+$mods_repo['tiletype']['icon']['css']['variable-number'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+    content: "\\[value]";
+    font-family: "Material Design Icons" !important;
+    opacity: .7;
+    display: inline-block;
+    [fixup-nudge]
+}
+
+#tile-[tile_id] .tile-primary div {
+    display: inline-block;
+}
+EOF;
+
+$mods_repo['tiletype']['icon']['css']['variable-string'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+    content: "\\[value]";
+    font-family: "Material Design Icons" !important;
+    opacity: .7;
+    display: inline-block;
+    [fixup-nudge]
+}
+
+#tile-[tile_id] .tile-primary div {
+    display: inline-block;
+}
+EOF;
+
+$mods_repo['tiletype']['icon']['css']['variable-time'] = <<<EOF
+#tile-[tile_id] .tile-primary:before {
+    content: "\\[value]";
+    font-family: "Material Design Icons" !important;
+    opacity: .7;
+    display: inline-block;
+    [fixup-nudge]
+}
+
+#tile-[tile_id] .tile-primary div {
+    display: inline-block;
 }
 EOF;
 
@@ -1586,6 +1787,7 @@ $mods_repo['tiletype']['text_alignment']['css']['texttile'] = <<<EOF
 #tile-[tile_id] .text-center {
     text-align: [value] !important;
     justify-content: [value];
+    display: grid;
 }
 EOF;
 
@@ -1704,8 +1906,346 @@ $mods_repo['tiletype']['zoomable']['css']['attribute'] = <<<EOF
 EOF;
 
 
+
+
+
+$mods_repo['tiletype']['touch_slider']['label'] = "Enable Touch Slider";
+$mods_repo['tiletype']['touch_slider']['type'] = 'checkbox';
+$mods_repo['tiletype']['touch_slider']['text']['default'] = 'Make the entire tile a touch slider.';
+$mods_repo['tiletype']['touch_slider']['css']['default'] = <<<EOF
+#tile-[tile_id] {
+    margin: 0;
+}
+
+#tile-[tile_id]  .tile-title {
+    z-index: 2;
+    pointer-events: none;
+}
+
+#tile-[tile_id]  * {
+    -webkit-transition: none;
+    transition: none;
+}
+
+#tile-[tile_id]  .tile-primary .dimmer {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    top: 0;
+}
+
+#tile-[tile_id] .tile-contents {
+    padding: 0;
+    position: absolute;
+    top: 0;
+    height: 100%;
+}
+
+#tile-[tile_id] .tile-primary {
+    padding: 0;
+}
+
+#tile-[tile_id] .vue-slider {
+    margin: 0 !important;
+    height: 100% !important;
+}
+
+#tile-[tile_id] .vue-slider-process {
+    border-radius: 0;
+    background-color: rgba(0,0,0,.3) !important;
+    top: auto;
+    bottom: 0;
+    height: 100% !important;
+}
+
+#tile-[tile_id] .vue-slider-dot-handle {
+    border-radius: 0;
+    background-color: transparent;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+#tile-[tile_id] .vue-slider-dot {
+    height: 101% !important;
+}
+
+#tile-[tile_id] .vue-slider-rail {
+    background-color: transparent !important;
+    width: 101%;
+}
+
+#tile-[tile_id] .vue-slider-dot-tooltip {
+    visibility: visible;
+    top: auto;
+    padding-left: 5px;
+}
+
+#tile-[tile_id] .vue-slider-dot-tooltip-inner {
+    background-color: unset;
+    border-color: unset;
+    font-size: 30px;
+    padding: 0;
+    margin: 0;
+    color: rgba(0,0,0,.3);
+    bottom: 0;
+    position: absolute;
+    line-height: 30px;
+}
+
+#tile-[tile_id] .tile-edit {
+    z-index: 6;
+}
+
+#tile-[tile_id] .tile-primary>div:nth-child(1) {
+    z-index: 6;
+    position: absolute;
+    margin: 0;
+    bottom: 0;
+    left: .75em;
+}
+
+#tile-[tile_id] .tile-primary>div:nth-child(3) {
+    bottom: .5em;
+    right: 1.5em;
+    position: absolute;
+    z-index: 5;
+}
+
+#tile-[tile_id] .tile-primary>div:nth-child(3) {
+   visibility: hidden;
+}
+
+#tile-[tile_id].lev10-90 .vue-slider-dot-tooltip {
+    right: -55px;
+}
+#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip {
+    right: -120px;
+}
+
+#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip-inner-top:after {
+    left: auto;
+    top: 7px;
+    transform: rotate(-90deg);
+    right: -15px;
+    visibility: hidden;
+}
+
+EOF;
+
+$mods_repo['tiletype']['touch_slider']['css']['level-vertical'] = <<<EOF
+#tile-[tile_id] {
+    margin: 0;
+}
+#tile-[tile_id]  .tile-title {
+    z-index: 2;
+    pointer-events: none;
+}
+#tile-[tile_id]  * {
+    -webkit-transition: none;
+    transition: none;
+}
+#tile-[tile_id]  .tile-primary .dimmer {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    top: 0;
+}
+#tile-[tile_id] .tile-contents {
+    padding: 0;
+    position: absolute;
+    top: 0;
+    height: 100%;
+}
+#tile-[tile_id] .tile-primary {
+    padding: 0;
+}
+#tile-[tile_id] .dimmer {
+    left: 0;
+}
+#tile-[tile_id] .vue-slider {
+    margin: 0 !important;
+    width: 100% !important;
+height: 100% !important;
+}
+#tile-[tile_id] .vue-slider-process {
+    border-radius: 0;
+    background-color: rgba(0,0,0,.3) !important;
+    top: auto;
+    bottom: 0;
+    width: 100% !important;
+}
+#tile-[tile_id] .vue-slider-dot-handle {
+    border-radius: 0;
+    background-color: transparent;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+#tile-[tile_id] .vue-slider-dot {
+    width: 101% !important;
+}
+#tile-[tile_id] .vue-slider-rail {
+    background-color: transparent !important;
+    height: 101%;
+}
+#tile-[tile_id] .vue-slider-dot-tooltip {
+    visibility: visible;
+    padding-left: 5px;
+}
+#tile-[tile_id] .vue-slider-dot-tooltip {
+    left: 5px;
+}
+#tile-[tile_id] .vue-slider-dot-tooltip-inner {
+    background-color: unset;
+    border-color: unset;
+    font-size: 30px;
+    padding: 0;
+    margin: 0;
+    color: rgba(0,0,0,.3);
+    bottom: 0;
+    position: absolute;
+    line-height: 30px;
+}
+#tile-[tile_id] .tile-edit {
+    z-index: 6;
+}
+#tile-[tile_id].lev10-80 .vue-slider-dot-tooltip {
+    bottom: -50px;
+}
+#tile-[tile_id].lev10-90 .vue-slider-dot-tooltip {
+    top: 80px;
+}
+#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip {
+    top: 100px;
+    bottom: auto;
+}
+#tile-[tile_id] .tile-primary>div:nth-child(2) {
+    bottom: .5em;
+    margin-left: auto;
+    position: absolute;
+    visibility: hidden;
+    z-index: 5;
+    margin-right: auto;
+    width: 100%;
+}
+#tile-[tile_id] .vue-slider-dot-tooltip-inner-left:after {
+visibility: hidden;
+}
+
+#tile-[tile_id].lev10-90 .vue-slider-dot-tooltip-inner-left:after,
+#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip-inner-left:after{
+    visibility: visible;
+    transform: rotate(-90deg);
+    top: -10px;
+    left: 0;
+}
+EOF;
+
+$mods_repo['tiletype']['touch_slider']['modifier']['layout']['label'] = "Slider Layout";
+$mods_repo['tiletype']['touch_slider']['modifier']['layout']['type'] = 'select-advanced';
+$mods_repo['tiletype']['touch_slider']['modifier']['layout']['options'] = [
+    "inherit" => "Default",
+    "stock_percentage" => "Stock Percentage"
+];
+
+$mods_repo['tiletype']['touch_slider']['modifier']['layout']['text']['default'] = 'Adjust the layout of the touch slider.';
+$mods_repo['tiletype']['touch_slider']['modifier']['layout']['css']['default']['default'] = <<<EOF
+.null {}
+EOF;
+
+$mods_repo['tiletype']['touch_slider']['modifier']['layout']['css']['stock_percentage']['default'] = <<<EOF
+#tile-[tile_id] .tile-primary>div:nth-child(3) {
+    visibility: visible;
+    pointer-events: none;
+}
+
+#tile-[tile_id].lev10-90 .vue-slider-dot-tooltip-inner-left:after,
+#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip-inner-left:after {
+  visibility: hidden;
+}
+#tile-[tile_id] .vue-slider-dot-tooltip {
+    visibility: hidden;
+}
+#tile-[tile_id] .vue-slider-dot-hover:hover .vue-slider-dot-tooltip, 
+#tile-[tile_id] .vue-slider-dot-hover:hover {
+    visibility: visible !important;
+}
+EOF;
+
+$mods_repo['tiletype']['touch_slider']['modifier']['layout']['css']['stock_percentage']['level-vertical'] = <<<EOF
+#tile-[tile_id] .tile-primary>div:nth-child(2) {
+    visibility: visible;
+    pointer-events: none;
+}
+#tile-[tile_id] .vue-slider-dot-hover:hover .vue-slider-dot-tooltip, 
+#tile-[tile_id] .vue-slider-dot-hover:hover {
+    visibility: visible !important;
+}
+#tile-[tile_id] .vue-slider-dot-tooltip {
+    visibility: hidden;
+}
+#tile-[tile_id].lev10-90 .vue-slider-dot-tooltip-inner-left:after,
+#tile-[tile_id].lev10-100 .vue-slider-dot-tooltip-inner-left:after {
+  visibility: hidden;
+}
+EOF;
+
 $mods_repo['tiletype']['buttonize']['label'] = "Buttonize!";
 $mods_repo['tiletype']['buttonize']['type'] = 'checkbox';
+$mods_repo['tiletype']['buttonize']['text']['default'] = 'Change the layout of this tile to be more button-like.';
+$mods_repo['tiletype']['buttonize']['text']['dashboard'] = 'Change the layout of this Dashboard Link to be a stacked large icon and small text.';
+$mods_repo['tiletype']['buttonize']['text']['links'] = 'Change the layout of this Links tile to stack the icon above the text and make icon large.';
+$mods_repo['tiletype']['buttonize']['css']['default'] = <<<EOF
+#tile-[tile_id] .material-icons::before,
+#tile-[tile_id] .material-icons::after {
+  font-size: 250%;
+}
+EOF;
+$mods_repo['tiletype']['buttonize']['css']['dashboard'] = <<<EOF
+#tile-[tile_id] {
+    height: 100%;
+}
+
+#tile-[tile_id] .tile-primary {
+    line-height: 1.2em;
+}
+
+#tile-[tile_id] .tile-primary:before {
+    display: block !important;
+    line-height: 1.2em;
+    font-size: 40px;
+    visibility: visible;
+}
+
+#tile-[tile_id] .tile-primary:after {
+    font-size: 18px;
+    margin-left: 0px;
+    line-height: 1.2em;
+}
+
+EOF;
+
+$mods_repo['tiletype']['buttonize']['css']['links'] = <<<EOF
+#tile-[tile_id] {
+    height: 100%;
+}
+
+#tile-[tile_id] .tile-primary {
+    line-height: 1.2em;
+}
+
+#tile-[tile_id] .tile-primary:before {
+    display: block !important;
+    line-height: 1.2em;
+    font-size: 40px;
+    visibility: visible;
+}
+
+EOF;
+
 $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['label'] = "Icon only";
 $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['type'] = 'checkbox';
 $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['text']['default'] = 'Hide the text, only show the icon.';
@@ -1725,38 +2265,20 @@ $mods_repo['tiletype']['buttonize']['modifier']['icon_only']['css']['dashboard']
 #tile-[tile_id] .tile-primary:before {
     font-size: 60px;
 }
-EOF;
 
-$mods_repo['tiletype']['buttonize']['text']['default'] = 'Change the layout of this tile to be more button-like.';
-$mods_repo['tiletype']['buttonize']['text']['dashboard'] = 'Change the layout of this Dashboard Link to be a stacked large icon and small text.';
-$mods_repo['tiletype']['buttonize']['css']['default'] = <<<EOF
-#tile-[tile_id] .material-icons::before,
-#tile-[tile_id] .material-icons::after {
-  font-size: 250%;
+#tile-[tile_id] .tile-primary:after {
+    display: none;
 }
 EOF;
-$mods_repo['tiletype']['buttonize']['css']['dashboard'] = <<<EOF
-#tile-[tile_id] {
-    height: 100%;
-}
 
-#tile-[tile_id] .tile-primary {
-    line-height: 1.2em;
+$mods_repo['tiletype']['buttonize']['modifier']['icon_only']['css']['links'] = <<<EOF
+#tile-[tile_id] .tile-primary div {
+    display: none;
 }
 
 #tile-[tile_id] .tile-primary:before {
-    display: block;
-    line-height: 1.2em;
-    font-size: 40px;
-    visibility: visible;
+    font-size: 60px;
 }
-
-#tile-[tile_id] .tile-primary:after {
-    font-size: 18px;
-    margin-left: 0px;
-    line-height: 1.2em;
-}
-
 EOF;
 
 $mods_repo['tiletype']['color_fg']['label'] = "Text Color";
@@ -1841,5 +2363,86 @@ $mods_repo['tiletype']['remove_title']['css']['default'] = <<<EOF
 }
 
 EOF;
+
+// CHROMA TILE
+$mods_repo['tiletype']['chroma_battery']['label'] = "Custom value-based color for this tile";
+$mods_repo['tiletype']['chroma_battery']['type'] = 'textbox';
+$mods_repo['tiletype']['chroma_battery']['options'] = [
+    "default" => "Use dashboard setting",
+    "10,20" => "10 > 20",
+    "10,30" => "10 > 30",
+    "10,40" => "10 > 40",
+    "20,30" => "20 > 30",
+    "20,40" => "20 > 40",
+    "20,50" => "20 > 50",
+    "20,60" => "20 > 60",
+    "30,40" => "30 > 40",
+    "30,50" => "30 > 50",
+    "30,50" => "30 > 50",
+    "30,60" => "30 > 60",
+    "30,70" => "30 > 70",
+    "40,50" => "40 > 50",
+    "40,60" => "40 > 60",
+    "40,70" => "40 > 70",
+    "40,80" => "40 > 80",
+    "50,60" => "50 > 60",
+    "50,70" => "50 > 70",
+    "50,80" => "50 > 80",
+    "60,70" => "60 > 70",
+    "60,80" => "60 > 80"
+];
+$mods_repo['tiletype']['chroma_battery']['text']['default'] = 'Comma-delimited breakpoints.  Example: "20, 45" is [CRITICAL 1-20], [WARNING 21-45] then OK for everything above.<br><small>red_end, yellow_end</small>';
+
+$mods_repo['tiletype']['chroma_temperature']['label'] = "Custom value-based gradient for this tile";
+$mods_repo['tiletype']['chroma_temperature']['type'] = 'textbox';
+$mods_repo['tiletype']['chroma_temperature']['text']['default'] = 'Comma-delimited gradient index values.  Default values:<br><b>-30,15,32,33,70,90,100,120</b> F<br><b>-30,-10,0,1,20,30,40,50</b>  C<br><small>purple,blue,blue_end,green_start,green,yellow,orange,red</small>';
+
+$mods_repo['tiletype']['chroma_humidity']['label'] = "Enable value-based humidity tile color for this tile.";
+$mods_repo['tiletype']['chroma_humidity']['type'] = 'textbox';
+$mods_repo['tiletype']['chroma_humidity']['text']['default'] = 'Change the color of this tile based on the humidity value.';
+
+// CHROMA DASHBOARD
+
+$mods_repo['dashboard']['chroma_battery']['label'] = "Global value-based battery tile color.";
+$mods_repo['dashboard']['chroma_battery']['type'] = 'textbox';
+$mods_repo['dashboard']['chroma_battery']['options'] = [
+    "default" => "Disabled",
+    "10,20" => "10 > 20",
+    "10,30" => "10 > 30",
+    "10,40" => "10 > 40",
+    "20,30" => "20 > 30",
+    "20,40" => "20 > 40",
+    "20,50" => "20 > 50",
+    "20,60" => "20 > 60",
+    "30,40" => "30 > 40",
+    "30,50" => "30 > 50",
+    "30,50" => "30 > 50",
+    "30,60" => "30 > 60",
+    "30,70" => "30 > 70",
+    "40,50" => "40 > 50",
+    "40,60" => "40 > 60",
+    "40,70" => "40 > 70",
+    "40,80" => "40 > 80",
+    "50,60" => "50 > 60",
+    "50,70" => "50 > 70",
+    "50,80" => "50 > 80",
+    "60,70" => "60 > 70",
+    "60,80" => "60 > 80"
+];
+$mods_repo['dashboard']['chroma_battery']['text']['default'] = "Comma-delimited breakpoints.  Example: '20, 45' is [CRITICAL 1-20], [WARNING 21-45] then OK for everything above.<br><small>red_end, yellow_end</small>";
+
+//$mods_repo['dashboard']['chroma_battery']['text']['default'] = '(CRITICAL level > WARNING level) > Green for everything above.';
+
+$mods_repo['dashboard']['chroma_temperature']['label'] = "Global value-based temperature tile color.";
+$mods_repo['dashboard']['chroma_temperature']['type'] = 'checkbox';
+$mods_repo['dashboard']['chroma_temperature']['text']['default'] = 'Change the color of all Temperature tiles based on the temperature value.';
+
+$mods_repo['dashboard']['chroma_humidity']['label'] = 'Enable value-based humidity tile color globally.';
+$mods_repo['dashboard']['chroma_humidity']['type'] = 'checkbox';
+$mods_repo['dashboard']['chroma_humidity']['text']['default'] = 'Change the color of all Humidity tiles based on the humidity value.';
+
+$mods_repo['dashboard']['parallax']['label'] = 'Enable Parallax Background';
+$mods_repo['dashboard']['parallax']['text']['default'] = 'Add parallax vertical scroll effect for dashboard background.';
+$mods_repo['dashboard']['parallax']['type'] = 'checkbox';
 
 ?>

@@ -1,4 +1,6 @@
 // allow access within functions
+var version = "2.1.0"
+var patch = ""
 var smartlyDATA = '';
 var hubitatJSON = '';
 var smartlyMODS = [];
@@ -6,6 +8,9 @@ var smartlyMODS = [];
 var debug = true;
 
 $(document).ready(function() {
+
+  $('#version').html(version);
+  $('#patch').html(patch);
 
   // retrieve smartly_mods from json
   $.getJSON("assets/data/smartly_mods.json", function(data) {
@@ -502,6 +507,7 @@ function smartly_settings_editor() {
 
   // open the editor modal
   $("#smartly_settings_modal").modal();
+
   var modal_label = $("#settings_modalLabel");
   modal_label.html("Dashboard Settings");
 
@@ -601,10 +607,10 @@ function smartly_settings_editor() {
 
   for (let [section, section_html] of Object.entries(section_build)) {
     if (section_counter < 1) { active_class = 'active'; }
-    section_menu += '<li class="nav-item"><a class="nav-link ' + active_class + '" data-toggle="pill" href="#' + section + '">' + section + '</a></li>';
+    section_menu += '<li class="nav-item"><a class="nav-link ' + active_class + '" data-toggle="pill" href="#dashboard_' + section + '">' + section + '</a></li>';
 
     if (section_counter < 1) { active_class = 'active'; } else { active_class = 'fade'; }
-    section_tab_html += '<div class="tab-pane container ' + active_class + '" id="' + section + '">' + section_html.join('')   + '</div>';
+    section_tab_html += '<div class="tab-pane container ' + active_class + '" id="dashboard_' + section + '">' + section_html.join('')   + '</div>';
     section_counter++;
     active_class = '';
   }
@@ -650,7 +656,7 @@ function smartly_grid(smartly_data, hubitat_json) {
   $grid = $("#grid");
   $gridheader.empty();
   $grid.empty();
-  $gridheader.html("'" + hubitat_json.name + "' tile editor" + "<br><span style='font-size: 70%;'>Click on a tile below to change title, label and/or icons. <i class='fa fa-cog' onclick='smartly_settings_editor();'></i>");
+  $gridheader.html("'" + hubitat_json.name + "' tile editor" + "<br><span style='font-size: 70%;'>Click on a tile below to change title, label, icons, colors, etc. <i class='fa fa-cog' onclick='smartly_settings_editor();'></i>");
   $grid.css({
     width: $gridwidth,
     height: $gridheight,
@@ -765,6 +771,8 @@ function smartly_update() {
     $("#inputjson").prop("readonly", true);
   }
 
+  $("#smartly_modal .modql-body").html('');
+
 }
 
 
@@ -796,6 +804,11 @@ function smartly_settings_update() {
   var zoomy_val = $("#smart_edit_zoomy").is(":checked") ? true : false;
   var header_val = $("#smart_edit_header").val() ? $("#smart_edit_header").val() : null;
   var hide_scrollbars_val = $("#smart_edit_hide_scrollbars").is(":checked") ? true : false;
+  var parallax_val = $("#smart_edit_parallax").is(":checked") ? true : false;
+
+  var chroma_battery_val = $("#smart_edit_chroma_battery").val() ? $("#smart_edit_chroma_battery").val() : null;
+  var chroma_temperature_val = $("#smart_edit_chroma_temperature").val() ? $("#smart_edit_chroma_temperature").val() : null;
+  var chroma_humidity_val = $("#smart_edit_chroma_humidity").val() ? $("#smart_edit_chroma_humidity").val() : null;
 
   // if calibration values, split into array
   var cal_devices = cal_devices_val ? cal_devices_val.split(',') : null;
@@ -823,6 +836,10 @@ function smartly_settings_update() {
   smartlyDATA['dashboard']['mods'] = {};
   smartlyDATA['dashboard']['mods']['header'] = {};
   smartlyDATA['dashboard']['mods']['hide_scrollbars'] = {};
+  smartlyDATA['dashboard']['mods']['parallax'] = {};
+  smartlyDATA['dashboard']['mods']['chroma_battery'] = {};
+  smartlyDATA['dashboard']['mods']['chroma_temperature'] = {};
+  smartlyDATA['dashboard']['mods']['chroma_humidity'] = {};
 
   // save calibration devices
   smartlyDATA['dashboard']['mods']['cal_devices'] = cal_devices;
@@ -830,6 +847,12 @@ function smartly_settings_update() {
   smartlyDATA['dashboard']['mods']['zoomy'] = zoomy_val;
   smartlyDATA['dashboard']['mods']['header']['value'] = header_val;
   smartlyDATA['dashboard']['mods']['hide_scrollbars']['value'] = hide_scrollbars_val;
+  smartlyDATA['dashboard']['mods']['parallax']['value'] = parallax_val;
+
+  smartlyDATA['dashboard']['mods']['chroma_battery']['value'] = chroma_battery_val;
+  smartlyDATA['dashboard']['mods']['chroma_temperature']['value'] = chroma_temperature_val;
+  smartlyDATA['dashboard']['mods']['chroma_humidity']['value'] = chroma_humidity_val;
+
 
   // populate the hidden smartly_datablock
   var smartly_datablock = $("#smartlydata");
@@ -840,6 +863,9 @@ function smartly_settings_update() {
   if ($locked) {
     $("#inputjson").prop("readonly", true);
   }
+
+  $("#smartly_settings_modal .modal-body").html('');
+
 }
 
 
@@ -853,6 +879,25 @@ function parse_form(smart_id, mod_name, mod_construct, parent_mod = null, sectio
   if (parent_mod) {
     parent_plug = parent_mod + "__";
     if (debug) {  console.log(parent_plug, "PARENT FOUND");}
+  }
+
+  // pre-define hierarchy to avoid undefined form parse errors
+  if (typeof smartlyDATA['tiles'][smart_id] === 'undefined') {
+    smartlyDATA['tiles'][smart_id] = {};
+    if (typeof smartlyDATA['tiles'][smart_id][section] === 'undefined') {
+      smartlyDATA['tiles'][smart_id][section] = {};
+      if (parent_mod) {
+        if (typeof smartlyDATA['tiles'][smart_id][section][parent_mod] === 'undefined') {
+          smartlyDATA['tiles'][smart_id][section][parent_mod] = {};
+          if (typeof smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'] === 'undefined') {
+            smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'] = {};
+            if (typeof smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name] === 'undefined') {
+              smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name] = {};
+            }
+          }
+        }
+      }
+    }
   }
 
   if (debug) {  console.log("#smart_edit_" + parent_plug + mod_name, "LOOKING FOR"); }
@@ -869,13 +914,16 @@ function parse_form(smart_id, mod_name, mod_construct, parent_mod = null, sectio
 
           if (parent_mod) {
             smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = true;
-          } else { console.log(smartlyDATA['tiles'][smart_id], section + " " + mod_name);
+
+          } else {
+            if (debug) {  console.log(smartlyDATA['tiles'][smart_id], section + " " + mod_name); }
             smartlyDATA['tiles'][smart_id][section][mod_name]['value'] = true;
           }
         } else {
           if (parent_mod) {
             smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = "unchecked";
-          } else { console.log(smartlyDATA['tiles'][smart_id], section + " " + mod_name);
+          } else {
+            if (debug) {  console.log(smartlyDATA['tiles'][smart_id], section + " " + mod_name); }
             smartlyDATA['tiles'][smart_id][section][mod_name]['value'] = "unchecked";
           }
         }
@@ -883,11 +931,13 @@ function parse_form(smart_id, mod_name, mod_construct, parent_mod = null, sectio
         break;
 
       case 'select':
-console.log($("#smart_edit_" + parent_plug + mod_name).val());
+      case 'select-advanced':
+        if (debug) {  console.log($("#smart_edit_" + parent_plug + mod_name).val()); }
         if ($("#smart_edit_" + parent_plug + mod_name).val() && $("#smart_edit_" + parent_plug + mod_name).val() !== 'default') {
           if (debug) { console.log("#smart_edit_" + parent_plug + mod_name, "SMART_EDIT_TITLE PRESENT"); }
 
           if (parent_mod) {
+ //           console.log(smartlyDATA, "SDATA for " + smart_id + " / " + section + " / " + parent_mod);
             smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = $("#smart_edit_" + parent_plug + mod_name).val();
           } else {
             smartlyDATA['tiles'][smart_id][section][mod_name]['value'] = $("#smart_edit_" + mod_name).val();
@@ -913,7 +963,12 @@ console.log($("#smart_edit_" + parent_plug + mod_name).val());
    
           if (parent_mod) {
             smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = $("#smart_edit_" + parent_plug + mod_name).val();
+
           } else {
+            if (debug) {
+              console.log(smartlyDATA['tiles'][smart_id], "setting defaults");
+              console.log(section, "SECTION");
+            }
             smartlyDATA['tiles'][smart_id][section][mod_name]['value'] = $("#smart_edit_" + mod_name).val();
           }
 
@@ -923,12 +978,16 @@ console.log($("#smart_edit_" + parent_plug + mod_name).val());
             if (parent_mod) {
               smartlyDATA['tiles'][smart_id][section][parent_mod]['modifier'][mod_name]['value'] = null;
             } else {
+              if (debug) {  console.log(mod_name, "MODNAME"); }
+//              console.log(smartlyDATA, "SDATA for " + smart_id + " / " + section + " / " + mod_name);
+
               smartlyDATA['tiles'][smart_id][section][mod_name]['value'] = null;
             }
 
           }
         }
       // switch
+        if (debug) {  console.log(smartlyDATA, "SDATA"); }
     }
   }
 
@@ -940,7 +999,6 @@ console.log($("#smart_edit_" + parent_plug + mod_name).val());
 
 function build_form(tile_id, tile_data = null, tile_mod, mod_construct, mod_name) {
   if (debug) {  console.log(tile_mod, "build_form: tile_mod");}
-  console.log(tile_mod, "build_form: tile_mod");
     var formValue = '';
     var formInsert = '';
 
@@ -963,15 +1021,15 @@ function build_form(tile_id, tile_data = null, tile_mod, mod_construct, mod_name
 
   switch (mod_construct.type) {
     case 'checkbox':
-console.log(mod_construct, "INCOMING MOD CONSTRUCT - CHECKBOX");
+      if (debug) {  console.log(mod_construct, "INCOMING MOD CONSTRUCT - CHECKBOX"); }
 
       if (typeof tile_mod !== 'undefined') {
         if (tile_mod.value === true) {
           formValue = 'checked';
         }
-        console.log(tile_mod.value, "TILEMOD VALUE: " . name);
+        if (debug) {  (tile_mod.value, "TILEMOD VALUE: " . name); }
       } else {
-        console.log("UNDEFINED TILEMOD");
+        if (debug) {  console.log("UNDEFINED TILEMOD"); }
       }
 
 
@@ -980,6 +1038,7 @@ console.log(mod_construct, "INCOMING MOD CONSTRUCT - CHECKBOX");
       break;
 
     case 'select':
+    case 'select-advanced':
 
       formHtml += '<div class="form-group row"><label for="select" class="col-4 col-form-label">' + mod_construct.label + '</label><div class="col-8"><select id="smart_edit_' + mod_name + '" name="smart_edit_' + mod_name + '" class="custom-select">';
 
@@ -1024,7 +1083,7 @@ console.log(mod_construct, "INCOMING MOD CONSTRUCT - CHECKBOX");
       formValue = tile_mod.value ? tile_mod.value : '';
       formHtml += '<div class="form-group row"><label class="col-4 col-form-label" for="title">' + mod_construct.label + '</label><div class="col-8">';
       formHtml += '<div id="pickr_' + mod_name + '">&nbsp;</div><input id="smart_edit_' + mod_name + '" name="smart_edit_' + mod_name + '" type="text" class="form-control" aria-describedby="' + mod_name + 'HelpBlock" value="' + formValue + '" ' + formInsert + '><span id="' + mod_name + 'HelpBlock" class="form-text text-muted">' + helpText + '</span></div></div>';
-      formHtml += '<script type="text/javascript">var pickr_' + mod_name + ' = new Pickr({el: "#pickr_' + mod_name + '",default: $("#smart_edit_' + mod_name + '").val(), comparison: false, defaultRepresentation: "RGBA",toRGBA: true,components: {preview: true,opacity: true,hue: true,interaction: {input: true,clear: false,save: true}},onChange(hsva, instance) { $("#smart_edit_' + mod_name + '").val(hsva.toRGBA().toString()); console.log(hsva, "object"); }});</script>';
+      formHtml += '<script type="text/javascript">var pickr_' + mod_name + ' = new Pickr({el: "#pickr_' + mod_name + '",default: $("#smart_edit_' + mod_name + '").val(), comparison: false, defaultRepresentation: "RGBA",toRGBA: true,components: {preview: true,opacity: true,hue: true,interaction: {input: true,clear: false,save: true}},onChange(hsva, instance) { $("#smart_edit_' + mod_name + '").val(hsva.toRGBA().toString()); }});</script>';
       formHtml += '<script type="text/javascript">$("#smart_edit_' + mod_name + '").on("change paste",function() { if ($(this).val()) { pickr_' + mod_name + '.setColor( $(this).val() ); } else { pickr_' + mod_name + '.setColor(null); }    });</script>';
 
       break

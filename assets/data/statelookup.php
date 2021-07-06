@@ -23,6 +23,9 @@ $statelookup = [
     'momentary' => [
         'default' => 'he-tap'
     ],
+    'links' => [
+        'default' => ''
+    ],
     'level-step' => [
         'default' => 'he-settings1'
     ],
@@ -156,7 +159,13 @@ $statelookup = [
     ],
     'scene' => [
         'default' => 'he-image1'
-    ]
+    ],
+
+    'variable-bool' => ['default' => ''],
+    'variable-decimal' => ['default' => ''],
+    'variable-number' => ['default' => ''],
+    'variable-string' => ['default' => ''],
+    'variable-time' => ['default' => '']
 ];
 
 /*
